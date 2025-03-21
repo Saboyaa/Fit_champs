@@ -192,7 +192,7 @@ function Tasks({ initialTasks = [], onTasksUpdate }) {
           </ul>
         </div>
       ) : (
-        <p className="text-gray-200 text-center">Nenhuma tarefa adicionada.</p>
+        <p className="text-gray-200 text-center">Nenhum treino adicionado.</p>
       )}
     </div>
   );

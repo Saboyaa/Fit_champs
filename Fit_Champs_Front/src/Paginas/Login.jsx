@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import icone from "../images/icone.png";
+
 export default function Login() {
   const togglePasswordVisibility = (field) => {
     if (field === "password") {
@@ -22,7 +23,7 @@ export default function Login() {
         <p className="text-blue-100 mt-2">Supere seus limites!</p>
       </div>
       <div className="bg-gradient-to-l from-orange-400 to-orange-500 p-8 rounded-2xl shadow-lg items-center w-[450px] h-[400px]  mt-[30px] margin-auto">
-        <h2 className="text-3xl font-extrabold text-center mb-4 text-neutral-800">
+        <h2 className="text-3xl font-bold text-center mb-4 text-neutral-800">
           Login
         </h2>
         <form className="w-full" method="GET">
@@ -43,7 +44,7 @@ export default function Login() {
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-2  border rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-800"
                 required
               />
               <button

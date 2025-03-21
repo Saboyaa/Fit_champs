@@ -3,9 +3,9 @@ import Home from "../Paginas/Home";
 import TreinosSemanais from "../Paginas/TreinosSemanais";
 import ListadeExercicios from "../Paginas/ListadeExercicios";
 import GraficodeEvolucao from "../Paginas/GraficodeEvolucao";
-import Rank from "../Paginas/Rank";
 import Cadastro from "../Paginas/Cadastro";
 import Login from "../Paginas/Login";
+import RankingSemanal from "../Paginas/RankingSemanal";
 
 const AppRoutes = () => {
   return (
@@ -15,7 +15,7 @@ const AppRoutes = () => {
       <Route path="/ListadeExercicios" element={<ListadeExercicios />} />
       <Route path="/GraficodeEvolucao" element={<GraficodeEvolucao />} />
       <Route path="/" element={<Login />} />
-      <Route path="/Rank" element={<Rank />} />
+      <Route path="/Rank" element={<RankingSemanal />} />
       <Route path="/Cadastro" element={<Cadastro />} />
     </Routes>
   );

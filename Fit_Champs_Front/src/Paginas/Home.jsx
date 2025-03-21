@@ -1,5 +1,4 @@
 import React from "react";
-
 import { useState } from "react";
 import BarraMenu from "../Components/BarraMenu";
 import peito from "../images/peito.png";
@@ -13,7 +12,7 @@ import { useGlobalContext } from "../Context/ContextoGlobal";
 const Home = () => {
   const { isMenuOpen } = useGlobalContext();
   // Dados de exemplo do usuário
-  const [userData] = useState({
+  const [userData, setUserData] = useState({
     nome: "João Silva",
     foto: "imagem",
     telefone: "(11) 98765-4321",
@@ -23,6 +22,38 @@ const Home = () => {
     peso: 75,
     posicaoRank: 1,
   });
+
+  // Estado para controlar a visibilidade do modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Handle saving updated user data
+  const handleSaveUserData = (updatedData) => {
+    setUserData(updatedData);
+
+    // Aqui você normalmente enviaria os dados atualizados para o seu backend
+    // Exemplo:
+    /*
+    fetch('/api/usuarios/atualizar', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedData)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Falha na resposta da rede');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Perfil atualizado com sucesso', data);
+    })
+    .catch(error => {
+      console.error('Erro ao atualizar perfil:', error);
+    });
+    */
+  };
 
   const getIcon = (grupo) => {
     switch (grupo.toLowerCase()) {
@@ -130,7 +161,10 @@ const Home = () => {
               </div>
             </div>
             <div className="flex justify-center mb-2 ">
-              <button className="bg-neutral-800 text-white font-semibold py-2 px-4 rounded-md hover:opacity-80">
+              <button
+                className="bg-neutral-800 text-white font-semibold py-2 px-4 rounded-md hover:opacity-80"
+                onClick={() => setIsModalOpen(true)}
+              >
                 Editar Perfil
               </button>
             </div>
@@ -211,7 +245,200 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de Edição de Perfil */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-neutral-800">
+                Editar Perfil
+              </h2>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <ProfileEditForm
+              userData={userData}
+              onSave={handleSaveUserData}
+              onCancel={() => setIsModalOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
+  );
+};
+
+// Componente do formulário de edição de perfil
+const ProfileEditForm = ({ userData, onSave, onCancel }) => {
+  const [formData, setFormData] = useState({
+    nome: userData.nome || "",
+    email: userData.email || "",
+    telefone: userData.telefone || "",
+    idade: userData.idade || "",
+    altura: userData.altura || "",
+    peso: userData.peso || "",
+    // Mantemos outros campos como foto e posicaoRank inalterados
+    foto: userData.foto,
+    posicaoRank: userData.posicaoRank,
+  });
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="mb-4">
+        <label
+          className="block text-gray-700 text-sm font-bold mb-2"
+          htmlFor="nome"
+        >
+          Nome
+        </label>
+        <input
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="nome"
+          name="nome"
+          type="text"
+          value={formData.nome}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="mb-4">
+        <label
+          className="block text-gray-700 text-sm font-bold mb-2"
+          htmlFor="email"
+        >
+          Email
+        </label>
+        <input
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="email"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="mb-4">
+        <label
+          className="block text-gray-700 text-sm font-bold mb-2"
+          htmlFor="telefone"
+        >
+          Telefone
+        </label>
+        <input
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="telefone"
+          name="telefone"
+          type="tel"
+          value={formData.telefone}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="idade"
+          >
+            Idade
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="idade"
+            name="idade"
+            type="number"
+            value={formData.idade}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="altura"
+          >
+            Altura (cm)
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="altura"
+            name="altura"
+            type="number"
+            value={formData.altura}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="peso"
+          >
+            Peso (kg)
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="peso"
+            name="peso"
+            type="number"
+            value={formData.peso}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end mt-6">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-400 mr-2"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          className="bg-neutral-800 text-white font-semibold py-2 px-4 rounded-md hover:opacity-80"
+        >
+          Salvar
+        </button>
+      </div>
+    </form>
   );
 };
 
