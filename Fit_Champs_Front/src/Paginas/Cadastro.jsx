@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import icone from "../images/icone.png";
 
 const Cadastro = () => {
   // Estados para os campos do formulário
@@ -139,8 +140,17 @@ const Cadastro = () => {
   };
 
   return (
-    <div className="h-full w-[80%] bg-orange-400 flex items-center justify-center p-4 rounded-md mt-5 ">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-[60%] ">
+    <div className="h-full w-[90%] bg-orange-400 p-4 rounded-md mt-5">
+      <div className="bg-neutral-800 rounded-lg shadow-lg p-8 w-[70%] mb-2 text-center mx-auto">
+        <div className="text-center">
+          <div className="flex justify-center items-center gap-2">
+            <h1 className="text-2xl font-bold text-white mb-0">Fit Champs</h1>
+            <img src={icone} alt="icone" className="h-8 w-8" />
+          </div>
+          <p className="text-blue-100 mt-2">Junte-se a nós você também!</p>
+        </div>
+      </div>
+      <div className="bg-white rounded-lg shadow-lg p-8 w-[70%] mx-auto">
         <h1 className="text-2xl font-bold text-center text-neutral-800 mb-6">
           Cadastro de Usuário
         </h1>
@@ -163,7 +173,7 @@ const Cadastro = () => {
               htmlFor="name"
               className="block font-medium mb-2 text-gray-700"
             >
-              Nome Completo
+              Nome Completo:
             </label>
             <input
               type="text"
@@ -180,7 +190,7 @@ const Cadastro = () => {
               htmlFor="email"
               className="block font-medium mb-2 text-gray-700"
             >
-              E-mail
+              E-mail:
             </label>
             <input
               type="email"
@@ -197,7 +207,7 @@ const Cadastro = () => {
               htmlFor="age"
               className="block font-medium mb-2 text-gray-700"
             >
-              Idade
+              Idade:
             </label>
             <input
               type="number"
@@ -216,7 +226,7 @@ const Cadastro = () => {
               htmlFor="weight"
               className="block font-medium mb-2 text-gray-700"
             >
-              Peso (kg)
+              Peso (kg):
             </label>
             <input
               type="number"
@@ -236,7 +246,7 @@ const Cadastro = () => {
               htmlFor="phone"
               className="block font-medium mb-2 text-gray-700"
             >
-              Telefone
+              Telefone:
             </label>
             <input
               type="tel"
@@ -254,7 +264,7 @@ const Cadastro = () => {
               htmlFor="password"
               className="block font-medium mb-2 text-gray-700"
             >
-              Senha
+              Senha:
             </label>
             <div className="relative">
               <input
@@ -295,7 +305,7 @@ const Cadastro = () => {
               htmlFor="confirmPassword"
               className="block font-medium mb-2 text-gray-700"
             >
-              Confirmar Senha
+              Confirmar Senha:
             </label>
             <div className="relative">
               <input

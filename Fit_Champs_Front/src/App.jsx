@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import Tasks from "./Components/Tasks";
+import React from "react";
 import BarraMenu from "./Components/BarraMenu";
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes";
 import TopMenu from "./Components/TopMenu";
-import { GlobalProvider } from "./Context/ContextoGlobal"; // Importa o contexto
+import { GlobalProvider } from "./Context/ContextoGlobal"; // Importa o contexto global
+import { ExerciciosProvider } from "./Context/ExerciciosContext"; // Importa o contexto de exercícios
 
 function Layout() {
   const location = useLocation();
@@ -27,9 +27,11 @@ function Layout() {
 function App() {
   return (
     <GlobalProvider>
-      <Router>
-        <Layout />
-      </Router>
+      <ExerciciosProvider>
+        <Router>
+          <Layout />
+        </Router>
+      </ExerciciosProvider>
     </GlobalProvider>
   );
 }

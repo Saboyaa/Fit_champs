@@ -72,7 +72,7 @@ const Home = () => {
     <div className="w-screen h-full bg-neutral-800 flex justify-center p-6">
       <div
         className={`rounded-md mt-10 transition-all duration-300 bg-orange-400 ${
-          isMenuOpen ? "w-[90%] ml-64" : "w-full"
+          isMenuOpen ? "w-[90%] ml-64 opacity-80" : "w-full"
         }`}
       >
         <div className="max-w-4xl mx-auto">

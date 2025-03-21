@@ -1,7 +1,7 @@
 import { PlusCircleIcon, TrashIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-function Tasks({ initialTasks = [] }) {
+function Tasks({ initialTasks = [], onTasksUpdate }) {
   const [tasks, setTasks] = useState(initialTasks);
   const [selectedOptions, setSelectedOptions] = useState({});
 
@@ -12,6 +12,13 @@ function Tasks({ initialTasks = [] }) {
     Nexercicio: 1,
     reminder: false,
   });
+
+  // Notifica o componente pai sempre que as tasks mudarem
+  useEffect(() => {
+    if (onTasksUpdate) {
+      onTasksUpdate(tasks);
+    }
+  }, [tasks, onTasksUpdate]);
 
   const toggleReminderCheck = (id, opcaoDescricao) => {
     const updatedTasks = tasks.map((task) =>
@@ -124,7 +131,7 @@ function Tasks({ initialTasks = [] }) {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="bg-neutral-800 text-white p-2 rounded-md flex items-center gap-2 hover:opacity-80  "
+            className="bg-neutral-800 text-white p-2 rounded-md flex items-center gap-2 hover:opacity-80"
           >
             <PlusCircleIcon size={22} />
             Adicionar Tarefa
