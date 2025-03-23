@@ -5,12 +5,16 @@ import { NavLink } from "react-router-dom";
 
 function TopMenu({ userPhoto, onLogout }) {
   return (
-    <div className="fixed top-0 left-0 right-0 h-12 bg-sky-950 flex justify-between items-center z-40 px-4">
+    <div className="fixed top-0 left-0 right-0 h-12 bg-gradient-to-t from-slate-950 to-slate-800 flex justify-between items-center z-40 px-4">
       {/* Espaço para o logo ou título (caso queira adicionar) */}
       <div></div>
       <div className="text-white font-bold ml-12 flex gap-2">
-        <p className="mt-2">FIT CHAMPS</p>{" "}
-        <img src={icone} alt="icone" className="h-8 w-8 mb-3 "></img>
+        <p className="mt-2 ml-2 ml-20">FIT CHAMPS</p>{" "}
+        <img
+          src={icone}
+          alt="icone"
+          className="h-8 w-8 mb-3 animate-pulse"
+        ></img>
       </div>
       {/* Área direita com ícones e usuário */}
       <div className="flex items-center space-x-4">

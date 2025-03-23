@@ -663,7 +663,7 @@ const RankingSemanal = () => {
           <h1 className="text-3xl font-bold text-white mb-2">
             Ranking Semanal
           </h1>
-          <p className="text-white mb-4">
+          <p className="text-blue-200 mb-4">
             Veja como você se compara com outros atletas esta semana!
           </p>
 

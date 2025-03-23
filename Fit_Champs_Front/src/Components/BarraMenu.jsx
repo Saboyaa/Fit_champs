@@ -27,7 +27,7 @@ function BarraMenu() {
 
       {/* Menu */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-sky-950 text-white font-bold p-5 transform ${
+        className={`fixed top-0 left-0 h-full w-64b bg-slate-900 text-white font-bold p-5 transform ${
           isMenuOpen ? "translate-x-0 " : "-translate-x-full"
         } transition-transform duration-300`}
       >

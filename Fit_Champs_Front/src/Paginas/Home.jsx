@@ -235,7 +235,7 @@ const Home = () => {
                     {/* Barra de progresso */}
                     <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-sky-600 rounded-full"
+                        className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full"
                         style={{
                           width: `${Math.min(
                             100,
