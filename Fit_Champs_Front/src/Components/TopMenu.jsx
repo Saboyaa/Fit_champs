@@ -5,9 +5,9 @@ import { NavLink } from "react-router-dom";
 
 function TopMenu({ userPhoto, onLogout }) {
   return (
-    <div className="fixed top-0 left-0 right-0 h-12 bg-orange-400 flex justify-between items-center z-40 px-4">
+    <div className="fixed top-0 left-0 right-0 h-12 bg-sky-950 flex justify-between items-center z-40 px-4">
       {/* Espaço para o logo ou título (caso queira adicionar) */}
-      <div className="text-white font-bold ml-12">MENU</div>
+      <div></div>
       <div className="text-white font-bold ml-12 flex gap-2">
         <p className="mt-2">FIT CHAMPS</p>{" "}
         <img src={icone} alt="icone" className="h-8 w-8 mb-3 "></img>
@@ -15,7 +15,7 @@ function TopMenu({ userPhoto, onLogout }) {
       {/* Área direita com ícones e usuário */}
       <div className="flex items-center space-x-4">
         {/* Ícone de notificações */}
-        <button className="relative text-white hover:bg-orange-500 p-1 rounded-full">
+        <button className="relative text-white hover:bg-slate-600 p-1 rounded-full">
           <LucideBell size={20} />
           <span className="absolute -top-1 -right-1 bg-neutral-800 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
             3
@@ -23,14 +23,14 @@ function TopMenu({ userPhoto, onLogout }) {
         </button>
 
         {/* Ícone de configurações */}
-        <button className="text-white hover:bg-orange-500 p-1 rounded-full">
+        <button className="text-white hover:bg-slate-600 p-1 rounded-full">
           <LucideSettings size={20} />
         </button>
 
         {/* Botão de logout */}
         <button
           onClick={onLogout}
-          className="relative text-white hover:bg-orange-500 p-1 rounded-full"
+          className="relative text-white hover:bg-slate-600 p-1 rounded-full"
         >
           <NavLink to="/" className="text-white flex gap-2">
             Sair <LucideLogOut size={16} className="mt-1" />

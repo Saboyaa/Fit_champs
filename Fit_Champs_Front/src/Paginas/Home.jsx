@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import BarraMenu from "../Components/BarraMenu";
 import peito from "../images/peito.png";
 import perna from "../images/perna.png";
 import ombro from "../images/ombro.png";
@@ -21,16 +20,18 @@ const Home = () => {
     altura: 178,
     peso: 75,
     posicaoRank: 1,
+    sexo: "Masculino",
+    cidade: "São Paulo",
   });
 
   // Estado para controlar a visibilidade do modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Handle saving updated user data
+  // Função para salvar os dados do usuário
   const handleSaveUserData = (updatedData) => {
     setUserData(updatedData);
 
-    // Aqui você normalmente enviaria os dados atualizados para o seu backend
+    // Back é com vcs
     // Exemplo:
     /*
     fetch('/api/usuarios/atualizar', {
@@ -102,13 +103,13 @@ const Home = () => {
   return (
     <div className="w-screen h-full bg-neutral-800 flex justify-center p-6">
       <div
-        className={`rounded-md mt-10 transition-all duration-300 bg-orange-400 ${
+        className={`rounded-md mt-10 transition-all duration-300 bg-sky-950 ${
           isMenuOpen ? "w-[90%] ml-64 opacity-80" : "w-full"
         }`}
       >
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-center mb-8 text-white bg-neutral-800 rounded-md p-3 mt-2">
-            Perfil do Usuário
+          <h1 className="text-3xl font-semibold text-center mb-8 text-white bg-neutral-800 rounded-md p-3 mt-2">
+            Bem vindo a sua academia virtual!
           </h1>
 
           {/* Cartão de perfil do usuário */}
@@ -121,7 +122,7 @@ const Home = () => {
                   </h2>
                   <p className="text-blue-100">{userData.email}</p>
                 </div>
-                <div className="bg-orange-400 p-3 rounded-full">
+                <div className="bg-sky-950 p-3 rounded-full">
                   <svg
                     className="h-12 w-12 text-white"
                     fill="currentColor"
@@ -158,6 +159,16 @@ const Home = () => {
                   <span className="font-medium text-gray-500 w-24">Peso:</span>
                   <span>{userData.peso} kg</span>
                 </div>
+                <div className="flex items-center">
+                  <span className="font-medium text-gray-500 w-24">
+                    Cidade:
+                  </span>
+                  <span>{userData.cidade}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="font-medium text-gray-500 w-24">Sexo:</span>
+                  <span>{userData.sexo}</span>
+                </div>
               </div>
             </div>
             <div className="flex justify-center mb-2 ">
@@ -181,9 +192,11 @@ const Home = () => {
                 <div key={recorde.grupo} className="relative ">
                   <div className="flex   mb-2">
                     <p className="text-neutral-800 flex gap-1 ">
-                      <p className="text-orange-400">{userData.posicaoRank}º</p>{" "}
+                      <p className=" text-sky-700 font-semibold">
+                        {userData.posicaoRank}º
+                      </p>{" "}
                       posição do ranking de{" "}
-                      <p className="text-orange-400">{recorde.grupo}</p>
+                      <p className="font-bold">{recorde.grupo}</p>
                     </p>
                   </div>
                 </div>
@@ -212,7 +225,7 @@ const Home = () => {
                         {recorde.grupo}
                       </h3>
                       <div className="flex items-center space-x-2 ml-auto">
-                        <span className="font-bold text-2xl text-orange-500 mr-2">
+                        <span className="font-bold text-2xl text-sky-700  mr-2">
                           {recorde.peso * recorde.series * recorde.rep}
                         </span>
                         <span className="text-sm text-gray-500"> Volume </span>
@@ -222,7 +235,7 @@ const Home = () => {
                     {/* Barra de progresso */}
                     <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-orange-500 rounded-full"
+                        className="h-full bg-sky-600 rounded-full"
                         style={{
                           width: `${Math.min(
                             100,
@@ -295,9 +308,11 @@ const ProfileEditForm = ({ userData, onSave, onCancel }) => {
     idade: userData.idade || "",
     altura: userData.altura || "",
     peso: userData.peso || "",
-    // Mantemos outros campos como foto e posicaoRank inalterados
+    cidade: userData.cidade || "",
+    //nao coloquei pra alterar foto
     foto: userData.foto,
     posicaoRank: userData.posicaoRank,
+    sexo: userData.sexo,
   });
 
   // Handle input changes
@@ -369,7 +384,23 @@ const ProfileEditForm = ({ userData, onSave, onCancel }) => {
           onChange={handleChange}
         />
       </div>
-
+      <div className="mb-4">
+        <label
+          className="block text-gray-700 text-sm font-bold mb-2"
+          htmlFor="nome"
+        >
+          Cidade
+        </label>
+        <input
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="cidade"
+          name="cidade"
+          type="text"
+          value={formData.cidade}
+          onChange={handleChange}
+          required
+        />
+      </div>
       <div className="grid grid-cols-3 gap-4">
         <div className="mb-4">
           <label

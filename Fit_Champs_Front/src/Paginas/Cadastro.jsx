@@ -11,6 +11,9 @@ const Cadastro = () => {
     phone: "",
     password: "",
     confirmPassword: "",
+    cidade: "",
+    sexo: "",
+    altura: "",
   });
 
   // Estado para notificações
@@ -29,6 +32,9 @@ const Cadastro = () => {
   // Estados para mostrar/esconder senha
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Novo estado para rastrear o campo em foco
+  const [focusedField, setFocusedField] = useState(null);
 
   // Função para atualizar os dados do formulário
   const handleChange = (e) => {
@@ -63,6 +69,38 @@ const Cadastro = () => {
     if (id === "password") {
       calculatePasswordStrength(value);
     }
+  };
+
+  // Novas funções para lidar com o foco
+  const handleFocus = (fieldId) => {
+    setFocusedField(fieldId);
+  };
+
+  const handleBlur = () => {
+    setFocusedField(null);
+  };
+
+  // Função para determinar a classe de estilo do campo
+  const getFieldStyle = (fieldId) => {
+    const baseStyle =
+      "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sky-6  00 transition-all duration-300";
+
+    if (fieldId === focusedField) {
+      return `${baseStyle} border-sky-700 bg-orange-50 shadow-md transform scale-[1.02]`;
+    }
+
+    return `${baseStyle} border-gray-300`;
+  };
+
+  // Função para determinar a classe de estilo do container do campo
+  const getFieldContainerStyle = (fieldId) => {
+    const baseStyle = "mb-4 transition-all duration-300";
+
+    if (fieldId === focusedField) {
+      return `${baseStyle} bg-neutral-100 p-3 rounded-lg`;
+    }
+
+    return baseStyle;
   };
 
   // Função para calcular a força da senha
@@ -125,6 +163,9 @@ const Cadastro = () => {
       phone: "",
       password: "",
       confirmPassword: "",
+      altura: "",
+      cidade: "",
+      sexo: "",
     });
 
     setPasswordStrength({ score: 0, color: "" });
@@ -140,7 +181,7 @@ const Cadastro = () => {
   };
 
   return (
-    <div className="h-full w-[90%] bg-orange-400 p-4 rounded-md mt-5">
+    <div className="h-full w-[90%] bg-sky-950 p-4 rounded-md mt-5">
       <div className="bg-neutral-800 rounded-lg shadow-lg p-8 w-[70%] mb-2 text-center mx-auto">
         <div className="text-center">
           <div className="flex justify-center items-center gap-2">
@@ -150,7 +191,10 @@ const Cadastro = () => {
           <p className="text-blue-100 mt-2">Junte-se a nós você também!</p>
         </div>
       </div>
-      <div className="bg-white rounded-lg shadow-lg p-8 w-[70%] mx-auto">
+      <div
+        className="bg-white rounded-lg shadow-md
+      p-8 w-[70%] mx-auto"
+      >
         <h1 className="text-2xl font-bold text-center text-neutral-800 mb-6">
           Cadastro de Usuário
         </h1>
@@ -168,170 +212,243 @@ const Cadastro = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="name"
-              className="block font-medium mb-2 text-gray-700"
-            >
-              Nome Completo:
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="email"
-              className="block font-medium mb-2 text-gray-700"
-            >
-              E-mail:
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="age"
-              className="block font-medium mb-2 text-gray-700"
-            >
-              Idade:
-            </label>
-            <input
-              type="number"
-              id="age"
-              min="1"
-              max="120"
-              value={formData.age}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="weight"
-              className="block font-medium mb-2 text-gray-700"
-            >
-              Peso (kg):
-            </label>
-            <input
-              type="number"
-              id="weight"
-              step="0.1"
-              min="1"
-              max="300"
-              value={formData.weight}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="phone"
-              className="block font-medium mb-2 text-gray-700"
-            >
-              Telefone:
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              placeholder="(00) 00000-0000"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block font-medium mb-2 text-gray-700"
-            >
-              Senha:
-            </label>
-            <div className="relative">
+          <div className="">
+            <div className={getFieldContainerStyle("name")}>
+              <label
+                htmlFor="name"
+                className="block font-medium mb-2 text-gray-700"
+              >
+                Nome Completo:
+              </label>
               <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                value={formData.password}
+                type="text"
+                id="name"
+                value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                onFocus={() => handleFocus("name")}
+                onBlur={handleBlur}
+                className={getFieldStyle("name")}
                 required
               />
-              <button
-                type="button"
-                onClick={() => togglePasswordVisibility("password")}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-              >
-                {showPassword ? "👁️" : "👁️‍🗨️"}
-              </button>
             </div>
-            {/* Indicador de força da senha */}
-            <div className="h-1 mt-2 rounded-full bg-gray-200">
-              <div
-                className={`h-1 rounded-full transition-all duration-300 ${passwordStrength.color}`}
-                style={{ width: `${passwordStrength.score}%` }}
-              ></div>
-            </div>
-            {/* Tooltip com dicas de senha */}
-            <div className="mt-1 text-xs text-gray-500 flex items-center">
-              <span className="mr-1">?</span>
-              <span>
-                A senha deve ter pelo menos 8 caracteres, incluindo maiúsculas,
-                números e símbolos
-              </span>
-            </div>
-          </div>
 
-          <div>
-            <label
-              htmlFor="confirmPassword"
-              className="block font-medium mb-2 text-gray-700"
-            >
-              Confirmar Senha:
-            </label>
-            <div className="relative">
+            <div className={getFieldContainerStyle("email")}>
+              <label
+                htmlFor="email"
+                className="block font-medium mb-2 text-gray-700"
+              >
+                E-mail:
+              </label>
               <input
-                type={showConfirmPassword ? "text" : "password"}
-                id="confirmPassword"
-                value={formData.confirmPassword}
+                type="email"
+                id="email"
+                value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                onFocus={() => handleFocus("email")}
+                onBlur={handleBlur}
+                className={getFieldStyle("email")}
                 required
               />
-              <button
-                type="button"
-                onClick={() => togglePasswordVisibility("confirmPassword")}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+            </div>
+            <div className={getFieldContainerStyle("cidade")}>
+              <label
+                htmlFor="cidade"
+                className="block font-medium mb-2 text-gray-700"
               >
-                {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                Cidade:
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={formData.cidade}
+                onChange={handleChange}
+                onFocus={() => handleFocus("cidade")}
+                onBlur={handleBlur}
+                className={getFieldStyle("cidade")}
+                required
+              />
+            </div>
+            <div className={getFieldContainerStyle("sexo")}>
+              <label
+                htmlFor="sexo"
+                className="block font-medium mb-2 text-gray-700"
+              >
+                Sexo:
+              </label>
+              <select
+                id="sexo"
+                value={formData.sexo}
+                onChange={handleChange}
+                onFocus={() => handleFocus("sexo")}
+                onBlur={handleBlur}
+                className={getFieldStyle("sexo")}
+                required
+              >
+                <option value="masculino">Masculino</option>
+                <option value="feminino">Feminino</option>
+              </select>
+            </div>
+            <div className={getFieldContainerStyle("age")}>
+              <label
+                htmlFor="age"
+                className="block font-medium mb-2 text-gray-700"
+              >
+                Idade:
+              </label>
+              <input
+                type="number"
+                id="age"
+                min="12"
+                max="100"
+                value={formData.age}
+                onChange={handleChange}
+                onFocus={() => handleFocus("age")}
+                onBlur={handleBlur}
+                className={getFieldStyle("age")}
+                required
+              />
+            </div>
+            <div className={getFieldContainerStyle("altura")}>
+              <label
+                htmlFor="altura"
+                className="block font-medium mb-2 text-gray-700"
+              >
+                Altura (cm):
+              </label>
+              <input
+                type="number"
+                id="altura"
+                step="1"
+                min="1"
+                max="220"
+                value={formData.altura}
+                onChange={handleChange}
+                onFocus={() => handleFocus("altura")}
+                onBlur={handleBlur}
+                className={getFieldStyle("altura")}
+                required
+              />
+            </div>
+            <div className={getFieldContainerStyle("weight")}>
+              <label
+                htmlFor="weight"
+                className="block font-medium mb-2 text-gray-700"
+              >
+                Peso (kg):
+              </label>
+              <input
+                type="number"
+                id="weight"
+                step="0.1"
+                min="1"
+                max="300"
+                value={formData.weight}
+                onChange={handleChange}
+                onFocus={() => handleFocus("weight")}
+                onBlur={handleBlur}
+                className={getFieldStyle("weight")}
+                required
+              />
+            </div>
+
+            <div className={getFieldContainerStyle("phone")}>
+              <label
+                htmlFor="phone"
+                className="block font-medium mb-2 text-gray-700"
+              >
+                Telefone:
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                placeholder="(00) 00000-0000"
+                value={formData.phone}
+                onChange={handleChange}
+                onFocus={() => handleFocus("phone")}
+                onBlur={handleBlur}
+                className={getFieldStyle("phone")}
+                required
+              />
+            </div>
+
+            <div className={getFieldContainerStyle("password")}>
+              <label
+                htmlFor="password"
+                className="block font-medium mb-2 text-gray-700"
+              >
+                Senha:
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  onFocus={() => handleFocus("password")}
+                  onBlur={handleBlur}
+                  className={getFieldStyle("password")}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => togglePasswordVisibility("password")}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                >
+                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                </button>
+              </div>
+              {/* Indicador de força da senha */}
+              <div className="h-1 mt-2 rounded-full bg-gray-200">
+                <div
+                  className={`h-1 rounded-full transition-all duration-300 ${passwordStrength.color}`}
+                  style={{ width: `${passwordStrength.score}%` }}
+                ></div>
+              </div>
+              {/* Tooltip com dicas de senha */}
+              <div className="mt-1 text-xs text-gray-500 flex items-center">
+                <span className="mr-1">?</span>
+                <span>
+                  A senha deve ter pelo menos 8 caracteres, incluindo
+                  maiúsculas, números e símbolos
+                </span>
+              </div>
+            </div>
+
+            <div className={getFieldContainerStyle("confirmPassword")}>
+              <label
+                htmlFor="confirmPassword"
+                className="block font-medium mb-2 text-gray-700"
+              >
+                Confirmar Senha:
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  onFocus={() => handleFocus("confirmPassword")}
+                  onBlur={handleBlur}
+                  className={getFieldStyle("confirmPassword")}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => togglePasswordVisibility("confirmPassword")}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                >
+                  {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                </button>
+              </div>
+            </div>
+            <div className="flex justify-center mt-6">
+              <button
+                type="submit"
+                className="bg-sky-600 text-white py-2 px-4 rounded-md hover:opacity-80 focus:outline-none focus:ring-2  focus:ring-offset-2 transition-colors"
+              >
+                Cadastrar
               </button>
             </div>
-          </div>
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className=" bg-orange-400 text-white py-2 px-4 rounded-md hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors"
-            >
-              Cadastrar
-            </button>
           </div>
         </form>
       </div>

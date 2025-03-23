@@ -90,10 +90,10 @@ const GraficoEvolucao = () => {
 
     const lastVolume = data[data.length - 1].volume;
     const previousVolume = data[data.length - 2].volume;
-    const diff = lastVolume - previousVolume;
+    const diff = (lastVolume / previousVolume).toFixed(2);
 
-    if (diff > 0) return { type: "melhora", diff };
-    if (diff < 0) return { type: "piora", diff: Math.abs(diff) };
+    if (diff > 1) return { type: "melhora", diff };
+    if (diff < 1) return { type: "piora", diff: diff };
     return { type: "mesmo", diff: 0 };
   };
 
@@ -103,7 +103,10 @@ const GraficoEvolucao = () => {
       return (
         <div className="flex items-center text-green-600">
           <ArrowUpCircle className="mr-1" size={16} />
-          <span>Melhora de {trend.diff}kg no volume, continue assim!</span>
+          <span>
+            Melhora de {trend.diff}% em relação ao treino anterior, continue
+            assim!
+          </span>
         </div>
       );
     } else if (trend.type === "piora") {
@@ -111,7 +114,8 @@ const GraficoEvolucao = () => {
         <div className="flex items-center text-red-600">
           <ArrowDownCircle className="mr-1" size={16} />
           <span>
-            Queda de {trend.diff}kg no volume, não deixe a peteca cair!
+            Queda de {(1 - trend.diff).toFixed(2)}% em relação ao treino
+            anterior, não deixe a peteca cair!
           </span>
         </div>
       );
@@ -133,7 +137,7 @@ const GraficoEvolucao = () => {
   return (
     <div className="w-screen h-full bg-neutral-800 flex justify-center p-6">
       <div
-        className={`rounded-md mt-10 transition-all duration-300 bg-orange-400 ${
+        className={`rounded-md mt-10 transition-all duration-300 bg-sky-950 ${
           isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
         }`}
       >
@@ -203,7 +207,7 @@ const GraficoEvolucao = () => {
                       <Line
                         type="monotone"
                         dataKey="volume"
-                        stroke={isHovered ? "#ff9900" : "#000000"}
+                        stroke={isHovered ? "#104E8B" : "#000000"}
                         activeDot={{ r: 8 }}
                         name={`Volume ${type}`}
                         strokeWidth={isHovered ? 3 : 2}

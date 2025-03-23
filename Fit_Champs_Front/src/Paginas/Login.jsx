@@ -15,20 +15,20 @@ export default function Login() {
 
   return (
     <div className="bg-neutral-800 h-screen">
-      <div className="text-center mt-8 bg-gradient-to-l from-orange-400 to-orange-500 p-4 rounded-xl">
+      <div className="text-center mt-8 bg-gradient-to-t from-sky-700 to-sky-950 p-4 rounded-xl">
         <div className="flex justify-center items-center gap-2">
           <h1 className="text-3xl font-bold text-white mb-0">Fit Champs</h1>
           <img src={icone} alt="icone" className="h-8 w-8" />
         </div>
         <p className="text-blue-100 mt-2">Supere seus limites!</p>
       </div>
-      <div className="bg-gradient-to-l from-orange-400 to-orange-500 p-8 rounded-2xl shadow-lg items-center w-[450px] h-[400px]  mt-[30px] margin-auto">
-        <h2 className="text-3xl font-bold text-center mb-4 text-neutral-800">
+      <div className="bg-gradient-to-t from-sky-700 to-sky-950 p-8 rounded-2xl shadow-lg items-center w-[450px] h-[400px]  mt-[30px] margin-auto">
+        <h2 className="text-3xl font-bold text-center mb-4 text-white">
           Login
         </h2>
         <form className="w-full" method="GET">
           <div className="mb-4">
-            <label className="block text-neutral-800 font-bold">Usuário:</label>
+            <label className="block text-white font-bold">Usuário:</label>
             <input
               type="text"
               className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-800"
@@ -37,7 +37,7 @@ export default function Login() {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="block  text-neutral-800 font-bold"
+              className="block  text-white font-bold"
             >
               Senha:
             </label>
@@ -60,7 +60,7 @@ export default function Login() {
             <NavLink to={"/Home"}>
               <button
                 type="submit"
-                className="w-5/6 bg-neutral-800 text-white p-2 rounded-lg hover:opacity-80 "
+                className="w-5/6 bg-neutral-800 text-white p-2 rounded-lg hover:bg-slate-900 "
               >
                 Entrar
               </button>
@@ -69,13 +69,13 @@ export default function Login() {
         </form>
         <div className="mt-2 text-center ">
           <NavLink to={"/Cadastro"}>
-            <button className="w-2/3 bg-neutral-800 text-white p-2 rounded-lg hover:opacity-80">
+            <button className="w-2/3 bg-neutral-800 text-white p-2 rounded-lg hover:bg-slate-900">
               Cadastrar novo usuário
             </button>
           </NavLink>
         </div>
         <div className="mt-4 text-center">
-          <a href="#" className=" text-neutral-800 hover:underline text-sm">
+          <a href="#" className=" text-white hover:underline text-sm">
             Esqueci a senha
           </a>
         </div>

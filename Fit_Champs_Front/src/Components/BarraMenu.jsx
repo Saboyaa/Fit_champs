@@ -18,33 +18,33 @@ function BarraMenu() {
       {/* Botão só aparece quando o menu está fechado */}
       {!isMenuOpen && (
         <button
-          className="fixed top-1 left-4 p-2 bg-neutral-800 text-white rounded-lg z-50"
+          className="fixed top-1 left-6 p-2  rounded-lg text-white flex z-50 hover:bg-slate-600 font-semibold"
           onClick={() => setIsMenuOpen(true)}
         >
-          <Menu size={24} />
+          <Menu size={24} className="p-1" /> MENU
         </button>
       )}
 
       {/* Menu */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-orange-400 text-white font-bold p-5 transform ${
+        className={`fixed top-0 left-0 h-full w-64 bg-sky-950 text-white font-bold p-5 transform ${
           isMenuOpen ? "translate-x-0 " : "-translate-x-full"
         } transition-transform duration-300`}
       >
         <nav className="mt-4">
           <ul className="space-y-3 mt-12">
-            <li className="hover:opacity-80 hover:bg-neutral-800 p-2 rounded-lg cursor-pointer">
+            <li className=" hover:bg-slate-600 p-2 rounded-lg cursor-pointer">
               <NavLink to="/Home" className="text-white flex gap-2">
                 Home <LucideHome size={16} className="mt-1" />
               </NavLink>
             </li>
-            <li className="hover:opacity-80 hover:bg-neutral-800 p-2 rounded-lg cursor-pointer">
+            <li className=" hover:bg-slate-600 p-2 rounded-lg cursor-pointer">
               <NavLink to="/TreinosSemanais" className="text-white flex gap-2">
                 Treinos da Semana{" "}
                 <LucideCalendarDays size={16} className="mt-1" />
               </NavLink>
             </li>
-            <li className="hover:opacity-80 hover:bg-neutral-800 p-2 rounded-lg cursor-pointer">
+            <li className=" hover:bg-slate-600 p-2 rounded-lg cursor-pointer">
               <NavLink
                 to="/ListadeExercicios"
                 className="text-white flex gap-2"
@@ -53,7 +53,7 @@ function BarraMenu() {
                 <LucideBicepsFlexed size={16} className="mt-1" />
               </NavLink>
             </li>
-            <li className="hover:opacity-80 hover:bg-neutral-800 p-2 rounded-lg cursor-pointer">
+            <li className=" hover:bg-slate-600 p-2 rounded-lg cursor-pointer">
               <NavLink
                 to="/GraficodeEvolucao"
                 className="text-white flex gap-2"
@@ -62,7 +62,7 @@ function BarraMenu() {
                 <LucideChartLine size={16} className="mt-1" />
               </NavLink>
             </li>
-            <li className="hover:opacity-80 hover:bg-neutral-800 p-2 rounded-lg cursor-pointer">
+            <li className=" hover:bg-slate-600 p-2 rounded-lg cursor-pointer">
               <NavLink to="/Rank" className="text-white flex gap-2">
                 Rank Semanal <TrophyIcon size={16} className="mt-1" />
               </NavLink>
@@ -70,10 +70,13 @@ function BarraMenu() {
 
             <div className="mt-10">
               <button
-                className="absolute text-white mt-3"
+                className="absolute text-white mt-3 p-1"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <LucideArrowBigLeftDash size={20} />
+                <LucideArrowBigLeftDash
+                  size={24}
+                  className="hover:bg-slate-600 rounded-lg "
+                />
               </button>
             </div>
           </ul>

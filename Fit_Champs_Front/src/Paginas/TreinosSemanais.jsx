@@ -58,7 +58,7 @@ function TreinosSemanais() {
           isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
         }`}
       >
-        <div className="bg-orange-400 p-8 rounded-md mb-6">
+        <div className="bg-sky-950 p-8 rounded-md mb-6">
           <h1 className="text-3xl text-slate-100 font-bold text-center">
             <span className="ml-4 text-3xl text-white gap-2">
               Treinos Semanais ({weekRange.start} - {weekRange.end})
@@ -73,7 +73,7 @@ function TreinosSemanais() {
         <div className="mt-6 flex justify-center">
           <button
             onClick={enviarParaListaExercicios}
-            className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-md shadow-lg transition-all duration-300"
+            className="bg-sky-950 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-md shadow-lg transition-all duration-300"
           >
             Continuar para Seleção de Exercícios
           </button>

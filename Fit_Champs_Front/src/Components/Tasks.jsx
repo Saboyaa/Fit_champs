@@ -71,7 +71,7 @@ function Tasks({ initialTasks = [], onTasksUpdate }) {
   };
 
   return (
-    <div className="bg-orange-400 p-5 shadow rounded-md">
+    <div className="bg-sky-950 p-5 shadow rounded-md">
       <form onSubmit={handleSubmit} className="mb-6">
         <div className="flex flex-col md:flex-row gap-3 mb-4">
           <div className="flex-1">

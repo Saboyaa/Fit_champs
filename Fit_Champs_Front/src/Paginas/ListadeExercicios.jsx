@@ -162,7 +162,7 @@ function ListadeExercicios() {
           isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
         }`}
       >
-        <div className="bg-orange-400 p-8 rounded-md mb-6">
+        <div className="bg-sky-950 p-8 rounded-md mb-6">
           <h1 className="text-3xl text-slate-100 font-bold text-center">
             <span className="ml-4 text-3xl text-white gap-2">
               Lista de Exercícios
@@ -186,7 +186,7 @@ function ListadeExercicios() {
               return (
                 <div
                   key={treino.id}
-                  className="bg-orange-400 p-5 rounded-md shadow"
+                  className="bg-sky-950 p-5 rounded-md shadow"
                 >
                   <h2 className="text-xl font-bold text-white mb-4">
                     {treino.text} - {treino.descripition}

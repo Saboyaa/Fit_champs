@@ -12,7 +12,7 @@ function Layout() {
   const isHomePage = location.pathname === "/";
   const isCadastroPage = location.pathname === "/Cadastro";
   return (
-    <div className="bg-neutral-800 flex justify-center">
+    <div className="bg-neutral-800 flex justify-center ">
       <AppRoutes />
       {!isHomePage && !isCadastroPage && (
         <>
