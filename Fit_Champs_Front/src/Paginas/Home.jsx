@@ -1,16 +1,17 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import peito from "../images/peito.png";
 import perna from "../images/perna.png";
 import ombro from "../images/ombro.png";
 import costas from "../images/costas.png";
 import braco from "../images/musculo.png";
-import { LucideMedal } from "lucide-react";
+import { LucideMedal, ActivitySquare } from "lucide-react";
 import { useGlobalContext } from "../Context/ContextoGlobal";
 
 const Home = () => {
   const { isMenuOpen } = useGlobalContext();
-  // Dados de exemplo do usuário
+
+  // Dados de exemplo do usuário com IMC adicionado
   const [userData, setUserData] = useState({
     nome: "João Silva",
     foto: "imagem",
@@ -22,7 +23,41 @@ const Home = () => {
     posicaoRank: 1,
     sexo: "Masculino",
     cidade: "São Paulo",
+    imc: { value: null, classification: "" },
   });
+
+  // Calcular IMC quando o componente montar ou quando altura/peso mudar
+  useEffect(() => {
+    calculateIMC(userData.altura, userData.peso);
+  }, [userData.altura, userData.peso]);
+
+  // Função para calcular o IMC e sua classificação
+  const calculateIMC = (altura, peso) => {
+    if (altura && peso) {
+      const heightInMeters = altura / 100;
+      const imcValue = (peso / (heightInMeters * heightInMeters)).toFixed(2);
+      let classification = "";
+
+      if (imcValue < 18.5) {
+        classification = "Abaixo do peso";
+      } else if (imcValue >= 18.5 && imcValue < 25) {
+        classification = "Peso normal";
+      } else if (imcValue >= 25 && imcValue < 30) {
+        classification = "Sobrepeso";
+      } else if (imcValue >= 30 && imcValue < 35) {
+        classification = "Obesidade grau I";
+      } else if (imcValue >= 35 && imcValue < 40) {
+        classification = "Obesidade grau II";
+      } else {
+        classification = "Obesidade grau III";
+      }
+
+      setUserData((prev) => ({
+        ...prev,
+        imc: { value: imcValue, classification },
+      }));
+    }
+  };
 
   // Estado para controlar a visibilidade do modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,6 +65,7 @@ const Home = () => {
   // Função para salvar os dados do usuário
   const handleSaveUserData = (updatedData) => {
     setUserData(updatedData);
+    calculateIMC(updatedData.altura, updatedData.peso);
 
     // Back é com vcs
     // Exemplo:
@@ -100,21 +136,39 @@ const Home = () => {
     { grupo: "Braço", peso: 45, series: 4, rep: 10, exercicio: "Rosca Direta" },
   ]);
 
+  // Função para determinar a cor do indicador de IMC
+  const getIMCColor = (classification) => {
+    switch (classification) {
+      case "Abaixo do peso":
+        return "text-yellow-500";
+      case "Peso normal":
+        return "text-green-500";
+      case "Sobrepeso":
+        return "text-orange-400";
+      case "Obesidade grau I":
+      case "Obesidade grau II":
+      case "Obesidade grau III":
+        return "text-red-500";
+      default:
+        return "text-gray-500";
+    }
+  };
+
   return (
-    <div className="w-screen h-full bg-neutral-800 flex justify-center p-6">
+    <div className="w-screen h-full bg-sky-950 flex justify-center p-6">
       <div
-        className={`rounded-md mt-10 transition-all duration-300 bg-sky-950 ${
+        className={`rounded-md mt-10 transition-all duration-300  ${
           isMenuOpen ? "w-[90%] ml-64 opacity-80" : "w-full"
         }`}
       >
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-semibold text-center mb-8 text-white bg-neutral-800 rounded-md p-3 mt-2">
+          <h1 className="text-3xl font-semibold text-center mb-8 text-white bg-neutral-800 rounded-md p-3 mt-2 shadow-lg">
             Bem vindo a sua academia virtual!
           </h1>
 
           {/* Cartão de perfil do usuário */}
           <div className="bg-white rounded-lg shadow-lg mb-8 overflow-hidden">
-            <div className="bg-neutral-800 p-4">
+            <div className="bg-gradient-to-r from-neutral-800 to-neutral-700 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-white">
@@ -122,7 +176,7 @@ const Home = () => {
                   </h2>
                   <p className="text-blue-100">{userData.email}</p>
                 </div>
-                <div className="bg-sky-950 p-3 rounded-full">
+                <div className="bg-sky-950 p-3 rounded-full shadow-lg transform hover:scale-105 transition-transform">
                   <svg
                     className="h-12 w-12 text-white"
                     fill="currentColor"
@@ -135,10 +189,10 @@ const Home = () => {
             </div>
 
             <div className="p-6">
-              <h3 className="text-lg font-semibold mb-4 text-neutral-800">
+              <h3 className="text-lg font-semibold mb-4 text-neutral-800 border-b border-gray-200 pb-2">
                 Informações Pessoais
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex items-center">
                   <span className="font-medium text-gray-500 w-24">
                     Telefone:
@@ -170,43 +224,92 @@ const Home = () => {
                   <span>{userData.sexo}</span>
                 </div>
               </div>
+
+              {/* IMC Card */}
+              <div className="mt-6 bg-neutral-50 p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <ActivitySquare className="text-sky-700" size={20} />
+                  <h4 className="font-semibold text-neutral-800">IMC</h4>
+                </div>
+                <div className="flex flex-wrap gap-4 items-center">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-sky-700">
+                      {userData.imc.value || "---"}
+                    </div>
+                    <div className="text-xs text-gray-500">Valor</div>
+                  </div>
+                  <div className="h-10 border-l border-gray-300"></div>
+                  <div>
+                    <div
+                      className={`font-semibold ${getIMCColor(
+                        userData.imc.classification
+                      )}`}
+                    >
+                      {userData.imc.classification || "---"}
+                    </div>
+                    <div className="text-xs text-gray-500">Classificação</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-center mb-2 ">
+            <div className="flex justify-center mb-6">
               <button
-                className="bg-neutral-800 text-white font-semibold py-2 px-4 rounded-md hover:opacity-80"
+                className="bg-gradient-to-r from-neutral-800 to-neutral-700 text-white font-semibold py-2 px-6 rounded-md hover:opacity-90 transition-opacity shadow-md flex items-center gap-2"
                 onClick={() => setIsModalOpen(true)}
               >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  />
+                </svg>
                 Editar Perfil
               </button>
             </div>
           </div>
 
           <div className="bg-white rounded-lg shadow-lg overflow-hidden mt-6 mb-6">
-            <div className="bg-neutral-800 p-4">
-              <h2 className="text-2xl font-bold text-white flex gap-1">
-                Posições no Rank! <LucideMedal size={24} className="mt-1" />
+            <div className="bg-gradient-to-r from-neutral-800 to-neutral-700 p-4">
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                Posições no Rank!{" "}
+                <LucideMedal size={24} className="text-yellow-400" />
               </h2>
             </div>
-            <div className="p-6 ">
-              {recordesMusculares.map((recorde) => (
-                <div key={recorde.grupo} className="relative ">
-                  <div className="flex   mb-2">
-                    <p className="text-neutral-800 flex gap-1 ">
-                      <p className=" text-sky-700 font-semibold">
-                        {userData.posicaoRank}º
-                      </p>{" "}
-                      posição do ranking de{" "}
-                      <p className="font-bold">{recorde.grupo}</p>
-                    </p>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {recordesMusculares.map((recorde) => (
+                  <div
+                    key={recorde.grupo}
+                    className="relative p-3 bg-neutral-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <div>{getIcon(recorde.grupo)}</div>
+                      <div>
+                        <p className="text-neutral-800">
+                          <span className="text-sky-700 font-semibold">
+                            {userData.posicaoRank}º
+                          </span>{" "}
+                          <span className="text-gray-500">em</span>{" "}
+                          <span className="font-bold">{recorde.grupo}</span>
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Cartão de recordes musculares */}
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-2">
-            <div className="bg-neutral-800 p-4">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+            <div className="bg-gradient-to-r from-neutral-800 to-neutral-700 p-4">
               <h2 className="text-2xl font-bold text-white">
                 Recordes Musculares
               </h2>
@@ -216,16 +319,21 @@ const Home = () => {
             </div>
 
             <div className="p-6">
-              <div className="space-y-6 ">
+              <div className="space-y-8">
                 {recordesMusculares.map((recorde) => (
-                  <div key={recorde.grupo} className="relative">
-                    <div className="flex  items-center mb-2">
-                      {getIcon(recorde.grupo)}
-                      <h3 className="text-lg font-semibold ml-4 ">
+                  <div
+                    key={recorde.grupo}
+                    className="relative bg-neutral-50 p-4 rounded-lg hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center mb-3">
+                      <div className="bg-sky-600 p-2 rounded-md">
+                        {getIcon(recorde.grupo)}
+                      </div>
+                      <h3 className="text-lg font-semibold ml-4">
                         {recorde.grupo}
                       </h3>
                       <div className="flex items-center space-x-2 ml-auto">
-                        <span className="font-bold text-2xl text-sky-700  mr-2">
+                        <span className="font-bold text-2xl text-sky-700 mr-2">
                           {recorde.peso * recorde.series * recorde.rep}
                         </span>
                         <span className="text-sm text-gray-500"> Volume </span>
@@ -233,9 +341,9 @@ const Home = () => {
                     </div>
 
                     {/* Barra de progresso */}
-                    <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-5 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full"
+                        className="h-full bg-gradient-to-r from-sky-700 to-sky-400 rounded-full"
                         style={{
                           width: `${Math.min(
                             100,
@@ -247,9 +355,15 @@ const Home = () => {
                       ></div>
                     </div>
 
-                    <div className="mt-2 text-sm text-gray-600">
-                      <span className="font-medium">Exercício: </span>
-                      {recorde.exercicio}
+                    <div className="mt-3 text-sm text-gray-600 flex items-center">
+                      <span className="font-medium mr-1">Exercício:</span>
+                      <span className="bg-neutral-100 py-1 px-3 rounded-full">
+                        {recorde.exercicio}
+                      </span>
+                      <span className="ml-auto text-xs text-gray-500">
+                        {recorde.peso} kg × {recorde.series} séries ×{" "}
+                        {recorde.rep} reps
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -309,10 +423,10 @@ const ProfileEditForm = ({ userData, onSave, onCancel }) => {
     altura: userData.altura || "",
     peso: userData.peso || "",
     cidade: userData.cidade || "",
-    //nao coloquei pra alterar foto
     foto: userData.foto,
     posicaoRank: userData.posicaoRank,
     sexo: userData.sexo,
+    imc: userData.imc,
   });
 
   // Handle input changes
@@ -464,7 +578,7 @@ const ProfileEditForm = ({ userData, onSave, onCancel }) => {
         </button>
         <button
           type="submit"
-          className="bg-neutral-800 text-white font-semibold py-2 px-4 rounded-md hover:opacity-80"
+          className="bg-gradient-to-r from-neutral-800 to-neutral-700 text-white font-semibold py-2 px-4 rounded-md hover:opacity-90"
         >
           Salvar
         </button>

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import icone from "../images/icone.png";
+import { Link } from "react-router-dom";
 
 const Cadastro = () => {
   // Estados para os campos do formulário
@@ -12,8 +13,12 @@ const Cadastro = () => {
     password: "",
     confirmPassword: "",
     cidade: "",
-    sexo: "",
+    sexo: "masculino", // Default value
     altura: "",
+    imc: {
+      value: null,
+      classification: "",
+    },
   });
 
   // Estado para notificações
@@ -33,8 +38,15 @@ const Cadastro = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Novo estado para rastrear o campo em foco
+  // Estado para rastrear o campo em foco
   const [focusedField, setFocusedField] = useState(null);
+
+  // Estado para o display do IMC (separado do formData)
+  const [imcDisplay, setImcDisplay] = useState({
+    value: null,
+    classification: "",
+    color: "",
+  });
 
   // Função para atualizar os dados do formulário
   const handleChange = (e) => {
@@ -83,7 +95,7 @@ const Cadastro = () => {
   // Função para determinar a classe de estilo do campo
   const getFieldStyle = (fieldId) => {
     const baseStyle =
-      "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sky-6  00 transition-all duration-300";
+      "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sky-600 transition-all duration-300";
 
     if (fieldId === focusedField) {
       return `${baseStyle} border-sky-700 bg-orange-50 shadow-md transform scale-[1.02]`;
@@ -120,6 +132,62 @@ const Cadastro = () => {
     setPasswordStrength({ score, color });
   };
 
+  // Função para calcular o IMC
+  const calculateIMC = () => {
+    if (formData.altura && formData.weight) {
+      const heightInMeters = parseFloat(formData.altura) / 100;
+      const weightInKg = parseFloat(formData.weight);
+
+      if (heightInMeters > 0 && weightInKg > 0) {
+        const imcValue = weightInKg / (heightInMeters * heightInMeters);
+
+        let classification = "";
+        let color = "";
+
+        if (imcValue < 18.5) {
+          classification = "Abaixo do peso";
+          color = "text-blue-600";
+        } else if (imcValue < 25) {
+          classification = "Peso normal";
+          color = "text-green-600";
+        } else if (imcValue < 30) {
+          classification = "Sobrepeso";
+          color = "text-yellow-600";
+        } else if (imcValue < 35) {
+          classification = "Obesidade Grau I";
+          color = "text-orange-600";
+        } else if (imcValue < 40) {
+          classification = "Obesidade Grau II";
+          color = "text-red-600";
+        } else {
+          classification = "Obesidade Grau III";
+          color = "text-red-800";
+        }
+
+        // Atualizar o display do IMC
+        setImcDisplay({
+          value: imcValue.toFixed(2),
+          classification,
+          color,
+        });
+
+        // Armazenar o IMC nos dados do formulário
+        setFormData((prevData) => ({
+          ...prevData,
+          imc: {
+            value: imcValue.toFixed(2),
+            classification,
+          },
+        }));
+      }
+    }
+  };
+
+  // Calcular IMC quando altura ou peso forem atualizados
+  useEffect(() => {
+    calculateIMC();
+  }, [formData.altura, formData.weight]);
+
   // Função para mostrar notificação
   const showNotification = (message, type) => {
     setNotification({
@@ -150,8 +218,14 @@ const Cadastro = () => {
       return;
     }
 
+    // Preparar dados para envio (removendo confirmPassword)
+    const dataToSubmit = {
+      ...formData,
+      confirmPassword: undefined,
+    };
+
     // Aqui você enviaria os dados para o servidor (API)
-    console.log("Dados enviados:", formData);
+    console.log("Dados enviados:", dataToSubmit);
     showNotification("Cadastro realizado com sucesso!", "success");
 
     // Limpar formulário
@@ -165,10 +239,15 @@ const Cadastro = () => {
       confirmPassword: "",
       altura: "",
       cidade: "",
-      sexo: "",
+      sexo: "masculino",
+      imc: {
+        value: null,
+        classification: "",
+      },
     });
 
     setPasswordStrength({ score: 0, color: "" });
+    setImcDisplay({ value: null, classification: "", color: "" });
   };
 
   // Toggle para mostrar/esconder senha
@@ -181,20 +260,19 @@ const Cadastro = () => {
   };
 
   return (
-    <div className="h-full w-[90%] bg-sky-950 p-4 rounded-md mt-5">
-      <div className="bg-neutral-800 rounded-lg shadow-lg p-8 w-[70%] mb-2 text-center mx-auto">
+    <div className="h-full w-[90%] bg-sky-950 p-6 rounded-md mt-5">
+      <div className="bg-neutral-800 rounded-lg shadow-xl p-8 w-[70%] mb-4 text-center mx-auto border-b-4 border-sky-600">
         <div className="text-center">
-          <div className="flex justify-center items-center gap-2">
-            <h1 className="text-2xl font-bold text-white mb-0">Fit Champs</h1>
-            <img src={icone} alt="icone" className="h-8 w-8" />
+          <div className="flex justify-center items-center gap-3">
+            <h1 className="text-3xl font-bold text-white mb-0">Fit Champs</h1>
+            <img src={icone} alt="icone" className="h-10 w-10" />
           </div>
-          <p className="text-blue-100 mt-2">Junte-se a nós você também!</p>
+          <span className="text-blue-100 mt-2 block">
+            Melhorando sua saúde e qualidade de vida
+          </span>
         </div>
       </div>
-      <div
-        className="bg-white rounded-lg shadow-md
-      p-8 w-[70%] mx-auto"
-      >
+      <div className="bg-white rounded-lg shadow-lg p-8 w-[70%] mx-auto border-t-4 border-sky-600">
         <h1 className="text-2xl font-bold text-center text-neutral-800 mb-6">
           Cadastro de Usuário
         </h1>
@@ -212,7 +290,7 @@ const Cadastro = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className={getFieldContainerStyle("name")}>
               <label
                 htmlFor="name"
@@ -250,6 +328,7 @@ const Cadastro = () => {
                 required
               />
             </div>
+
             <div className={getFieldContainerStyle("cidade")}>
               <label
                 htmlFor="cidade"
@@ -259,7 +338,7 @@ const Cadastro = () => {
               </label>
               <input
                 type="text"
-                id="name"
+                id="cidade"
                 value={formData.cidade}
                 onChange={handleChange}
                 onFocus={() => handleFocus("cidade")}
@@ -268,6 +347,7 @@ const Cadastro = () => {
                 required
               />
             </div>
+
             <div className={getFieldContainerStyle("sexo")}>
               <label
                 htmlFor="sexo"
@@ -288,6 +368,7 @@ const Cadastro = () => {
                 <option value="feminino">Feminino</option>
               </select>
             </div>
+
             <div className={getFieldContainerStyle("age")}>
               <label
                 htmlFor="age"
@@ -305,48 +386,6 @@ const Cadastro = () => {
                 onFocus={() => handleFocus("age")}
                 onBlur={handleBlur}
                 className={getFieldStyle("age")}
-                required
-              />
-            </div>
-            <div className={getFieldContainerStyle("altura")}>
-              <label
-                htmlFor="altura"
-                className="block font-medium mb-2 text-gray-700"
-              >
-                Altura (cm):
-              </label>
-              <input
-                type="number"
-                id="altura"
-                step="1"
-                min="1"
-                max="220"
-                value={formData.altura}
-                onChange={handleChange}
-                onFocus={() => handleFocus("altura")}
-                onBlur={handleBlur}
-                className={getFieldStyle("altura")}
-                required
-              />
-            </div>
-            <div className={getFieldContainerStyle("weight")}>
-              <label
-                htmlFor="weight"
-                className="block font-medium mb-2 text-gray-700"
-              >
-                Peso (kg):
-              </label>
-              <input
-                type="number"
-                id="weight"
-                step="0.1"
-                min="1"
-                max="300"
-                value={formData.weight}
-                onChange={handleChange}
-                onFocus={() => handleFocus("weight")}
-                onBlur={handleBlur}
-                className={getFieldStyle("weight")}
                 required
               />
             </div>
@@ -371,6 +410,77 @@ const Cadastro = () => {
               />
             </div>
 
+            <div className={getFieldContainerStyle("altura")}>
+              <label
+                htmlFor="altura"
+                className="block font-medium mb-2 text-gray-700"
+              >
+                Altura (cm):
+              </label>
+              <input
+                type="number"
+                id="altura"
+                step="1"
+                min="1"
+                max="220"
+                value={formData.altura}
+                onChange={handleChange}
+                onFocus={() => handleFocus("altura")}
+                onBlur={handleBlur}
+                className={getFieldStyle("altura")}
+                required
+              />
+            </div>
+
+            <div className={getFieldContainerStyle("weight")}>
+              <label
+                htmlFor="weight"
+                className="block font-medium mb-2 text-gray-700"
+              >
+                Peso (kg):
+              </label>
+              <input
+                type="number"
+                id="weight"
+                step="0.1"
+                min="1"
+                max="300"
+                value={formData.weight}
+                onChange={handleChange}
+                onFocus={() => handleFocus("weight")}
+                onBlur={handleBlur}
+                className={getFieldStyle("weight")}
+                required
+              />
+            </div>
+          </div>
+
+          {/* IMC Display Section */}
+          {imcDisplay.value && (
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+              <h3 className="font-semibold text-lg text-gray-800 mb-2">
+                Seu IMC:
+              </h3>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-lg font-bold">{imcDisplay.value}</p>
+                  <p className={`${imcDisplay.color} font-medium`}>
+                    {imcDisplay.classification}
+                  </p>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <p>IMC = peso(kg) / altura²(m)</p>
+                </div>
+              </div>
+              <div className="mt-3 text-xs text-gray-700 bg-gray-100 p-2 rounded">
+                <p className="font-medium">
+                  Este valor será salvo no seu cadastro
+                </p>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className={getFieldContainerStyle("password")}>
               <label
                 htmlFor="password"
@@ -441,14 +551,21 @@ const Cadastro = () => {
                 </button>
               </div>
             </div>
-            <div className="flex justify-center mt-6">
-              <button
-                type="submit"
-                className="bg-sky-600 text-white py-2 px-4 rounded-md hover:opacity-80 focus:outline-none focus:ring-2  focus:ring-offset-2 transition-colors"
-              >
-                Cadastrar
-              </button>
-            </div>
+          </div>
+
+          <div className="flex justify-between items-center mt-6">
+            <Link
+              to="/"
+              className="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors flex items-center"
+            >
+              <span className="mr-1">←</span> Login
+            </Link>
+            <button
+              type="submit"
+              className="bg-sky-600 text-white py-2 px-6 rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors shadow-md"
+            >
+              Cadastrar
+            </button>
           </div>
         </form>
       </div>

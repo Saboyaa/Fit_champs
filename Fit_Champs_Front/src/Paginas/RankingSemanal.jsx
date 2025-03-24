@@ -653,7 +653,7 @@ const RankingSemanal = () => {
   const userFaixaEtaria = getUserFaixaEtaria();
 
   return (
-    <div className="w-screen min-h-screen bg-neutral-800 flex justify-center p-6">
+    <div className="w-screen min-h-screen bg-sky-950 flex justify-center p-6">
       <div
         className={`rounded-md mt-10 transition-all duration-300 ${
           isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
