@@ -104,7 +104,7 @@ const GraficoEvolucao = () => {
       { data: "28/01/2025", volume: 1900 },
       { data: "04/02/2025", volume: 2000 },
       { data: "11/02/2025", volume: 1950 },
-      { data: "18/02/2025", volume: 2100 },
+      { data: "18/02/2025", volume: 2400 },
     ],
   });
 

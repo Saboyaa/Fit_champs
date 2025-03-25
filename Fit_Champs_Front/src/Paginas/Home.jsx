@@ -5,7 +5,7 @@ import perna from "../images/perna.png";
 import ombro from "../images/ombro.png";
 import costas from "../images/costas.png";
 import braco from "../images/musculo.png";
-import { LucideMedal, ActivitySquare } from "lucide-react";
+import { LucideMedal, ActivitySquare, Edit } from "lucide-react";
 import { useGlobalContext } from "../Context/ContextoGlobal";
 
 const Home = () => {
@@ -25,6 +25,28 @@ const Home = () => {
     cidade: "São Paulo",
     imc: { value: null, classification: "" },
   });
+
+  // State to manage volume goal edit modal
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  const [currentEditGroup, setCurrentEditGroup] = useState(null);
+
+  // Function to open goal edit modal
+  const openGoalModal = (grupo) => {
+    setCurrentEditGroup(grupo);
+    setIsGoalModalOpen(true);
+  };
+
+  // Function to update volume goal
+  const updateVolumeGoal = (grupo, newGoal) => {
+    setRecordesMusculares((prev) =>
+      prev.map((recorde) =>
+        recorde.grupo === grupo
+          ? { ...recorde, metaVolume: Number(newGoal) }
+          : recorde
+      )
+    );
+    setIsGoalModalOpen(false);
+  };
 
   // Calcular IMC quando o componente montar ou quando altura/peso mudar
   useEffect(() => {
@@ -66,6 +88,7 @@ const Home = () => {
   const handleSaveUserData = (updatedData) => {
     setUserData(updatedData);
     calculateIMC(updatedData.altura, updatedData.peso);
+    setIsModalOpen(false);
 
     // Back é com vcs
     // Exemplo:
@@ -110,32 +133,38 @@ const Home = () => {
   };
 
   // Dados de exemplo dos recordes de peso
-  const [recordesMusculares] = useState([
-    { grupo: "Peito", peso: 100, series: 4, rep: 10, exercicio: "Supino Reto" },
+  const [recordesMusculares, setRecordesMusculares] = useState([
+    {
+      grupo: "Peito",
+      recordeVolume: 4000,
+      metaVolume: 5000,
+      data: "2022-10-10",
+    },
     {
       grupo: "Costas",
-      peso: 120,
-      series: 4,
-      rep: 10,
-      exercicio: "Remada Curvada",
+      recordeVolume: 4800,
+      metaVolume: 6000,
+      data: "2022-10-11",
     },
     {
       grupo: "Perna",
-      peso: 180,
-      series: 4,
-      rep: 10,
-      exercicio: "Agachamento Livre",
+      recordeVolume: 7200,
+      metaVolume: 8000,
+      data: "2022-10-12",
     },
     {
       grupo: "Ombro",
-      peso: 70,
-      series: 4,
-      rep: 10,
-      exercicio: "Desenvolvimento Militar",
+      recordeVolume: 2800,
+      metaVolume: 4000,
+      data: "2022-10-14",
     },
-    { grupo: "Braço", peso: 45, series: 4, rep: 10, exercicio: "Rosca Direta" },
+    {
+      grupo: "Braço",
+      recordeVolume: 1800,
+      metaVolume: 3000,
+      data: "2022-10-15",
+    },
   ]);
-
   // Função para determinar a cor do indicador de IMC
   const getIMCColor = (classification) => {
     switch (classification) {
@@ -334,9 +363,18 @@ const Home = () => {
                       </h3>
                       <div className="flex items-center space-x-2 ml-auto">
                         <span className="font-bold text-2xl text-sky-700 mr-2">
-                          {recorde.peso * recorde.series * recorde.rep}
+                          {recorde.recordeVolume}/{recorde.metaVolume}
                         </span>
-                        <span className="text-sm text-gray-500"> Volume </span>
+                        <span className="text-sm text-gray-500">
+                          {" "}
+                          Volume/Meta{" "}
+                        </span>
+                        <button
+                          onClick={() => openGoalModal(recorde.grupo)}
+                          className="ml-2 text-gray-500 hover:text-sky-700"
+                        >
+                          <Edit size={16} className=" text-sky-600" />
+                        </button>
                       </div>
                     </div>
 
@@ -347,22 +385,15 @@ const Home = () => {
                         style={{
                           width: `${Math.min(
                             100,
-                            ((recorde.peso * recorde.rep * recorde.series) /
-                              10000) *
-                              100
+                            (recorde.recordeVolume / recorde.metaVolume) * 100
                           )}%`,
                         }}
                       ></div>
                     </div>
 
                     <div className="mt-3 text-sm text-gray-600 flex items-center">
-                      <span className="font-medium mr-1">Exercício:</span>
-                      <span className="bg-neutral-100 py-1 px-3 rounded-full">
-                        {recorde.exercicio}
-                      </span>
-                      <span className="ml-auto text-xs text-gray-500">
-                        {recorde.peso} kg × {recorde.series} séries ×{" "}
-                        {recorde.rep} reps
+                      <span className="font-medium mr-1">
+                        Data do treino: {recorde.data}
                       </span>
                     </div>
                   </div>
@@ -372,6 +403,17 @@ const Home = () => {
           </div>
         </div>
       </div>
+      {isGoalModalOpen && (
+        <VolumeGoalModal
+          grupo={currentEditGroup}
+          currentGoal={
+            recordesMusculares.find((r) => r.grupo === currentEditGroup)
+              ?.metaVolume
+          }
+          onSave={updateVolumeGoal}
+          onCancel={() => setIsGoalModalOpen(false)}
+        />
+      )}
 
       {/* Modal de Edição de Perfil */}
       {isModalOpen && (
@@ -409,6 +451,54 @@ const Home = () => {
           </div>
         </div>
       )}
+    </div>
+  );
+};
+
+// Volume Goal Edit Modal Component
+const VolumeGoalModal = ({ grupo, currentGoal, onSave, onCancel }) => {
+  const [newGoal, setNewGoal] = useState(currentGoal);
+
+  const handleSave = () => {
+    onSave(grupo, newGoal);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+        <h2 className="text-2xl font-bold mb-4">
+          Editar Meta de Volume - {grupo}
+        </h2>
+        <div className="mb-4">
+          <label
+            htmlFor="volumeGoal"
+            className="block text-gray-700 text-sm font-bold mb-2"
+          >
+            Meta de Volume
+          </label>
+          <input
+            type="number"
+            id="volumeGoal"
+            value={newGoal}
+            onChange={(e) => setNewGoal(Number(e.target.value))}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="flex justify-end space-x-2">
+          <button
+            onClick={onCancel}
+            className="bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-400"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleSave}
+            className="bg-gradient-to-r from-neutral-800 to-neutral-700 text-white font-semibold py-2 px-4 rounded-md hover:opacity-90"
+          >
+            Salvar
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
