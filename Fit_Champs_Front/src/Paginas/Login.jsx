@@ -11,7 +11,7 @@ export default function Login() {
   };
 
   return (
-    <div className=" w-[750px] bg-gradient-to-br from-slate-950 to-slate-700  flex flex-col items-center justify-center p-6 rounded-md shadow-2xl">
+    <div className=" w-[100vw]  bg-gradient-to-br from-slate-950 to-slate-700  flex flex-col items-center justify-center p-6 rounded-md shadow-2xl">
       {/* Logo Header */}
       <div className="mb-8 flex flex-col items-center">
         <div className="flex items-center gap-3 mb-2">
