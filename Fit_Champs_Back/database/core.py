@@ -1,8 +1,8 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-url = "postgresql://pedro:P0stgr3_i$_d4t4@localhost:5432/FitChampsDB"
+url = "DATABASE_URL"
 
 engine = create_engine(url)
 

@@ -1,6 +1,6 @@
 bcrypt
 cryptography
-fastapi
+fastapi[standard]
 python-jose
 python-multipart
 SQLAlchemy
