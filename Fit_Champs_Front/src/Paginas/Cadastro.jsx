@@ -260,8 +260,8 @@ const Cadastro = () => {
   };
 
   return (
-    <div className="h-full w-[90%] bg-sky-950 p-6 rounded-md mt-5">
-      <div className="bg-neutral-800 rounded-lg shadow-xl p-8 w-[70%] mb-4 text-center mx-auto border-b-4 border-sky-600">
+    <div className="h-full w-[100vw] bg-sky-950 p-6 rounded-md ">
+      <div className="bg-darkblue rounded-lg shadow-xl p-8 w-[70%] mb-4 text-center mx-auto border-b-4 border-sky-600">
         <div className="text-center">
           <div className="flex justify-center items-center gap-3">
             <h1 className="text-3xl font-bold text-white mb-0">Fit Champs</h1>

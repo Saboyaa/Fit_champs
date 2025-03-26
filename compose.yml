@@ -1,0 +1,5 @@
+services:
+    service:
+        build: ./Fit_Champs_Front
+        ports:
+            - "3000:3000"
