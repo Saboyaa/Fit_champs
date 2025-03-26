@@ -8,8 +8,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  AreaChart,
-  Area,
   ComposedChart,
   Bar,
 } from "recharts";
@@ -22,6 +20,7 @@ import {
   Filter,
   Target,
   Award,
+  BarChart,
 } from "lucide-react";
 import { useGlobalContext } from "../Context/ContextoGlobal";
 import peito from "../images/peito.png";
@@ -34,11 +33,10 @@ const GraficoEvolucao = () => {
   const { isMenuOpen } = useGlobalContext();
   const [hoveredChart, setHoveredChart] = useState(null);
   const [viewMode, setViewMode] = useState("cards"); // cards, comparison, summary
-  const [visualizationType, setVisualizationType] = useState("line"); // line, area, bar
+  const [visualizationType, setVisualizationType] = useState("line"); // line, bar
   const [timeRange, setTimeRange] = useState("6m"); // 1m, 3m, 6m, 1y
   const [showMetas, setShowMetas] = useState(false);
 
-  // Objetivos/metas para cada grupo muscular
   const metas = {
     Peito: 3500,
     Costas: 3400,
@@ -111,8 +109,8 @@ const GraficoEvolucao = () => {
   // Dados para gráfico de comparação
   const prepareComparisonData = () => {
     const result = [];
-    // Usamos apenas o último registro de cada tipo de treino
-    trainingTypes.forEach((type) => {
+    // Usamos o último registro de cada tipo de treino
+    Object.keys(trainingData).forEach((type) => {
       const data = trainingData[type];
       if (data.length > 0) {
         const lastEntry = data[data.length - 1];
@@ -243,20 +241,21 @@ const GraficoEvolucao = () => {
       </div>
     );
   };
-
-  // Renderizar o gráfico de acordo com o tipo selecionado
   const renderChart = (type, data, isLastItemOdd = false) => {
     const chartProps = {
       data: data,
       margin: { top: 5, right: 20, left: 20, bottom: 5 },
     };
-
+    const updatedData = data.map((item) => ({
+      ...item,
+      meta: showMetas ? metas[type] || 0 : 0, // Substitui null por 0, feito por conta do problema do grafico de barras
+    }));
     // Referência para a meta
     const metaData = showMetas
-      ? [
-          { data: data[0]?.data, volume: metas[type] },
-          { data: data[data.length - 1]?.data, volume: metas[type] },
-        ]
+      ? data.map((item) => ({
+          data: item.data,
+          volume: metas[type],
+        }))
       : [];
 
     return (
@@ -298,43 +297,8 @@ const GraficoEvolucao = () => {
             </LineChart>
           )}
 
-          {visualizationType === "area" && (
-            <AreaChart {...chartProps}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="data" />
-              <YAxis
-                label={{
-                  value: "Volume (kg)",
-                  angle: -90,
-                  position: "insideLeft",
-                }}
-              />
-              <Tooltip formatter={(value) => [`${value} kg`, "Volume"]} />
-              <Legend />
-              <Area
-                type="monotone"
-                dataKey="volume"
-                stroke={hoveredChart === type ? "#1E40AF" : "#3B82F6"}
-                fill={hoveredChart === type ? "#BFDBFE" : "#93C5FD"}
-                name={`Volume ${type}`}
-              />
-              {showMetas && (
-                <Line
-                  type="monotone"
-                  data={metaData}
-                  dataKey="volume"
-                  stroke="#10B981"
-                  strokeDasharray="5 5"
-                  strokeWidth={2}
-                  name="Meta"
-                  dot={false}
-                />
-              )}
-            </AreaChart>
-          )}
-
           {visualizationType === "bar" && (
-            <ComposedChart {...chartProps}>
+            <ComposedChart data={updatedData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="data" />
               <YAxis
@@ -344,71 +308,57 @@ const GraficoEvolucao = () => {
                   position: "insideLeft",
                 }}
               />
-              <Tooltip formatter={(value) => [`${value} kg`, "Volume"]} />
-              <Legend />
-              <Bar
-                dataKey="volume"
-                fill={hoveredChart === type ? "#1E40AF" : "#3B82F6"}
-                name={`Volume ${type}`}
-              />
-              {showMetas && (
-                <Line
-                  type="monotone"
-                  data={metaData}
-                  dataKey="volume"
-                  stroke="#10B981"
-                  strokeDasharray="5 5"
-                  strokeWidth={2}
-                  name="Meta"
-                  dot={false}
-                />
-              )}
-            </ComposedChart>
-          )}
-        </ResponsiveContainer>
-      </div>
-    );
-  };
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    const treino = payload.find(
+                      (entry) => entry.dataKey === "volume"
+                    );
+                    const meta = payload.find(
+                      (entry) => entry.dataKey === "meta"
+                    );
 
-  // Renderizar o gráfico de comparação
-  const renderComparisonChart = () => {
-    const data = prepareComparisonData();
-
-    return (
-      <div className="bg-white p-6 rounded-lg shadow-md w-full">
-        <h2 className="text-xl font-semibold mb-4">
-          Comparação entre Grupos Musculares
-        </h2>
-        <div className="h-96">
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart
-              data={data}
-              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="nome" />
-              <YAxis
-                label={{
-                  value: "Volume (kg)",
-                  angle: -90,
-                  position: "insideLeft",
+                    return (
+                      <div className="custom-tooltip bg-white p-2 border">
+                        <p>{label}</p>
+                        {treino && (
+                          <p className=" text-indigo-700">
+                            Treino: {treino.value} kg
+                          </p>
+                        )}
+                        {meta && (
+                          <p className="text-emerald-500">
+                            Meta: {meta.value} kg
+                          </p>
+                        )}
+                      </div>
+                    );
+                  }
+                  return null;
                 }}
               />
-              <Tooltip formatter={(value) => [`${value} kg`, "Volume"]} />
               <Legend />
-              <Bar dataKey="volume" fill="#3B82F6" name="Volume Atual" />
+
               {showMetas && (
                 <Line
                   type="monotone"
                   dataKey="meta"
                   stroke="#10B981"
+                  strokeDasharray="5 5"
                   strokeWidth={2}
                   name="Meta"
+                  dot={false}
                 />
               )}
+
+              <Bar
+                dataKey="volume"
+                fill={hoveredChart === type ? "#1E40AF" : "#3B82F6"}
+                name={`Volume ${type}`}
+              />
             </ComposedChart>
-          </ResponsiveContainer>
-        </div>
+          )}
+        </ResponsiveContainer>
       </div>
     );
   };
@@ -429,7 +379,7 @@ const GraficoEvolucao = () => {
         <h2 className="text-xl font-semibold mb-4">Evolução Total do Treino</h2>
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
-            {visualizationType === "line" || visualizationType === "area" ? (
+            {visualizationType === "line" ? (
               <ComposedChart
                 data={data}
                 margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
@@ -445,28 +395,16 @@ const GraficoEvolucao = () => {
                 />
                 <Tooltip />
                 <Legend />
-                {trainingTypes.map((type) =>
-                  visualizationType === "line" ? (
-                    <Line
-                      key={type}
-                      type="monotone"
-                      dataKey={type}
-                      stroke={colors[type]}
-                      strokeWidth={2}
-                      name={type}
-                    />
-                  ) : (
-                    <Area
-                      key={type}
-                      type="monotone"
-                      dataKey={type}
-                      stroke={colors[type]}
-                      fill={colors[type] + "80"}
-                      stackId="1"
-                      name={type}
-                    />
-                  )
-                )}
+                {trainingTypes.map((type) => (
+                  <Line
+                    key={type}
+                    type="monotone"
+                    dataKey={type}
+                    stroke={colors[type]}
+                    strokeWidth={2}
+                    name={type}
+                  />
+                ))}
               </ComposedChart>
             ) : (
               <ComposedChart
@@ -501,7 +439,85 @@ const GraficoEvolucao = () => {
     );
   };
 
-  // Array dos tipos de treino para processamento
+  const renderComparisonChart = () => {
+    const comparisonData = prepareComparisonData();
+
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-md w-full">
+        <h2 className="text-xl font-semibold mb-4">
+          Comparação de Volumes por Grupo Muscular
+        </h2>
+        <div className="h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            {visualizationType === "line" && (
+              <LineChart
+                data={comparisonData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="nome" />
+                <YAxis
+                  label={{
+                    value: "Volume (kg)",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                />
+                <Tooltip formatter={(value) => [`${value} kg`, "Volume"]} />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="volume"
+                  stroke="#3B82F6"
+                  strokeWidth={2}
+                  name="Volume Atual"
+                  activeDot={{ r: 8 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="meta"
+                  stroke="#10B981"
+                  strokeDasharray="5 5"
+                  strokeWidth={2}
+                  name="Meta"
+                  dot={false}
+                />
+              </LineChart>
+            )}
+            {visualizationType === "bar" && (
+              <ComposedChart
+                data={comparisonData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="nome" />
+                <YAxis
+                  label={{
+                    value: "Volume (kg)",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                />
+                <Tooltip formatter={(value) => [`${value} kg`, "Volume"]} />
+                <Legend />
+                <Bar dataKey="volume" fill="#3B82F6" name="Volume Atual" />
+                {showMetas && (
+                  <Line
+                    type="monotone"
+                    dataKey="meta"
+                    stroke="#10B981"
+                    strokeWidth={2}
+                    name="Meta"
+                  />
+                )}
+              </ComposedChart>
+            )}
+          </ResponsiveContainer>
+        </div>
+      </div>
+    );
+  };
+
   const trainingTypes = Object.keys(trainingData);
   const isOdd = trainingTypes.length % 2 !== 0;
   const lastItemIndex = trainingTypes.length - 1;
@@ -531,7 +547,9 @@ const GraficoEvolucao = () => {
             <button
               onClick={() => setViewMode("cards")}
               className={`px-3 py-1 rounded-md flex items-center ${
-                viewMode === "cards" ? "bg-blue-600 text-white" : "bg-gray-100"
+                viewMode === "cards"
+                  ? "bg-neutral-800 text-white"
+                  : "bg-gray-100"
               }`}
             >
               <Filter size={16} className="mr-1" />
@@ -541,7 +559,7 @@ const GraficoEvolucao = () => {
               onClick={() => setViewMode("comparison")}
               className={`px-3 py-1 rounded-md flex items-center ${
                 viewMode === "comparison"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-neutral-800 text-white"
                   : "bg-gray-100"
               }`}
             >
@@ -552,7 +570,7 @@ const GraficoEvolucao = () => {
               onClick={() => setViewMode("summary")}
               className={`px-3 py-1 rounded-md flex items-center ${
                 viewMode === "summary"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-neutral-800 text-white"
                   : "bg-gray-100"
               }`}
             >
@@ -567,35 +585,23 @@ const GraficoEvolucao = () => {
               onClick={() => setVisualizationType("line")}
               className={`px-3 py-1 rounded-md ${
                 visualizationType === "line"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-neutral-800 text-white"
                   : "bg-gray-100"
               }`}
             >
               Linha
             </button>
             <button
-              onClick={() => setVisualizationType("area")}
-              className={`px-3 py-1 rounded-md ${
-                visualizationType === "area"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100"
-              }`}
-            >
-              Área
-            </button>
-            <button
               onClick={() => setVisualizationType("bar")}
               className={`px-3 py-1 rounded-md ${
                 visualizationType === "bar"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-neutral-800 text-white"
                   : "bg-gray-100"
               }`}
             >
               Barras
             </button>
           </div>
-
-          {/* Exibir metas */}
           <div className="bg-white p-2 rounded-lg shadow-md">
             <button
               onClick={() => setShowMetas(!showMetas)}
@@ -619,12 +625,12 @@ const GraficoEvolucao = () => {
                 hoveredChart !== null && hoveredChart !== type;
 
               const cardClasses = `
-                bg-white p-4 rounded-lg shadow-md 
-                transition-all duration-300 ease-in-out
-                ${isHovered ? "scale-105 shadow-lg z-10" : ""}
-                ${isOtherHovered ? "opacity-50 scale-95" : ""}
-                ${isLastItemOdd ? "md:col-span-2" : ""}
-              `;
+                        bg-white p-4 rounded-lg shadow-md 
+                        transition-all duration-300 ease-in-out
+                        ${isHovered ? "scale-105 shadow-lg z-10" : ""}
+                        ${isOtherHovered ? "opacity-50 scale-95" : ""}
+                        ${isLastItemOdd ? "md:col-span-2" : ""}
+                      `;
 
               return (
                 <div

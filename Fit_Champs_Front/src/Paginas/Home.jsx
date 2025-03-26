@@ -5,7 +5,7 @@ import perna from "../images/perna.png";
 import ombro from "../images/ombro.png";
 import costas from "../images/costas.png";
 import braco from "../images/musculo.png";
-import { LucideMedal, ActivitySquare, Edit } from "lucide-react";
+import { LucideMedal, ActivitySquare, Edit, PartyPopper } from "lucide-react";
 import { useGlobalContext } from "../Context/ContextoGlobal";
 
 const Home = () => {
@@ -142,7 +142,7 @@ const Home = () => {
     },
     {
       grupo: "Costas",
-      recordeVolume: 4800,
+      recordeVolume: 6100,
       metaVolume: 6000,
       data: "2022-10-11",
     },
@@ -181,6 +181,27 @@ const Home = () => {
       default:
         return "text-gray-500";
     }
+  };
+
+  const meta = ({ recordeVolume, metaVolume }) => {
+    return recordeVolume >= metaVolume;
+  };
+
+  const Alcancoumeta = ({ recordeVolume, metaVolume }) => {
+    if (meta({ recordeVolume, metaVolume })) {
+      return (
+        <div className="flex-col flex items-center text-green-600 justify-center p-2 ">
+          <div className="flex">
+            <PartyPopper className="mt-1 mr-1" size={16} />
+            <span>Objetivo Alcançado! Parabéns!</span>
+          </div>
+          <div>
+            <span>Altere sua meta ao lado</span>
+          </div>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -355,33 +376,52 @@ const Home = () => {
                     className="relative bg-neutral-50 p-4 rounded-lg hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-center mb-3">
-                      <div className="bg-sky-600 p-2 rounded-md">
+                      <div
+                        className={` rounded-md ${
+                          !meta({
+                            recordeVolume: recorde.recordeVolume,
+                            metaVolume: recorde.metaVolume,
+                          })
+                            ? "bg-sky-700"
+                            : "bg-green-500"
+                        }`}
+                      >
                         {getIcon(recorde.grupo)}
                       </div>
                       <h3 className="text-lg font-semibold ml-4">
                         {recorde.grupo}
                       </h3>
                       <div className="flex items-center space-x-2 ml-auto">
-                        <span className="font-bold text-2xl text-sky-700 mr-2">
+                        <span
+                          className={` text-2xl font-bold mr-2 ${
+                            !meta({
+                              recordeVolume: recorde.recordeVolume,
+                              metaVolume: recorde.metaVolume,
+                            })
+                              ? "text-sky-700"
+                              : "text-green-700"
+                          }`}
+                        >
                           {recorde.recordeVolume}/{recorde.metaVolume}
                         </span>
                         <span className="text-sm text-gray-500">
                           {" "}
                           Volume/Meta{" "}
                         </span>
-                        <button
-                          onClick={() => openGoalModal(recorde.grupo)}
-                          className="ml-2 text-gray-500 hover:text-sky-700"
-                        >
-                          <Edit size={16} className=" text-sky-600" />
-                        </button>
                       </div>
                     </div>
 
                     {/* Barra de progresso */}
                     <div className="h-5 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-sky-700 to-sky-400 rounded-full"
+                        className={`h-full rounded-full ${
+                          !meta({
+                            recordeVolume: recorde.recordeVolume,
+                            metaVolume: recorde.metaVolume,
+                          })
+                            ? "bg-gradient-to-r from-sky-700 to-sky-400"
+                            : "bg-gradient-to-r from-green-700 to-green-400"
+                        }`}
                         style={{
                           width: `${Math.min(
                             100,
@@ -390,11 +430,34 @@ const Home = () => {
                         }}
                       ></div>
                     </div>
+                    <div>
+                      <Alcancoumeta
+                        recordeVolume={recorde.recordeVolume}
+                        metaVolume={recorde.metaVolume}
+                      />
+                    </div>
 
-                    <div className="mt-3 text-sm text-gray-600 flex items-center">
+                    <div className="mt-3 text-sm text-gray-600 flex items-center justify-between">
                       <span className="font-medium mr-1">
                         Data do treino: {recorde.data}
                       </span>
+                      <button
+                        onClick={() => openGoalModal(recorde.grupo)}
+                        className="ml-2 text-gray-500 hover:text-sky-700 flex items-center gap-1"
+                      >
+                        <Edit
+                          size={16}
+                          className={` ${
+                            !meta({
+                              recordeVolume: recorde.recordeVolume,
+                              metaVolume: recorde.metaVolume,
+                            })
+                              ? "text-sky-700"
+                              : "text-green-700"
+                          }`}
+                        />{" "}
+                        <span>Alterar Meta</span>
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -477,6 +540,7 @@ const VolumeGoalModal = ({ grupo, currentGoal, onSave, onCancel }) => {
             Meta de Volume
           </label>
           <input
+            step={100}
             type="number"
             id="volumeGoal"
             value={newGoal}

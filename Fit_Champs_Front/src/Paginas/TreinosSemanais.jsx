@@ -53,8 +53,10 @@ function TreinosSemanais() {
 
   const changeWeek = (offset) => {
     const newOffset = currentWeekOffset + offset;
-    setCurrentWeekOffset(newOffset);
 
+    if (newOffset > 0) return;
+
+    setCurrentWeekOffset(newOffset);
     const currentDate = new Date();
     const startOfCurrentWeek = currentDate.getDate() - currentDate.getDay();
     const newStartDate = new Date(
@@ -113,7 +115,10 @@ function TreinosSemanais() {
 
             <button
               onClick={() => changeWeek(1)}
-              className="bg-sky-900 hover:bg-sky-800 p-2 rounded-full text-white"
+              className={`bg-sky-900 hover:bg-sky-800 p-2 rounded-full text-white ${
+                currentWeekOffset === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={currentWeekOffset === 0}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -141,8 +146,12 @@ function TreinosSemanais() {
           </div>
         </div>
 
-        <div className="bg-neutral-900 rounded-lg p-6 shadow-lg mb-6">
-          <Tasks initialTasks={[]} onTasksUpdate={atualizarTasks} />
+        <div className="bg-sky-950 rounded-lg p-6 shadow-lg mb-6">
+          <Tasks
+            initialTasks={[]}
+            onTasksUpdate={atualizarTasks}
+            weekStartDate={weekRange.start.replace(/\//g, "-")}
+          />
         </div>
 
         <div className="sticky bottom-6 mt-4 flex justify-center">

@@ -9,6 +9,7 @@ import {
   Check,
   Info,
   ArrowLeft,
+  BarChart2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -67,6 +68,7 @@ function ListadeExercicios() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const navigate = useNavigate();
+  const [trainingDateAndVolume, setTrainingDateAndVolume] = useState({});
 
   // Inicializar exercícios para todos os treinos ao carregar
   useEffect(() => {
@@ -78,11 +80,6 @@ function ListadeExercicios() {
         inicializarExercicios(treino.id);
       }
     });
-
-    // Expandir o primeiro treino automaticamente se existir
-    if (treinos.length > 0 && treinos[0].descripition !== "Day Off") {
-      setExpandedTreino(treinos[0].id);
-    }
   }, [treinos]);
 
   const inicializarExercicios = (treinoId) => {
@@ -184,13 +181,35 @@ function ListadeExercicios() {
         exerciciosPorTreino,
       });
 
+      // Capture the current date and volumes when saving
+      const currentDate = new Date();
+      const volumeSummary = {};
+
+      treinos.forEach((treino) => {
+        if (treino.descripition !== "Day Off") {
+          const stats = calcularTotalPorTreino(treino.id);
+          volumeSummary[treino.id] = {
+            text: treino.text,
+            descripition: treino.descripition,
+            volume: stats.volume,
+            data: treino.data,
+            date: currentDate.toLocaleString("pt-BR", {
+              dateStyle: "short",
+              timeStyle: "short",
+            }),
+          };
+        }
+      });
+
+      setTrainingDateAndVolume(volumeSummary);
+
       setIsSaving(false);
       setSaveSuccess(true);
 
       // Reset success message after 3 seconds
       setTimeout(() => {
         setSaveSuccess(false);
-      }, 3000);
+      }, 2000);
     }, 1000);
   };
 
@@ -264,13 +283,15 @@ function ListadeExercicios() {
                   >
                     <div>
                       <h2 className="text-xl font-bold text-white flex items-center">
-                        {treino.text} - {treino.descripition}
+                        {treino.text} ({treino.data}) - {treino.descripition}
                       </h2>
-                      <div className="flex gap-4 mt-1 text-blue-200 text-sm">
-                        <span>
+                      <div className="flex gap-4 mt-1 text-blue-200 ">
+                        <span className="text-sky-400">
                           {stats.exercicios}/{stats.exerciciosTotal} exercícios
                         </span>
-                        <span>Volume total: {stats.volume}</span>
+                        <span className="text-sky-400">
+                          Volume total: {stats.volume}
+                        </span>
                       </div>
                     </div>
                     <div className="text-white">
@@ -463,7 +484,7 @@ function ListadeExercicios() {
             </div>
           </div>
         ) : (
-          <div className="bg-neutral-900 p-8 rounded-lg text-center shadow-lg">
+          <div className="bg-neutral-800 p-8 rounded-lg text-center shadow-lg">
             <div className="flex flex-col items-center gap-4">
               <Info size={40} className="text-blue-300" />
               <p className="text-white text-lg">
@@ -477,6 +498,37 @@ function ListadeExercicios() {
                 <ArrowLeft size={16} />
                 Ir para Treinos Semanais
               </button>
+            </div>
+          </div>
+        )}
+        {Object.keys(trainingDateAndVolume).length > 0 && (
+          <div className="mt-6 bg-sky-900 rounded-lg p-6 shadow-lg">
+            <div className="flex items-center mb-4">
+              <BarChart2 className="text-blue-300 mr-2" size={24} />
+              <h2 className="text-2xl text-slate-100 font-bold">
+                Resumo de Volumes de Treino
+              </h2>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Object.entries(trainingDateAndVolume).map(([treinoId, data]) => (
+                <div
+                  key={treinoId}
+                  className="bg-sky-950 rounded-lg p-4 shadow-md"
+                >
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    {data.text} ( {data.data} ) - {data.descripition}
+                  </h3>
+                  <div className="flex justify-between items-center">
+                    <span className="text-blue-300">Volume Total:</span>
+                    <span className="text-white font-bold">
+                      {data.volume} kg
+                    </span>
+                  </div>
+                  <div className="mt-2 text-sm text-blue-200">
+                    <span>Registrado em: {data.date}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
