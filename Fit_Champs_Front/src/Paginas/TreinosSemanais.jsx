@@ -3,7 +3,7 @@ import Tasks from "../Components/Tasks";
 import { useGlobalContext } from "../Context/ContextoGlobal";
 import { useExercicios } from "../Context/ExerciciosContext";
 import { useNavigate } from "react-router-dom";
-import { Calendar, Dumbbell, ChevronRight } from "lucide-react";
+import { Calendar, Dumbbell, ChevronRight, ArrowBigRight } from "lucide-react";
 
 function TreinosSemanais() {
   const { isMenuOpen } = useGlobalContext();
@@ -168,7 +168,7 @@ function TreinosSemanais() {
             ) : (
               <>
                 <span>Continuar para Seleção de Exercícios</span>
-                <ChevronRight size={20} />
+                <ArrowBigRight size={20} />
               </>
             )}
           </button>

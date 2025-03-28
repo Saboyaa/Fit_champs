@@ -659,7 +659,7 @@ const RankingSemanal = () => {
           isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
         }`}
       >
-        <div className="text-center bg-sky-950 p-4 rounded-xl w-full md:w-[80%] mx-auto mb-6">
+        <div className="text-center bg-sky-900 p-4 rounded-xl w-full md:w-[80%] mx-auto mb-6">
           <h1 className="text-3xl font-bold text-white mb-2">
             Ranking Semanal
           </h1>
@@ -667,8 +667,10 @@ const RankingSemanal = () => {
             Veja como você se compara com outros atletas esta semana!
           </p>
 
-          <div className="mb-4 bg-white p-3 rounded-lg">
-            <div className="text-gray-800 font-semibold mb-2">Seu perfil:</div>
+          <div className="mb-4 w-[30%]  bg-gray-100 p-3 rounded-lg mx-auto space-x-3">
+            <div className="text-neutral-800 font-semibold mb-2">
+              Seus dados:
+            </div>
             <div className="flex flex-wrap justify-center gap-2">
               <div className="bg-blue-100 px-3 py-1 rounded-full">
                 <span className="font-medium">{userSexo}</span>

@@ -267,7 +267,7 @@ const Cadastro = () => {
             <h1 className="text-3xl font-bold text-white mb-0">Fit Champs</h1>
             <img src={icone} alt="icone" className="h-10 w-10" />
           </div>
-          <span className="text-blue-100 mt-2 block">
+          <span className="text-blue-200 mt-2 block">
             Melhorando sua saúde e qualidade de vida
           </span>
         </div>

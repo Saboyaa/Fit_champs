@@ -175,7 +175,7 @@ function Tasks({ initialTasks = [], onTasksUpdate, weekStartDate }) {
               className="bg-neutral-800 text-blue-100 px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-neutral-700 transition-colors duration-300"
             >
               <PlusCircleIcon size={24} />
-              Adicionar Tarefa
+              Adicionar Treino
             </button>
           </div>
         </form>
@@ -183,8 +183,8 @@ function Tasks({ initialTasks = [], onTasksUpdate, weekStartDate }) {
       {tasks.length > 0 ? (
         <div className="bg-sky-900/50 p-6 shadow-lg rounded-xl mb-8 mt-5">
           <div className="space-y-4 mt-5">
-            <h3 className="font-bold text-2xl text-gray-200 mb-4">
-              Suas Tarefas:
+            <h3 className="font-bold text-2xl text-blue-100 mb-4">
+              Treinos Adicionados:
             </h3>
             <ul className="space-y-4">
               {tasks.map((task) => (
@@ -201,46 +201,9 @@ function Tasks({ initialTasks = [], onTasksUpdate, weekStartDate }) {
                     </p>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <select
-                      name="descripition"
-                      className="bg-sky-950 text-white p-2 rounded-md border border-neutral-700"
-                      onChange={(e) =>
-                        handleSelectChange(
-                          task.id,
-                          "descripition",
-                          e.target.value
-                        )
-                      }
-                      value={task.descripition}
-                    >
-                      <option value="Treino de Peito">Peito</option>
-                      <option value="Treino de Costas">Costas</option>
-                      <option value="Treino de Braço">Braço</option>
-                      <option value="Treino de Perna">Perna</option>
-                      <option value="Treino de Ombro">Ombro</option>
-                      <option value="Day Off">Day Off</option>
-                    </select>
-                    <select
-                      name="Nexercicio"
-                      className="bg-sky-950 text-white p-2 rounded-md border border-neutral-700"
-                      onChange={(e) =>
-                        handleSelectChange(
-                          task.id,
-                          "Nexercicio",
-                          e.target.value
-                        )
-                      }
-                      value={task.Nexercicio}
-                    >
-                      {[...Array(10).keys()].map((n) => (
-                        <option key={n + 1} value={n + 1}>
-                          {n + 1}
-                        </option>
-                      ))}
-                    </select>
                     <button
                       onClick={() => deleteTask(task.id)}
-                      className="p-2 rounded-md bg-red-800 text-white hover:bg-red-700 transition-colors duration-300"
+                      className="p-2 rounded-full bg-sky-700 text-white hover:bg-red-400 transition-colors duration-300"
                     >
                       <TrashIcon size={24} />
                     </button>

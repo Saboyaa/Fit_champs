@@ -13,10 +13,52 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TreinoTipoSumario from "../Components/resumoSemanal";
-// Importando o banco de dados de exercícios do arquivo separado
-import exerciciosPorTipo, { encontrarExercicio } from "../Classes/exercicio";
-import CustomDropdown from "../Components/selectmo";
-
+// Banco de dados simulado de exercícios por tipo de treino
+cconst exerciciosPorTipo = {
+  "Treino de Peito": [
+    { nome: "Supino Reto", subgrupo: "Peitoral Maior Central" },
+    { nome: "Supino Inclinado", subgrupo: "Peitoral Superior" },
+    { nome: "Crucifixo", subgrupo: "Peitoral Médio" },
+    { nome: "Crossover", subgrupo: "Peitoral Interno" },
+    { nome: "Flexão", subgrupo: "Peitoral Completo" },
+    { nome: "Peck Deck", subgrupo: "Peitoral Médio" },
+    { nome: "Pullover", subgrupo: "Peitoral Inferior e Serrátil" },
+  ],
+  "Treino de Costas": [
+    { nome: "Puxada Frente", subgrupo: "Latíssimo do Dorso" },
+    { nome: "Remada Baixa", subgrupo: "Trapézio e Romboides" },
+    { nome: "Remada Curvada", subgrupo: "Costas Médias" },
+    { nome: "Pulldown", subgrupo: "Dorsal Largo" },
+    { nome: "Barra Fixa", subgrupo: "Latíssimo do Dorso Total" },
+    { nome: "Remada Unilateral", subgrupo: "Trapézio e Romboides Unilateral" },
+  ],
+  "Treino de Braço": [
+    { nome: "Rosca Direta", subgrupo: "Bíceps Curto" },
+    { nome: "Rosca Alternada", subgrupo: "Bíceps Longo" },
+    { nome: "Rosca Martelo", subgrupo: "Braquial" },
+    { nome: "Tríceps Corda", subgrupo: "Tríceps Lateral" },
+    { nome: "Tríceps Francês", subgrupo: "Tríceps Longo" },
+    { nome: "Tríceps Testa", subgrupo: "Tríceps Medial" },
+  ],
+  "Treino de Perna": [
+    { nome: "Agachamento", subgrupo: "Quadríceps Completo" },
+    { nome: "Leg Press", subgrupo: "Quadríceps e Glúteos" },
+    { nome: "Cadeira Extensora", subgrupo: "Quadríceps Anterior" },
+    { nome: "Cadeira Flexora", subgrupo: "Posterior da Coxa" },
+    { nome: "Panturrilha", subgrupo: "Gastrocnêmio" },
+    { nome: "Stiff", subgrupo: "Posterior da Coxa e Glúteos" },
+    { nome: "Avanço", subgrupo: "Quadríceps e Glúteos Médio" },
+  ],
+  "Treino de Ombro": [
+    { nome: "Desenvolvimento", subgrupo: "Deltóide Anterior" },
+    { nome: "Elevação Lateral", subgrupo: "Deltóide Lateral" },
+    { nome: "Elevação Frontal", subgrupo: "Deltóide Anterior" },
+    { nome: "Face Pull", subgrupo: "Deltóide Posterior" },
+    { nome: "Encolhimento", subgrupo: "Trapézio Superior" },
+    { nome: "Arnold Press", subgrupo: "Deltóide Completo" },
+  ],
+  "Day Off": [],
+};
 function ListadeExercicios() {
   const { isMenuOpen } = useGlobalContext();
   const { treinos } = useExercicios();
@@ -42,33 +84,34 @@ function ListadeExercicios() {
   const inicializarExercicios = (treinoId) => {
     const treino = treinos.find((t) => t.id === treinoId);
     if (!treino || exerciciosPorTreino[treinoId]) return;
-
+  
     const novoExercicios = [];
     for (let i = 0; i < treino.Nexercicio; i++) {
       novoExercicios.push({
         id: Math.random().toString(36).substr(2, 9),
         nome: "",
+        subgrupo: "", // Novo campo
         repeticoes: "3 x 12",
         peso: 0,
         volume: 0,
-        subgrupo: "", // Adicionando propriedade subgrupo para cada exercício
       });
     }
-
+  
     setExerciciosPorTreino((prev) => ({
       ...prev,
       [treinoId]: novoExercicios,
     }));
   };
 
+  
   const adicionarExercicio = (treinoId) => {
     const novoExercicio = {
       id: Math.random().toString(36).substr(2, 9),
       nome: "",
+      subgrupo: "", // Novo campo
       repeticoes: "3 x 12",
       peso: 0,
       volume: 0,
-      subgrupo: "", // Adicionando propriedade subgrupo ao novo exercício
     };
 
     setExerciciosPorTreino((prev) => ({
@@ -85,42 +128,29 @@ function ListadeExercicios() {
   };
 
   const atualizarExercicio = (treinoId, exercicioId, campo, valor) => {
-    setExerciciosPorTreino((prev) => {
-      const novoExerciciosPorTreino = { ...prev };
+    setExerciciosPorTreino((prev) => ({
+      ...prev,
+      [treinoId]: prev[treinoId].map((ex) =>
+        ex.id === exercicioId ? { ...ex, [campo]: valor } : ex
+      ),
+    }));
 
-      // Se estamos atualizando o nome do exercício, também precisamos atualizar o subgrupo
-      if (campo === "nome" && valor) {
-        // Encontrar o exercício selecionado na lista de exercícios por tipo
-        const treinoAtual = treinos.find((t) => t.id === treinoId);
-        if (treinoAtual) {
-          const tipoTreino = treinoAtual.descripition;
-          const exercicioSelecionado = encontrarExercicio(tipoTreino, valor);
-
-          if (exercicioSelecionado) {
-            // Atualize tanto o nome quanto o subgrupo
-            novoExerciciosPorTreino[treinoId] = novoExerciciosPorTreino[
-              treinoId
-            ].map((ex) =>
-              ex.id === exercicioId
-                ? {
-                    ...ex,
-                    [campo]: valor,
-                    subgrupo: exercicioSelecionado.subgrupo,
-                  }
-                : ex
-            );
-            return novoExerciciosPorTreino;
-          }
-        }
-      }
-
-      // Caso contrário, apenas atualize o campo solicitado
-      novoExerciciosPorTreino[treinoId] = novoExerciciosPorTreino[treinoId].map(
-        (ex) => (ex.id === exercicioId ? { ...ex, [campo]: valor } : ex)
+    if (campo === "nome") {
+      const exercicioSelecionado = exerciciosPorTipo[treino.descripition]?.find(
+        (ex) => ex.nome === valor
       );
-
-      return novoExerciciosPorTreino;
-    });
+  
+      if (exercicioSelecionado) {
+        setExerciciosPorTreino((prev) => ({
+          ...prev,
+          [treinoId]: prev[treinoId].map((ex) =>
+            ex.id === exercicioId 
+              ? { ...ex, subgrupo: exercicioSelecionado.subgrupo } 
+              : ex
+          ),
+        }));
+      }
+    }
 
     // Se atualizarmos peso ou repetições, calcular volume
     if (campo === "peso" || campo === "repeticoes") {
@@ -334,12 +364,11 @@ function ListadeExercicios() {
                     <div className="bg-neutral-800 p-4">
                       <div className="space-y-3">
                         <div className="grid grid-cols-12 gap-3 text-blue-200 font-medium bg-sky-950 p-3 rounded-lg text-sm">
-                          <div className="col-span-3">Nome do Exercício</div>
-                          <div className="col-span-2">Subgrupo Muscular</div>
-                          <div className="col-span-2">Repetições</div>
+                          <div className="col-span-4">Nome do Exercício</div>
+                          <div className="col-span-3">Repetições</div>
                           <div className="col-span-2">Peso (kg)</div>
                           <div className="col-span-2">Volume</div>
-                          <div className="col-span-1">Deletar Exercicio</div>
+                          <div className="col-span-1 ">Deletar Exercicio</div>
                         </div>
 
                         {exerciciosPorTreino[treino.id].map(
@@ -348,16 +377,9 @@ function ListadeExercicios() {
                               key={exercicio.id}
                               className="grid grid-cols-12 gap-2 items-center bg-neutral-800 p-3 rounded-lg hover:bg-neutral-700 transition-colors"
                             >
-                              <div className="col-span-3">
-                                <CustomDropdown
-                                  options={
-                                    exerciciosPorTipo[treino.descripition]?.map(
-                                      (exercicioOpt) => ({
-                                        value: exercicioOpt.nome,
-                                        label: exercicioOpt.nome,
-                                      })
-                                    ) || []
-                                  }
+                              <div className="col-span-4">
+                                <select
+                                  className="w-full p-2 bg-neutral-700 text-white rounded-md border border-neutral-600 focus:ring-2 focus:ring-sky-600 focus:border-transparent"
                                   value={exercicio.nome}
                                   onChange={(e) =>
                                     atualizarExercicio(
@@ -367,25 +389,23 @@ function ListadeExercicios() {
                                       e.target.value
                                     )
                                   }
-                                  placeholder="Selecione um exercício"
-                                />
+                                >
+                                  <option value="">
+                                    Selecione um exercício
+                                  </option>
+                                  {exerciciosPorTipo[treino.descripition].map(
+                                    (nome) => (
+                                      <option key={nome} value={nome}>
+                                        {nome}
+                                      </option>
+                                    )
+                                  )}
+                                </select>
                               </div>
 
-                              <div className="col-span-2 text-white p-2 bg-neutral-700 rounded-md flex items-center justify-center font-medium">
-                                {exercicio.subgrupo}
-                              </div>
-
-                              <div className="col-span-2">
-                                <CustomDropdown
-                                  options={[
-                                    { value: "3 x 12", label: "3 x 12" },
-                                    { value: "4 x 10", label: "4 x 10" },
-                                    { value: "3 x 15", label: "3 x 15" },
-                                    { value: "5 x 5", label: "5 x 5" },
-                                    { value: "3 x 8", label: "3 x 8" },
-                                    { value: "4 x 8", label: "4 x 8" },
-                                    { value: "3 x 10", label: "3 x 10" },
-                                  ]}
+                              <div className="col-span-3">
+                                <select
+                                  className="w-full p-2 bg-neutral-700 text-white rounded-md border border-neutral-600 focus:ring-2 focus:ring-sky-600 focus:border-transparent"
                                   value={exercicio.repeticoes}
                                   onChange={(e) =>
                                     atualizarExercicio(
@@ -395,8 +415,15 @@ function ListadeExercicios() {
                                       e.target.value
                                     )
                                   }
-                                  placeholder="Selecione repetições"
-                                />
+                                >
+                                  <option value="3 x 12">3 x 12</option>
+                                  <option value="4 x 10">4 x 10</option>
+                                  <option value="3 x 15">3 x 15</option>
+                                  <option value="5 x 5">5 x 5</option>
+                                  <option value="3 x 8">3 x 8</option>
+                                  <option value="4 x 8">4 x 8</option>
+                                  <option value="3 x 10">3 x 10</option>
+                                </select>
                               </div>
 
                               <div className="col-span-2">
