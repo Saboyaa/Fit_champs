@@ -11,7 +11,7 @@ import {
   ChevronUp,
   Check,
 } from "lucide-react";
-import exerciciosPorTipo from "../Classes/exercicio";
+import exerciciosPorTipo from "../../Classes/exercicio";
 
 const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
   const [showSummary, setShowSummary] = useState(false);

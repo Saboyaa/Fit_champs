@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Tasks from "../Components/Tasks";
+import Tasks from "../Components/ComponentsTreinosSemanais/Tasks";
 import { useGlobalContext } from "../Context/ContextoGlobal";
 import { useExercicios } from "../Context/ExerciciosContext";
 import { useNavigate } from "react-router-dom";
-import { Calendar, Dumbbell, ChevronRight, ArrowBigRight } from "lucide-react";
+import { Calendar, Dumbbell, ArrowBigRight } from "lucide-react";
 
 function TreinosSemanais() {
   const { isMenuOpen } = useGlobalContext();

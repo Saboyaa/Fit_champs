@@ -1,545 +1,688 @@
-import React, { useState, useEffect } from "react";
-import { useExercicios } from "../Context/ExerciciosContext";
-import { useGlobalContext } from "../Context/ContextoGlobal";
+import React, { useState } from "react";
 import {
-  Save,
-  PlusCircle,
-  Trash,
-  Activity,
-  Check,
-  Info,
-  ArrowLeft,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  ComposedChart,
+  Bar,
+} from "recharts";
+import {
+  ArrowUpCircle,
+  ArrowDownCircle,
+  MinusCircle,
+  Calendar,
   BarChart2,
+  Filter,
+  Target,
+  Award,
+  BarChart,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import TreinoTipoSumario from "../Components/resumoSemanal";
-// Banco de dados simulado de exercícios por tipo de treino
-cconst exerciciosPorTipo = {
-  "Treino de Peito": [
-    { nome: "Supino Reto", subgrupo: "Peitoral Maior Central" },
-    { nome: "Supino Inclinado", subgrupo: "Peitoral Superior" },
-    { nome: "Crucifixo", subgrupo: "Peitoral Médio" },
-    { nome: "Crossover", subgrupo: "Peitoral Interno" },
-    { nome: "Flexão", subgrupo: "Peitoral Completo" },
-    { nome: "Peck Deck", subgrupo: "Peitoral Médio" },
-    { nome: "Pullover", subgrupo: "Peitoral Inferior e Serrátil" },
-  ],
-  "Treino de Costas": [
-    { nome: "Puxada Frente", subgrupo: "Latíssimo do Dorso" },
-    { nome: "Remada Baixa", subgrupo: "Trapézio e Romboides" },
-    { nome: "Remada Curvada", subgrupo: "Costas Médias" },
-    { nome: "Pulldown", subgrupo: "Dorsal Largo" },
-    { nome: "Barra Fixa", subgrupo: "Latíssimo do Dorso Total" },
-    { nome: "Remada Unilateral", subgrupo: "Trapézio e Romboides Unilateral" },
-  ],
-  "Treino de Braço": [
-    { nome: "Rosca Direta", subgrupo: "Bíceps Curto" },
-    { nome: "Rosca Alternada", subgrupo: "Bíceps Longo" },
-    { nome: "Rosca Martelo", subgrupo: "Braquial" },
-    { nome: "Tríceps Corda", subgrupo: "Tríceps Lateral" },
-    { nome: "Tríceps Francês", subgrupo: "Tríceps Longo" },
-    { nome: "Tríceps Testa", subgrupo: "Tríceps Medial" },
-  ],
-  "Treino de Perna": [
-    { nome: "Agachamento", subgrupo: "Quadríceps Completo" },
-    { nome: "Leg Press", subgrupo: "Quadríceps e Glúteos" },
-    { nome: "Cadeira Extensora", subgrupo: "Quadríceps Anterior" },
-    { nome: "Cadeira Flexora", subgrupo: "Posterior da Coxa" },
-    { nome: "Panturrilha", subgrupo: "Gastrocnêmio" },
-    { nome: "Stiff", subgrupo: "Posterior da Coxa e Glúteos" },
-    { nome: "Avanço", subgrupo: "Quadríceps e Glúteos Médio" },
-  ],
-  "Treino de Ombro": [
-    { nome: "Desenvolvimento", subgrupo: "Deltóide Anterior" },
-    { nome: "Elevação Lateral", subgrupo: "Deltóide Lateral" },
-    { nome: "Elevação Frontal", subgrupo: "Deltóide Anterior" },
-    { nome: "Face Pull", subgrupo: "Deltóide Posterior" },
-    { nome: "Encolhimento", subgrupo: "Trapézio Superior" },
-    { nome: "Arnold Press", subgrupo: "Deltóide Completo" },
-  ],
-  "Day Off": [],
-};
-function ListadeExercicios() {
-  const { isMenuOpen } = useGlobalContext();
-  const { treinos } = useExercicios();
-  const [exerciciosPorTreino, setExerciciosPorTreino] = useState({});
-  const [expandedTreino, setExpandedTreino] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
-  const navigate = useNavigate();
-  const [trainingDateAndVolume, setTrainingDateAndVolume] = useState({});
+import { useGlobalContext } from "../Context/ContextoGlobal";
+import peito from "../images/peito.png";
+import perna from "../images/perna.png";
+import ombro from "../images/ombro.png";
+import costas from "../images/costas.png";
+import braco from "../images/musculo.png";
 
-  // Inicializar exercícios para todos os treinos ao carregar
-  useEffect(() => {
-    treinos.forEach((treino) => {
-      if (
-        treino.descripition !== "Day Off" &&
-        !exerciciosPorTreino[treino.id]
-      ) {
-        inicializarExercicios(treino.id);
+const GraficoEvolucao = () => {
+  const { isMenuOpen } = useGlobalContext();
+  const [hoveredChart, setHoveredChart] = useState(null);
+  const [viewMode, setViewMode] = useState("cards"); // cards, comparison, summary
+  const [visualizationType, setVisualizationType] = useState("line"); // line, bar
+  const [timeRange, setTimeRange] = useState("6m"); // 1m, 3m, 6m, 1y
+  const [showMetas, setShowMetas] = useState(false);
+
+  const metas = {
+    Peito: 3500,
+    Costas: 3400,
+    Braço: 2100,
+    Perna: 4500,
+    Ombro: 2300,
+  };
+
+  const getIcon = (grupo) => {
+    switch (grupo.toLowerCase()) {
+      case "peito":
+        return <img src={peito} alt="Peito" className="w-8 h-8" />;
+      case "perna":
+        return <img src={perna} alt="Perna" className="w-8 h-8" />;
+      case "ombro":
+        return <img src={ombro} alt="Ombro" className="w-8 h-8" />;
+      case "costas":
+        return <img src={costas} alt="Costas" className="w-8 h-8" />;
+      case "braço":
+        return <img src={braco} alt="Braço" className="w-8 h-8" />;
+      default:
+        return null;
+    }
+  };
+
+  // Dados de exemplo para diferentes tipos de treino
+  const [trainingData] = useState({
+    Peito: [
+      { data: "10/01/2025", volume: 2400 },
+      { data: "17/01/2025", volume: 2600 },
+      { data: "24/01/2025", volume: 2550 },
+      { data: "31/01/2025", volume: 2800 },
+      { data: "07/02/2025", volume: 3000 },
+      { data: "14/02/2025", volume: 3200 },
+    ],
+    Costas: [
+      { data: "11/01/2025", volume: 2200 },
+      { data: "18/01/2025", volume: 2500 },
+      { data: "25/01/2025", volume: 2700 },
+      { data: "01/02/2025", volume: 2650 },
+      { data: "08/02/2025", volume: 2900 },
+      { data: "15/02/2025", volume: 3100 },
+    ],
+    Braço: [
+      { data: "12/01/2025", volume: 1400 },
+      { data: "19/01/2025", volume: 1500 },
+      { data: "26/01/2025", volume: 1700 },
+      { data: "02/02/2025", volume: 1650 },
+      { data: "09/02/2025", volume: 1800 },
+      { data: "16/02/2025", volume: 1900 },
+    ],
+    Perna: [
+      { data: "13/01/2025", volume: 3200 },
+      { data: "20/01/2025", volume: 3400 },
+      { data: "27/01/2025", volume: 3600 },
+      { data: "10/02/2025", volume: 3750 },
+      { data: "17/02/2025", volume: 4000 },
+      { data: "24/02/2025", volume: 3900 },
+    ],
+    Ombro: [
+      { data: "14/01/2025", volume: 1800 },
+      { data: "21/01/2025", volume: 1850 },
+      { data: "28/01/2025", volume: 1900 },
+      { data: "04/02/2025", volume: 2000 },
+      { data: "11/02/2025", volume: 1950 },
+      { data: "18/02/2025", volume: 2400 },
+    ],
+  });
+
+  // Dados para gráfico de comparação
+  const prepareComparisonData = () => {
+    const result = [];
+    // Usamos o último registro de cada tipo de treino
+    Object.keys(trainingData).forEach((type) => {
+      const data = trainingData[type];
+      if (data.length > 0) {
+        const lastEntry = data[data.length - 1];
+        result.push({
+          nome: type,
+          volume: lastEntry.volume,
+          meta: metas[type],
+        });
       }
     });
-  }, [treinos]);
-
-  const inicializarExercicios = (treinoId) => {
-    const treino = treinos.find((t) => t.id === treinoId);
-    if (!treino || exerciciosPorTreino[treinoId]) return;
-  
-    const novoExercicios = [];
-    for (let i = 0; i < treino.Nexercicio; i++) {
-      novoExercicios.push({
-        id: Math.random().toString(36).substr(2, 9),
-        nome: "",
-        subgrupo: "", // Novo campo
-        repeticoes: "3 x 12",
-        peso: 0,
-        volume: 0,
-      });
-    }
-  
-    setExerciciosPorTreino((prev) => ({
-      ...prev,
-      [treinoId]: novoExercicios,
-    }));
+    return result;
   };
 
-  
-  const adicionarExercicio = (treinoId) => {
-    const novoExercicio = {
-      id: Math.random().toString(36).substr(2, 9),
-      nome: "",
-      subgrupo: "", // Novo campo
-      repeticoes: "3 x 12",
-      peso: 0,
-      volume: 0,
-    };
+  // Dados para gráfico de progresso total
+  const prepareSummaryData = () => {
+    // Criamos um conjunto de todas as datas
+    const allDates = new Set();
+    Object.values(trainingData).forEach((data) => {
+      data.forEach((entry) => allDates.add(entry.data));
+    });
 
-    setExerciciosPorTreino((prev) => ({
-      ...prev,
-      [treinoId]: [...(prev[treinoId] || []), novoExercicio],
-    }));
-  };
-
-  const removerExercicio = (treinoId, exercicioId) => {
-    setExerciciosPorTreino((prev) => ({
-      ...prev,
-      [treinoId]: prev[treinoId].filter((ex) => ex.id !== exercicioId),
-    }));
-  };
-
-  const atualizarExercicio = (treinoId, exercicioId, campo, valor) => {
-    setExerciciosPorTreino((prev) => ({
-      ...prev,
-      [treinoId]: prev[treinoId].map((ex) =>
-        ex.id === exercicioId ? { ...ex, [campo]: valor } : ex
-      ),
-    }));
-
-    if (campo === "nome") {
-      const exercicioSelecionado = exerciciosPorTipo[treino.descripition]?.find(
-        (ex) => ex.nome === valor
+    // Ordenamos as datas
+    const sortedDates = Array.from(allDates).sort((a, b) => {
+      const [dayA, monthA, yearA] = a.split("/").map(Number);
+      const [dayB, monthB, yearB] = b.split("/").map(Number);
+      return (
+        new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB)
       );
-  
-      if (exercicioSelecionado) {
-        setExerciciosPorTreino((prev) => ({
-          ...prev,
-          [treinoId]: prev[treinoId].map((ex) =>
-            ex.id === exercicioId 
-              ? { ...ex, subgrupo: exercicioSelecionado.subgrupo } 
-              : ex
-          ),
-        }));
-      }
-    }
+    });
 
-    // Se atualizarmos peso ou repetições, calcular volume
-    if (campo === "peso" || campo === "repeticoes") {
-      setTimeout(() => {
-        // Buscar o exercício atualizado
-        const exercicio = exerciciosPorTreino[treinoId]?.find(
-          (ex) => ex.id === exercicioId
-        );
+    // Criamos um array de objetos com a data e o volume total de todos os treinos naquela data
+    return sortedDates.map((date) => {
+      const entry = { data: date };
 
-        if (exercicio) {
-          const repeticoesMatch =
-            exercicio.repeticoes.match(/(\d+)\s*x\s*(\d+)/);
-
-          if (repeticoesMatch) {
-            const series = parseInt(repeticoesMatch[1]);
-            const reps = parseInt(repeticoesMatch[2]);
-            const peso =
-              campo === "peso" ? parseFloat(valor) : parseFloat(exercicio.peso);
-
-            // Calcular volume (séries x repetições x peso)
-            const volume = series * reps * peso;
-
-            // Atualizar volume
-            setExerciciosPorTreino((prev) => ({
-              ...prev,
-              [treinoId]: prev[treinoId].map((ex) =>
-                ex.id === exercicioId ? { ...ex, volume } : ex
-              ),
-            }));
-          }
-        }
-      }, 0);
-    }
-  };
-
-  const toggleExpandTreino = (treinoId) => {
-    setExpandedTreino(expandedTreino === treinoId ? null : treinoId);
-  };
-
-  const salvarTreino = () => {
-    setIsSaving(true);
-
-    // Simular tempo de salvamento
-    setTimeout(() => {
-      console.log("Treinos salvos:", {
-        treinos,
-        exerciciosPorTreino,
-      });
-
-      // Capture the current date and volumes when saving
-      const currentDate = new Date();
-      const volumeSummary = {};
-
-      treinos.forEach((treino) => {
-        if (treino.descripition !== "Day Off") {
-          const stats = calcularTotalPorTreino(treino.id);
-          volumeSummary[treino.id] = {
-            text: treino.text,
-            descripition: treino.descripition,
-            volume: stats.volume,
-            data: treino.data,
-            date: currentDate.toLocaleString("pt-BR", {
-              dateStyle: "short",
-              timeStyle: "short",
-            }),
-          };
+      trainingTypes.forEach((type) => {
+        const matchingEntry = trainingData[type].find((e) => e.data === date);
+        if (matchingEntry) {
+          entry[type] = matchingEntry.volume;
+        } else {
+          entry[type] = 0;
         }
       });
 
-      setTrainingDateAndVolume(volumeSummary);
-
-      setIsSaving(false);
-      setSaveSuccess(true);
-
-      // Reset success message after 3 seconds
-      setTimeout(() => {
-        setSaveSuccess(false);
-      }, 2000);
-    }, 1000);
+      return entry;
+    });
   };
 
-  const calcularTotalPorTreino = (treinoId) => {
-    if (!exerciciosPorTreino[treinoId]) return { exercicios: 0, volume: 0 };
+  // Função para calcular a tendência (melhora ou piora)
+  const calculateTrend = (data) => {
+    if (data.length < 2) return { type: "mesmo", diff: 0 };
 
-    const treino = exerciciosPorTreino[treinoId];
-    const exerciciosCompletos = treino.filter((ex) => ex.nome !== "").length;
-    const volumeTotal = treino.reduce(
-      (total, ex) => total + (ex.volume || 0),
-      0
-    );
+    const lastVolume = data[data.length - 1].volume;
+    const previousVolume = data[data.length - 2].volume;
+    const diff = ((lastVolume / previousVolume - 1) * 100).toFixed(1);
 
-    return {
-      exercicios: exerciciosCompletos,
-      exerciciosTotal: treino.length,
-      volume: volumeTotal,
-    };
+    if (diff > 0) return { type: "melhora", diff };
+    if (diff < 0) return { type: "piora", diff: Math.abs(diff) };
+    return { type: "mesmo", diff: 0 };
   };
 
-  const voltarParaTreinosSemanais = () => {
-    navigate("/TreinosSemanais");
+  // Calcular o progresso em relação à meta
+  const calculateProgress = (data, meta) => {
+    if (data.length === 0) return 0;
+    const lastVolume = data[data.length - 1].volume;
+    return ((lastVolume / meta) * 100).toFixed(1);
   };
 
-  return (
-    <div className="w-screen min-h-screen bg-sky-950 flex justify-center p-6 overflow-y-auto">
-      <div
-        className={`rounded-md mt-6 transition-all duration-300 ${
-          isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
-        }`}
-      >
-        <div className="bg-sky-950 p-6 rounded-lg mb-6 shadow-lg">
-          <div className="flex items-center justify-center mb-3">
-            <Activity className="text-blue-300 mr-2" size={24} />
-            <h1 className="text-2xl text-slate-100 font-bold">
-              Lista de Exercícios
-            </h1>
-          </div>
-
-          <div className="bg-sky-900/50 p-3 rounded-lg">
-            <p className="text-blue-100 text-center font-medium">
-              Selecione os exercícios para cada dia de treino
-            </p>
-          </div>
-
-          <button
-            onClick={voltarParaTreinosSemanais}
-            className="mt-4 flex items-center gap-2 text-blue-300 hover:text-blue-100 transition-colors"
-          >
-            <ArrowLeft size={16} />
-            <span>Voltar para Treinos Semanais</span>
-          </button>
+  // Componente para exibir a tendência
+  const TrendIndicator = ({ trend }) => {
+    if (trend.type === "melhora") {
+      return (
+        <div className="flex items-center text-green-600">
+          <ArrowUpCircle className="mr-1" size={16} />
+          <span>
+            Melhora de {trend.diff}% em relação ao treino anterior, continue
+            assim!
+          </span>
         </div>
+      );
+    } else if (trend.type === "piora") {
+      return (
+        <div className="flex items-center text-red-600">
+          <ArrowDownCircle className="mr-1" size={16} />
+          <span>
+            Queda de {trend.diff}% em relação ao treino anterior, não deixe a
+            peteca cair!
+          </span>
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex items-center text-gray-600">
+          <MinusCircle className="mr-1" size={16} />
+          <span>Volume mantido</span>
+        </div>
+      );
+    }
+  };
 
-        {treinos.length > 0 &&
-        treinos.some(
-          (treino) =>
-            treino.descripition !== "Day Off" &&
-            exerciciosPorTreino[treino.id] &&
-            exerciciosPorTreino[treino.id].length > 0
-        ) ? (
-          <div className="space-y-4">
-            {treinos.map((treino) => {
-              if (treino.descripition === "Day Off") return null;
+  // Componente para exibir o progresso em relação à meta
+  const ProgressIndicator = ({ type, data }) => {
+    const meta = metas[type];
+    const progress = calculateProgress(data, meta);
+    const lastVolume = data.length > 0 ? data[data.length - 1].volume : 0;
 
-              // Only render the training day if it has exercises
-              if (
-                !exerciciosPorTreino[treino.id] ||
-                exerciciosPorTreino[treino.id].length === 0
-              ) {
-                return null;
-              }
-
-              const stats = calcularTotalPorTreino(treino.id);
-              const isExpanded = expandedTreino === treino.id;
-
-              return (
-                <div
-                  key={treino.id}
-                  className="bg-sky-950 rounded-lg shadow-lg overflow-hidden"
-                >
-                  <div
-                    className="p-4 bg-sky-900/50 flex justify-between items-center cursor-pointer hover:bg-sky-900 transition-colors"
-                    onClick={() => toggleExpandTreino(treino.id)}
-                  >
-                    <div>
-                      <h2 className="text-xl font-bold text-white flex items-center">
-                        {treino.text} ({treino.data}) - {treino.descripition}
-                      </h2>
-                      <div className="flex gap-4 mt-1 text-blue-200 ">
-                        <span className="text-sky-400">
-                          {stats.exercicios}/{stats.exerciciosTotal} exercícios
-                        </span>
-                        <span className="text-sky-400">
-                          Volume total: {stats.volume}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-white">
-                      {isExpanded ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M18 15l-6-6-6 6" />
-                        </svg>
-                      ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
-                      )}
-                    </div>
-                  </div>
-
-                  {isExpanded && (
-                    <div className="bg-neutral-800 p-4">
-                      <div className="space-y-3">
-                        <div className="grid grid-cols-12 gap-3 text-blue-200 font-medium bg-sky-950 p-3 rounded-lg text-sm">
-                          <div className="col-span-4">Nome do Exercício</div>
-                          <div className="col-span-3">Repetições</div>
-                          <div className="col-span-2">Peso (kg)</div>
-                          <div className="col-span-2">Volume</div>
-                          <div className="col-span-1 ">Deletar Exercicio</div>
-                        </div>
-
-                        {exerciciosPorTreino[treino.id].map(
-                          (exercicio, index) => (
-                            <div
-                              key={exercicio.id}
-                              className="grid grid-cols-12 gap-2 items-center bg-neutral-800 p-3 rounded-lg hover:bg-neutral-700 transition-colors"
-                            >
-                              <div className="col-span-4">
-                                <select
-                                  className="w-full p-2 bg-neutral-700 text-white rounded-md border border-neutral-600 focus:ring-2 focus:ring-sky-600 focus:border-transparent"
-                                  value={exercicio.nome}
-                                  onChange={(e) =>
-                                    atualizarExercicio(
-                                      treino.id,
-                                      exercicio.id,
-                                      "nome",
-                                      e.target.value
-                                    )
-                                  }
-                                >
-                                  <option value="">
-                                    Selecione um exercício
-                                  </option>
-                                  {exerciciosPorTipo[treino.descripition].map(
-                                    (nome) => (
-                                      <option key={nome} value={nome}>
-                                        {nome}
-                                      </option>
-                                    )
-                                  )}
-                                </select>
-                              </div>
-
-                              <div className="col-span-3">
-                                <select
-                                  className="w-full p-2 bg-neutral-700 text-white rounded-md border border-neutral-600 focus:ring-2 focus:ring-sky-600 focus:border-transparent"
-                                  value={exercicio.repeticoes}
-                                  onChange={(e) =>
-                                    atualizarExercicio(
-                                      treino.id,
-                                      exercicio.id,
-                                      "repeticoes",
-                                      e.target.value
-                                    )
-                                  }
-                                >
-                                  <option value="3 x 12">3 x 12</option>
-                                  <option value="4 x 10">4 x 10</option>
-                                  <option value="3 x 15">3 x 15</option>
-                                  <option value="5 x 5">5 x 5</option>
-                                  <option value="3 x 8">3 x 8</option>
-                                  <option value="4 x 8">4 x 8</option>
-                                  <option value="3 x 10">3 x 10</option>
-                                </select>
-                              </div>
-
-                              <div className="col-span-2">
-                                <input
-                                  type="number"
-                                  className="w-full p-2 bg-neutral-700 text-white rounded-md border border-neutral-600 focus:ring-2 focus:ring-sky-600 focus:border-transparent"
-                                  value={exercicio.peso}
-                                  onChange={(e) =>
-                                    atualizarExercicio(
-                                      treino.id,
-                                      exercicio.id,
-                                      "peso",
-                                      e.target.value
-                                    )
-                                  }
-                                  min="0"
-                                  step="0.5"
-                                />
-                              </div>
-
-                              <div className="col-span-2 text-white p-2 bg-neutral-700 rounded-md flex items-center justify-center font-medium">
-                                {exercicio.volume}
-                              </div>
-
-                              <div className="col-span-1 flex justify-center">
-                                <button
-                                  onClick={() =>
-                                    removerExercicio(treino.id, exercicio.id)
-                                  }
-                                  className="p-2 rounded-full bg-sky-700 text-white hover:bg-red-400 transition-colors"
-                                  title="Remover exercício"
-                                >
-                                  <Trash size={16} />
-                                </button>
-                              </div>
-                            </div>
-                          )
-                        )}
-                      </div>
-
-                      <div className="mt-4 flex justify-center">
-                        <button
-                          onClick={() => adicionarExercicio(treino.id)}
-                          className="bg-sky-800 text-white p-2 px-4 rounded-md flex items-center gap-2 hover:bg-sky-700 transition-colors shadow-md"
-                        >
-                          <PlusCircle size={18} />
-                          Adicionar Exercício
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            <div className="sticky bottom-6 mt-6 flex justify-center">
-              <button
-                onClick={salvarTreino}
-                disabled={isSaving}
-                className={`py-3 px-6 rounded-lg shadow-lg flex items-center gap-2 font-bold text-white transition-all duration-300 ${
-                  saveSuccess ? "bg-green-600" : "bg-sky-800 hover:bg-sky-700"
-                }`}
-              >
-                {isSaving ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Salvando...</span>
-                  </>
-                ) : saveSuccess ? (
-                  <>
-                    <Check size={20} />
-                    <span>Treino Salvo!</span>
-                  </>
-                ) : (
-                  <>
-                    <Save size={20} />
-                    <span>Salvar Treino Completo</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="bg-neutral-800 p-8 rounded-lg text-center shadow-lg">
-            <div className="flex flex-col items-center gap-4">
-              <Info size={40} className="text-blue-300" />
-              <p className="text-blue-100 text-lg">
-                Nenhum treino foi adicionado ou todos os exercícios foram
-                removidos. Por favor, vá para a página "Treinos Semanais" e
-                adicione seus dias de treino.
-              </p>
-              <button
-                onClick={voltarParaTreinosSemanais}
-                className="mt-4 bg-sky-800 hover:bg-sky-700 text-white py-2 px-4 rounded-md flex items-center gap-2 transition-colors"
-              >
-                <ArrowLeft size={16} />
-                Ir para Treinos Semanais
-              </button>
-            </div>
+    return (
+      <div className="mt-2">
+        <div className="flex justify-between text-xs text-gray-600 mb-1">
+          <span>Progresso para meta: {progress}%</span>
+          <span>
+            {lastVolume} / {meta} kg
+          </span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div
+            className={`h-2 rounded-full ${
+              progress >= 100 ? "bg-green-500" : "bg-blue-600"
+            }`}
+            style={{ width: `${Math.min(progress, 100)}%` }}
+          ></div>
+        </div>
+        {progress >= 100 && (
+          <div className="flex items-center justify-center mt-1 text-green-600">
+            <Award size={14} className="mr-1" />
+            <span className="text-xs">Meta alcançada!</span>
           </div>
         )}
       </div>
-      {treinos.length > 0 &&
-        treinos.some(
-          (treino) =>
-            treino.descripition !== "Day Off" &&
-            exerciciosPorTreino[treino.id] &&
-            exerciciosPorTreino[treino.id].length > 0
-        ) && (
-          <TreinoTipoSumario
-            treinos={treinos}
-            exerciciosPorTreino={exerciciosPorTreino}
-          />
+    );
+  };
+  const renderChart = (type, data, isLastItemOdd = false) => {
+    const chartProps = {
+      data: data,
+      margin: { top: 5, right: 20, left: 20, bottom: 5 },
+    };
+    const updatedData = data.map((item) => ({
+      ...item,
+      meta: showMetas ? metas[type] || 0 : 0, // Substitui null por 0, feito por conta do problema do grafico de barras
+    }));
+    // Referência para a meta
+    const metaData = showMetas
+      ? data.map((item) => ({
+          data: item.data,
+          volume: metas[type],
+        }))
+      : [];
+
+    return (
+      <div className={`h-64 ${isLastItemOdd ? "md:w-1/2 md:mx-auto" : ""}`}>
+        <ResponsiveContainer width="100%" height="100%">
+          {visualizationType === "line" && (
+            <LineChart {...chartProps}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="data" />
+              <YAxis
+                label={{
+                  value: "Volume (kg)",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
+              <Tooltip formatter={(value) => [`${value} kg`, "Volume"]} />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="volume"
+                stroke={hoveredChart === type ? "#1E40AF" : "#3B82F6"}
+                strokeWidth={hoveredChart === type ? 3 : 2}
+                activeDot={{ r: 8 }}
+                name={`Volume ${type}`}
+              />
+              {showMetas && (
+                <Line
+                  type="monotone"
+                  data={metaData}
+                  dataKey="volume"
+                  stroke="#10B981"
+                  strokeDasharray="5 5"
+                  strokeWidth={2}
+                  name="Meta"
+                  dot={false}
+                />
+              )}
+            </LineChart>
+          )}
+
+          {visualizationType === "bar" && (
+            <ComposedChart data={updatedData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="data" />
+              <YAxis
+                label={{
+                  value: "Volume (kg)",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    const treino = payload.find(
+                      (entry) => entry.dataKey === "volume"
+                    );
+                    const meta = payload.find(
+                      (entry) => entry.dataKey === "meta"
+                    );
+
+                    return (
+                      <div className="custom-tooltip bg-white p-2 border">
+                        <p>{label}</p>
+                        {treino && (
+                          <p className=" text-indigo-700">
+                            Treino: {treino.value} kg
+                          </p>
+                        )}
+                        {meta && (
+                          <p className="text-emerald-500">
+                            Meta: {meta.value} kg
+                          </p>
+                        )}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Legend />
+
+              {showMetas && (
+                <Line
+                  type="monotone"
+                  dataKey="meta"
+                  stroke="#10B981"
+                  strokeDasharray="5 5"
+                  strokeWidth={2}
+                  name="Meta"
+                  dot={false}
+                />
+              )}
+
+              <Bar
+                dataKey="volume"
+                fill={hoveredChart === type ? "#1E40AF" : "#3B82F6"}
+                name={`Volume ${type}`}
+              />
+            </ComposedChart>
+          )}
+        </ResponsiveContainer>
+      </div>
+    );
+  };
+
+  // Renderizar o gráfico de progresso total
+  const renderSummaryChart = () => {
+    const data = prepareSummaryData();
+    const colors = {
+      Peito: "#3B82F6",
+      Costas: "#10B981",
+      Braço: "#F59E0B",
+      Perna: "#8B5CF6",
+      Ombro: "#EC4899",
+    };
+
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-md w-full">
+        <h2 className="text-xl font-semibold mb-4">Evolução Total do Treino</h2>
+        <div className="h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            {visualizationType === "line" ? (
+              <ComposedChart
+                data={data}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="data" />
+                <YAxis
+                  label={{
+                    value: "Volume (kg)",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                />
+                <Tooltip />
+                <Legend />
+                {trainingTypes.map((type) => (
+                  <Line
+                    key={type}
+                    type="monotone"
+                    dataKey={type}
+                    stroke={colors[type]}
+                    strokeWidth={2}
+                    name={type}
+                  />
+                ))}
+              </ComposedChart>
+            ) : (
+              <ComposedChart
+                data={data}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="data" />
+                <YAxis
+                  label={{
+                    value: "Volume (kg)",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                />
+                <Tooltip />
+                <Legend />
+                {trainingTypes.map((type) => (
+                  <Bar
+                    key={type}
+                    dataKey={type}
+                    fill={colors[type]}
+                    stackId="a"
+                    name={type}
+                  />
+                ))}
+              </ComposedChart>
+            )}
+          </ResponsiveContainer>
+        </div>
+      </div>
+    );
+  };
+
+  const renderComparisonChart = () => {
+    const comparisonData = prepareComparisonData();
+
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-md w-full">
+        <h2 className="text-xl font-semibold mb-4">
+          Comparação de Volumes por Grupo Muscular
+        </h2>
+        <div className="h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            {visualizationType === "line" && (
+              <LineChart
+                data={comparisonData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="nome" />
+                <YAxis
+                  label={{
+                    value: "Volume (kg)",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                />
+                <Tooltip formatter={(value) => [`${value} kg`, "Volume"]} />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="volume"
+                  stroke="#3B82F6"
+                  strokeWidth={2}
+                  name="Volume Atual"
+                  activeDot={{ r: 8 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="meta"
+                  stroke="#10B981"
+                  strokeDasharray="5 5"
+                  strokeWidth={2}
+                  name="Meta"
+                  dot={false}
+                />
+              </LineChart>
+            )}
+            {visualizationType === "bar" && (
+              <ComposedChart
+                data={comparisonData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="nome" />
+                <YAxis
+                  label={{
+                    value: "Volume (kg)",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                />
+                <Tooltip formatter={(value) => [`${value} kg`, "Volume"]} />
+                <Legend />
+                <Bar dataKey="volume" fill="#3B82F6" name="Volume Atual" />
+                {showMetas && (
+                  <Line
+                    type="monotone"
+                    dataKey="meta"
+                    stroke="#10B981"
+                    strokeWidth={2}
+                    name="Meta"
+                  />
+                )}
+              </ComposedChart>
+            )}
+          </ResponsiveContainer>
+        </div>
+      </div>
+    );
+  };
+
+  const trainingTypes = Object.keys(trainingData);
+  const isOdd = trainingTypes.length % 2 !== 0;
+  const lastItemIndex = trainingTypes.length - 1;
+
+  return (
+    <div className="w-screen h-ful flex justify-center bg-sky-950 p-6">
+      <div
+        className={`rounded-md mt-10 transition-all duration-300  ${
+          isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
+        }`}
+      >
+        <div className="text-center bg-neutral-800 p-3 rounded-xl mt-2 w-[60%] mx-auto mb-4">
+          <div className="flex justify-center items-center gap-2">
+            <h1 className="text-2xl font-bold text-center text-white mb-6 mt-2">
+              Evolução de Volume por Tipo de Treino
+            </h1>
+          </div>
+          <p className="text-blue-100">
+            Acompanhe seu progresso e alcance seus objetivos!
+          </p>
+        </div>
+
+        {/* Controles */}
+        <div className="flex flex-wrap justify-center gap-4 mb-6 w-[90%] mx-auto">
+          {/* Modos de visualização */}
+          <div className="bg-white p-2 rounded-lg shadow-md flex space-x-2">
+            <button
+              onClick={() => setViewMode("cards")}
+              className={`px-3 py-1 rounded-md flex items-center ${
+                viewMode === "cards"
+                  ? "bg-neutral-800 text-white"
+                  : "bg-gray-100"
+              }`}
+            >
+              <Filter size={16} className="mr-1" />
+              <span>Por Grupo</span>
+            </button>
+            <button
+              onClick={() => setViewMode("comparison")}
+              className={`px-3 py-1 rounded-md flex items-center ${
+                viewMode === "comparison"
+                  ? "bg-neutral-800 text-white"
+                  : "bg-gray-100"
+              }`}
+            >
+              <BarChart2 size={16} className="mr-1" />
+              <span>Comparação</span>
+            </button>
+            <button
+              onClick={() => setViewMode("summary")}
+              className={`px-3 py-1 rounded-md flex items-center ${
+                viewMode === "summary"
+                  ? "bg-neutral-800 text-white"
+                  : "bg-gray-100"
+              }`}
+            >
+              <Calendar size={16} className="mr-1" />
+              <span>Resumo</span>
+            </button>
+          </div>
+
+          {/* Tipo de gráfico */}
+          <div className="bg-white p-2 rounded-lg shadow-md flex space-x-2">
+            <button
+              onClick={() => setVisualizationType("line")}
+              className={`px-3 py-1 rounded-md ${
+                visualizationType === "line"
+                  ? "bg-neutral-800 text-white"
+                  : "bg-gray-100"
+              }`}
+            >
+              Linha
+            </button>
+            <button
+              onClick={() => setVisualizationType("bar")}
+              className={`px-3 py-1 rounded-md ${
+                visualizationType === "bar"
+                  ? "bg-neutral-800 text-white"
+                  : "bg-gray-100"
+              }`}
+            >
+              Barras
+            </button>
+          </div>
+          <div className="bg-white p-2 rounded-lg shadow-md">
+            <button
+              onClick={() => setShowMetas(!showMetas)}
+              className={`px-3 py-1 rounded-md flex items-center ${
+                showMetas ? "bg-green-600 text-white" : "bg-gray-100"
+              }`}
+            >
+              <Target size={16} className="mr-1" />
+              <span>{showMetas ? "Ocultar Metas" : "Mostrar Metas"}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Visualização por cards */}
+        {viewMode === "cards" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-[90%] mx-auto pb-8">
+            {trainingTypes.map((type, index) => {
+              const isLastItemOdd = isOdd && index === lastItemIndex;
+              const isHovered = hoveredChart === type;
+              const isOtherHovered =
+                hoveredChart !== null && hoveredChart !== type;
+
+              const cardClasses = `
+                        bg-white p-4 rounded-lg shadow-md 
+                        transition-all duration-300 ease-in-out
+                        ${isHovered ? "scale-105 shadow-lg z-10" : ""}
+                        ${isOtherHovered ? "opacity-50 scale-95" : ""}
+                        ${isLastItemOdd ? "md:col-span-2" : ""}
+                      `;
+
+              return (
+                <div
+                  key={type}
+                  className={cardClasses}
+                  onMouseEnter={() => setHoveredChart(type)}
+                  onMouseLeave={() => setHoveredChart(null)}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center">
+                      <div className="mr-2">{getIcon(type)}</div>
+                      <h2 className="text-xl font-semibold">{type}</h2>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {trainingData[type].length > 0 &&
+                        `Último: ${
+                          trainingData[type][trainingData[type].length - 1].data
+                        }`}
+                    </div>
+                  </div>
+
+                  {renderChart(type, trainingData[type], isLastItemOdd)}
+
+                  <div className="mt-3 p-2 bg-gray-50 rounded">
+                    <TrendIndicator
+                      trend={calculateTrend(trainingData[type])}
+                    />
+                    {showMetas && (
+                      <ProgressIndicator
+                        type={type}
+                        data={trainingData[type]}
+                      />
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
+
+        {/* Visualização de comparação */}
+        {viewMode === "comparison" && (
+          <div className="w-[90%] mx-auto pb-8">{renderComparisonChart()}</div>
+        )}
+
+        {/* Visualização de resumo */}
+        {viewMode === "summary" && (
+          <div className="w-[90%] mx-auto pb-8">{renderSummaryChart()}</div>
+        )}
+      </div>
     </div>
   );
-}
+};
 
-export default ListadeExercicios;
+export default GraficoEvolucao;

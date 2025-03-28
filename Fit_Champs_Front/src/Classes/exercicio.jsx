@@ -98,7 +98,7 @@ const exerciciosPorTipo = {
     { nome: "Desenvolvimento Sentado", subgrupo: "Deltóide Geral" },
     { nome: "Shrugs com Halteres", subgrupo: "Trapézio" },
     { nome: "W-Raise", subgrupo: "Deltóide Posterior" },
-    { nome: "Y-Raise", subgrupo: "Trapézio/Deltóide Posterior" },
+    { nome: "Y-Raise", subgrupo: "Trapézio/Posterior" },
   ],
   "Day Off": [],
 };
