@@ -10,11 +10,11 @@ import {
   ChevronDown,
   ChevronUp,
   Check,
+  BarChart2,
 } from "lucide-react";
 import exerciciosPorTipo from "../../Classes/exercicio";
 
 const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
-  const [showSummary, setShowSummary] = useState(false);
   const [expandedType, setExpandedType] = useState(null);
 
   // Função para obter todos os subgrupos possíveis para um tipo de treino
@@ -116,36 +116,27 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
   };
 
   return (
-    <div
-      className={`bg-sky-950/50 rounded-2xl p-6 mt-6 shadow-2xl hover:shadow-3xl transition-all duration-300 ml-6 ${
-        showSummary ? "max-w-5xl w-full" : "max-w-xs"
-      }`}
-    >
-      <button
-        onClick={() => setShowSummary(!showSummary)}
-        className={`w-full bg-gradient-to-r from-sky-700 to-blue-600 hover:from-sky-600 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-xl flex items-center justify-center space-x-2 transform hover:scale-[1.02] transition-transform ${
-          !showSummary ? "whitespace-nowrap" : ""
-        }`}
-      >
-        <Activity className="text-blue-200" size={24} />
-        <span>
-          {showSummary ? "Esconder Resumo" : "Resumo dos Meus Treinos"}
-        </span>
-      </button>
+    <div className="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 rounded-2xl p-8 mt-6 shadow-2xl hover:shadow-3xl transition-all duration-300 w-full border border-indigo-500/30 backdrop-blur-sm">
+      <div className="flex items-center justify-center mb-6">
+        <BarChart2 className="text-blue-400 mr-3" size={32} />
+        <h1 className="text-3xl font-bold text-white bg-gradient-to-r from-blue-100 to-blue-400 bg-clip-text text-transparent">
+          Resumo dos Meus Treinos
+        </h1>
+      </div>
 
-      {showSummary && Object.keys(treinoTipoSummary).length > 0 && (
+      {Object.keys(treinoTipoSummary).length > 0 ? (
         <div className="mt-6 space-y-8 max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {detalhamentoTipos.map((item) => {
               const intensityLevel = getIntensityLevel(item.averageVolume);
 
               return (
                 <div
                   key={item.tipo}
-                  className="bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
+                  className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group border border-indigo-500/20 hover:border-indigo-500/40"
                 >
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-bold text-blue-200">
+                    <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-indigo-300">
                       {item.tipo}
                     </h3>
                     <button
@@ -154,44 +145,44 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
                           expandedType === item.tipo ? null : item.tipo
                         )
                       }
-                      className="text-blue-300 hover:text-blue-100"
+                      className="text-blue-300 hover:text-blue-100 bg-slate-700/50 p-2 rounded-full transition-colors"
                     >
                       {expandedType === item.tipo ? (
-                        <ChevronUp />
+                        <ChevronUp size={18} />
                       ) : (
-                        <ChevronDown />
+                        <ChevronDown size={18} />
                       )}
                     </button>
                   </div>
 
                   <div className="flex flex-col space-y-4">
-                    <div className="flex items-center">
+                    <div className="flex items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
                       <ClipboardList
-                        className="text-green-400 mr-2"
+                        className="text-green-400 mr-3"
                         size={20}
                       />
                       <span className="text-white">
                         Sessões: <strong>{item.sessionCount}</strong>
                       </span>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
                       <ClipboardList
-                        className="text-green-400 mr-2"
+                        className="text-green-400 mr-3"
                         size={20}
                       />
                       <span className="text-white">
                         Exercícios: <strong>{item.exerciseCount}</strong>
                       </span>
                     </div>
-                    <div className="flex items-center">
-                      <TrendingUp className="text-green-400 mr-2" size={20} />
+                    <div className="flex items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
+                      <TrendingUp className="text-green-400 mr-3" size={20} />
                       <span className="text-white">
                         Volume Total: <strong>{item.totalVolume}</strong>
                       </span>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/30">
                       <Zap
-                        className={`mr-2 ${intensityLevel.color}`}
+                        className={`mr-3 ${intensityLevel.color}`}
                         size={20}
                       />
                       <span className="text-white">
@@ -200,8 +191,9 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
                     </div>
 
                     {expandedType === item.tipo && (
-                      <div className="mt-4">
-                        <h4 className="text-blue-200 mb-3 font-semibold">
+                      <div className="mt-4 bg-indigo-900/20 p-4 rounded-xl border border-indigo-800/30">
+                        <h4 className="text-blue-200 mb-4 font-semibold flex items-center">
+                          <Target className="mr-2 text-blue-300" size={18} />
                           Subgrupos Musculares
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
@@ -212,22 +204,16 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
                               return (
                                 <div
                                   key={muscle}
-                                  className={`px-4 py-3 rounded-xl text-sm ${
+                                  className={`px-4 py-3 rounded-xl text-sm transition-all duration-300 ${
                                     isSelected
-                                      ? "bg-green-600 text-white"
-                                      : "bg-blue-900 text-blue-200"
-                                  } flex items-center justify-between transition-colors min-w-[180px] w-full`}
+                                      ? "bg-gradient-to-r from-green-600 to-green-700 text-white shadow-md"
+                                      : "bg-gradient-to-r from-slate-700 to-indigo-900/50 text-blue-200"
+                                  } flex items-center justify-between min-w-[180px] w-full`}
                                 >
                                   <div className="flex items-center flex-grow mr-3">
                                     <span className="truncate">{muscle}</span>
-                                    {isSelected && (
-                                      <Check
-                                        size={16}
-                                        className="ml-2 flex-shrink-0"
-                                      />
-                                    )}
                                   </div>
-                                  <span className="font-medium">
+                                  <span className="font-medium bg-slate-800/50 px-2 py-1 rounded-lg">
                                     {isSelected
                                       ? `${item.selectedMuscleGroups[muscle]}/${count}`
                                       : "0"}
@@ -246,31 +232,69 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
           </div>
 
           {/* Volume Total por Tipo de Treino */}
-          <div className="bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-2xl p-6 shadow-lg">
-            <div className="flex items-center mb-4">
-              <BicepsFlexedIcon className="text-green-400 mr-2" size={24} />
-              <p className="text-lg font-semibold text-blue-100">
+          <div className="bg-gradient-to-br from-slate-800 to-indigo-900/30 rounded-xl p-6 shadow-lg border border-indigo-500/20">
+            <div className="flex items-center mb-5">
+              <BicepsFlexedIcon className="text-blue-400 mr-3" size={24} />
+              <h2 className="text-xl font-semibold text-white">
                 Volume Total por Tipo de Treino
-              </p>
+              </h2>
             </div>
             <div className="space-y-4">
               {Object.entries(treinoTipoSummary)
                 .filter(([_, dados]) => dados.total > 0)
                 .sort((a, b) => b[1].total - a[1].total)
-                .map(([tipo, dados]) => (
+                .map(([tipo, dados], index) => (
                   <div
                     key={tipo}
-                    className="flex justify-between items-center text-white bg-neutral-800 p-4 rounded-xl hover:bg-neutral-700 transition-colors"
+                    className="flex justify-between items-center text-white bg-slate-800/70 p-4 rounded-xl hover:bg-slate-700/70 transition-colors border border-slate-700/30 transform hover:scale-[1.01] transition-transform"
                   >
                     <div className="flex items-center">
-                      <Trophy className="mr-3 text-yellow-400" size={20} />
-                      <span>{tipo}</span>
+                      <div
+                        className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                          index === 0
+                            ? "bg-yellow-500/20"
+                            : index === 1
+                            ? "bg-slate-400/20"
+                            : index === 2
+                            ? "bg-amber-700/20"
+                            : "bg-slate-600/20"
+                        } mr-3`}
+                      >
+                        {index < 3 ? (
+                          <Trophy
+                            className={`${
+                              index === 0
+                                ? "text-yellow-400"
+                                : index === 1
+                                ? "text-slate-300"
+                                : "text-amber-600"
+                            }`}
+                            size={20}
+                          />
+                        ) : (
+                          <span className="text-sm font-bold text-slate-400">
+                            {index + 1}
+                          </span>
+                        )}
+                      </div>
+                      <span className="font-medium">{tipo}</span>
                     </div>
-                    <strong>{Math.round(dados.total)}</strong>
+                    <div className="flex items-center">
+                      <span className="bg-indigo-800/50 px-4 py-2 rounded-lg font-bold">
+                        {Math.round(dados.total)}
+                      </span>
+                    </div>
                   </div>
                 ))}
             </div>
           </div>
+        </div>
+      ) : (
+        <div className="bg-slate-800/80 p-8 rounded-xl border border-slate-700/50 text-center">
+          <p className="text-blue-200 text-lg">
+            Nenhum dado de treino disponível ainda. Adicione exercícios aos seus
+            treinos para visualizar o resumo.
+          </p>
         </div>
       )}
     </div>

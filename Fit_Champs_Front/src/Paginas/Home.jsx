@@ -5,7 +5,17 @@ import perna from "../images/perna.png";
 import ombro from "../images/ombro.png";
 import costas from "../images/costas.png";
 import braco from "../images/musculo.png";
-import { LucideMedal, ActivitySquare, Edit, PartyPopper } from "lucide-react";
+import {
+  LucideMedal,
+  ActivitySquare,
+  Edit,
+  PartyPopper,
+  User,
+  Target,
+  Info,
+  Award,
+  BarChart2,
+} from "lucide-react";
 import { useGlobalContext } from "../Context/ContextoGlobal";
 
 const Home = () => {
@@ -29,6 +39,7 @@ const Home = () => {
   // State to manage volume goal edit modal
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [currentEditGroup, setCurrentEditGroup] = useState(null);
+  const [hoveredRecord, setHoveredRecord] = useState(null);
 
   // Function to open goal edit modal
   const openGoalModal = (grupo) => {
@@ -89,30 +100,6 @@ const Home = () => {
     setUserData(updatedData);
     calculateIMC(updatedData.altura, updatedData.peso);
     setIsModalOpen(false);
-
-    // Back é com vcs
-    // Exemplo:
-    /*
-    fetch('/api/usuarios/atualizar', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedData)
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Falha na resposta da rede');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Perfil atualizado com sucesso', data);
-    })
-    .catch(error => {
-      console.error('Erro ao atualizar perfil:', error);
-    });
-    */
   };
 
   const getIcon = (grupo) => {
@@ -165,6 +152,7 @@ const Home = () => {
       data: "2022-10-15",
     },
   ]);
+
   // Função para determinar a cor do indicador de IMC
   const getIMCColor = (classification) => {
     switch (classification) {
@@ -190,14 +178,11 @@ const Home = () => {
   const Alcancoumeta = ({ recordeVolume, metaVolume }) => {
     if (meta({ recordeVolume, metaVolume })) {
       return (
-        <div className="flex-col flex items-center text-green-600 justify-center p-2 ">
-          <div className="flex">
-            <PartyPopper className="mt-1 mr-1" size={16} />
-            <span>Objetivo Alcançado! Parabéns!</span>
-          </div>
-          <div>
-            <span>Altere sua meta ao lado</span>
-          </div>
+        <div className="flex items-center text-green-400 justify-center p-2 bg-green-900/30 rounded-lg mt-3 border border-green-700/50">
+          <PartyPopper className="mr-2" size={18} />
+          <span className="font-medium">
+            Objetivo Alcançado! Altere sua meta para continuar progredindo.
+          </span>
         </div>
       );
     }
@@ -205,222 +190,235 @@ const Home = () => {
   };
 
   return (
-    <div className="w-screen h-full bg-sky-950 flex justify-center p-6">
+    <div className="w-screen h-full flex justify-center bg-gradient-to-b from-slate-900 via-sky-900 to-slate-900 p-6">
       <div
-        className={`rounded-md mt-10 transition-all duration-300  ${
-          isMenuOpen ? "w-[90%] ml-64 opacity-80" : "w-full"
+        className={`rounded-md mt-6 transition-all duration-300 ${
+          isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
         }`}
       >
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-semibold text-center mb-8 text-white bg-neutral-800 rounded-md p-3 mt-2 shadow-lg">
-            Bem vindo a sua academia virtual!
-          </h1>
+        {/* Cabeçalho moderno */}
+        <div className="text-center bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 p-6 rounded-2xl w-full md:w-[80%] mx-auto mb-6 shadow-xl border border-indigo-500/30 backdrop-blur-sm">
+          <div className="flex justify-center items-center gap-3 mb-2">
+            <User className="text-blue-400" size={32} />
+            <h1 className="text-3xl font-bold text-white">Dashboard Pessoal</h1>
+          </div>
+          <p className="text-blue-200 mt-2 text-lg">
+            Bem-vindo à sua academia virtual personalizada!
+          </p>
+        </div>
 
+        <div className="max-w-6xl mx-auto">
           {/* Cartão de perfil do usuário */}
-          <div className="bg-white rounded-lg shadow-lg mb-8 overflow-hidden">
-            <div className="bg-gradient-to-r from-neutral-800 to-neutral-700 p-6">
+          <div className="bg-slate-800/90 backdrop-blur-sm p-6 rounded-xl shadow-lg mb-8 border border-slate-700 transition-all duration-300 hover:shadow-blue-900/20 hover:shadow-xl">
+            <div className="bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 p-6 rounded-lg mb-6 border border-indigo-500/30">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-white">
                     Olá, {userData.nome}!
                   </h2>
-                  <p className="text-blue-100">{userData.email}</p>
+                  <p className="text-blue-300">{userData.email}</p>
                 </div>
-                <div className="bg-sky-950 p-3 rounded-full shadow-lg transform hover:scale-105 transition-transform">
-                  <svg
-                    className="h-12 w-12 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                  </svg>
+                <div className="bg-slate-800 p-4 rounded-full shadow-lg transform hover:scale-105 transition-transform border border-indigo-500/50">
+                  <User className="h-12 w-12 text-blue-400" />
                 </div>
               </div>
             </div>
 
-            <div className="p-6">
-              <h3 className="text-lg font-semibold mb-4 text-neutral-800 border-b border-gray-200 pb-2">
-                Informações Pessoais
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex items-center">
-                  <span className="font-medium text-gray-500 w-24">
-                    Telefone:
-                  </span>
-                  <span>{userData.telefone}</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="font-medium text-gray-500 w-24">Idade:</span>
-                  <span>{userData.idade} anos</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="font-medium text-gray-500 w-24">
-                    Altura:
-                  </span>
-                  <span>{userData.altura} cm</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="font-medium text-gray-500 w-24">Peso:</span>
-                  <span>{userData.peso} kg</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="font-medium text-gray-500 w-24">
-                    Cidade:
-                  </span>
-                  <span>{userData.cidade}</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="font-medium text-gray-500 w-24">Sexo:</span>
-                  <span>{userData.sexo}</span>
-                </div>
-              </div>
-
-              {/* IMC Card */}
-              <div className="mt-6 bg-neutral-50 p-4 rounded-lg border border-gray-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <ActivitySquare className="text-sky-700" size={20} />
-                  <h4 className="font-semibold text-neutral-800">IMC</h4>
-                </div>
-                <div className="flex flex-wrap gap-4 items-center">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-sky-700">
-                      {userData.imc.value || "---"}
-                    </div>
-                    <div className="text-xs text-gray-500">Valor</div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-slate-900/70 p-6 rounded-xl border border-slate-700">
+                <h3 className="text-lg font-semibold mb-4 text-white border-b border-slate-700 pb-2 flex items-center">
+                  <Info className="mr-2 text-blue-400" size={20} />
+                  Informações Pessoais
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center">
+                    <span className="font-medium text-slate-400 w-24">
+                      Telefone:
+                    </span>
+                    <span className="text-blue-100">{userData.telefone}</span>
                   </div>
-                  <div className="h-10 border-l border-gray-300"></div>
-                  <div>
-                    <div
-                      className={`font-semibold ${getIMCColor(
-                        userData.imc.classification
-                      )}`}
-                    >
-                      {userData.imc.classification || "---"}
-                    </div>
-                    <div className="text-xs text-gray-500">Classificação</div>
+                  <div className="flex items-center">
+                    <span className="font-medium text-slate-400 w-24">
+                      Idade:
+                    </span>
+                    <span className="text-blue-100">{userData.idade} anos</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="font-medium text-slate-400 w-24">
+                      Altura:
+                    </span>
+                    <span className="text-blue-100">{userData.altura} cm</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="font-medium text-slate-400 w-24">
+                      Peso:
+                    </span>
+                    <span className="text-blue-100">{userData.peso} kg</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="font-medium text-slate-400 w-24">
+                      Cidade:
+                    </span>
+                    <span className="text-blue-100">{userData.cidade}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="font-medium text-slate-400 w-24">
+                      Sexo:
+                    </span>
+                    <span className="text-blue-100">{userData.sexo}</span>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="flex justify-center mb-6">
-              <button
-                className="bg-gradient-to-r from-neutral-800 to-neutral-700 text-white font-semibold py-2 px-6 rounded-md hover:opacity-90 transition-opacity shadow-md flex items-center gap-2"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-                Editar Perfil
-              </button>
-            </div>
-          </div>
 
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden mt-6 mb-6">
-            <div className="bg-gradient-to-r from-neutral-800 to-neutral-700 p-4">
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                Posições no Rank!{" "}
-                <LucideMedal size={24} className="text-yellow-400" />
-              </h2>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {recordesMusculares.map((recorde) => (
-                  <div
-                    key={recorde.grupo}
-                    className="relative p-3 bg-neutral-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <div>{getIcon(recorde.grupo)}</div>
-                      <div>
-                        <p className="text-neutral-800">
-                          <span className="text-sky-700 font-semibold">
-                            {userData.posicaoRank}º
-                          </span>{" "}
-                          <span className="text-gray-500">em</span>{" "}
-                          <span className="font-bold">{recorde.grupo}</span>
-                        </p>
+                <div className="mt-6 bg-slate-800 p-5 rounded-lg border border-slate-700">
+                  <div className="flex items-center gap-2 mb-2">
+                    <ActivitySquare className="text-blue-400" size={20} />
+                    <h4 className="font-semibold text-white">
+                      Índice de Massa Corporal (IMC)
+                    </h4>
+                  </div>
+                  <div className="flex flex-wrap gap-6 items-center mt-3">
+                    <div className="text-center bg-slate-900/80 py-3 px-5 rounded-lg border border-slate-700">
+                      <div className="text-3xl font-bold text-blue-400">
+                        {userData.imc.value || "---"}
+                      </div>
+                      <div className="text-xs text-slate-400 mt-1">Valor</div>
+                    </div>
+                    <div className="bg-slate-900/80 py-3 px-5 rounded-lg border border-slate-700">
+                      <div
+                        className={`font-semibold text-xl ${getIMCColor(
+                          userData.imc.classification
+                        )}`}
+                      >
+                        {userData.imc.classification || "---"}
+                      </div>
+                      <div className="text-xs text-slate-400 mt-1">
+                        Classificação
                       </div>
                     </div>
                   </div>
-                ))}
+                </div>
+                <div className="mt-6 flex justify-center">
+                  <button
+                    className="bg-gradient-to-r from-indigo-700 to-blue-800 text-white font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-all shadow-lg hover:shadow-blue-900/50 hover:scale-105 flex items-center gap-2"
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    <Edit size={16} />
+                    Atualizar Perfil
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/70 p-6 rounded-xl border border-slate-700">
+                <h3 className="text-lg font-semibold mb-4 text-white border-b border-slate-700 pb-2 flex items-center">
+                  <LucideMedal className="mr-2 text-yellow-400" size={20} />
+                  Posições no Ranking
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {recordesMusculares.map((recorde) => (
+                    <div
+                      key={recorde.grupo}
+                      className="relative p-4 bg-slate-800 rounded-lg border border-slate-700 hover:shadow-md transition-shadow hover:border-blue-600/50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="bg-slate-700 p-2 rounded-lg">
+                          {getIcon(recorde.grupo)}
+                        </div>
+                        <div>
+                          <p className="text-white">
+                            <span className="text-yellow-400 font-bold text-xl mr-1">
+                              {userData.posicaoRank}º
+                            </span>
+                            <span className="font-medium text-white">
+                              {recorde.grupo}
+                            </span>
+                          </p>
+                          <span className="text-xs text-blue-300">
+                            Categoria: {recorde.grupo}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Cartão de recordes musculares */}
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
-            <div className="bg-gradient-to-r from-neutral-800 to-neutral-700 p-4">
-              <h2 className="text-2xl font-bold text-white">
-                Recordes Musculares
-              </h2>
-              <p className="text-blue-100">
+          <div className="bg-slate-800/90 backdrop-blur-sm p-6 rounded-xl shadow-lg mb-8 border border-slate-700 transition-all duration-300 hover:shadow-blue-900/20 hover:shadow-xl">
+            <div className="bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 p-4 rounded-lg mb-6 border border-indigo-500/30">
+              <div className="flex items-center gap-2">
+                <BarChart2 className="text-blue-400" size={24} />
+                <h2 className="text-2xl font-bold text-white">
+                  Recordes Musculares
+                </h2>
+              </div>
+              <p className="text-blue-300 mt-1 ml-8">
                 Maiores volumes de treino por grupo muscular
               </p>
             </div>
 
-            <div className="p-6">
-              <div className="space-y-8">
-                {recordesMusculares.map((recorde) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recordesMusculares.map((recorde) => {
+                const isHovered = hoveredRecord === recorde.grupo;
+                const isOtherHovered =
+                  hoveredRecord !== null && hoveredRecord !== recorde.grupo;
+                const metaAlcancada = meta({
+                  recordeVolume: recorde.recordeVolume,
+                  metaVolume: recorde.metaVolume,
+                });
+
+                const cardClasses = `
+                  bg-slate-900/70 p-5 rounded-xl border border-slate-700
+                  transition-all duration-300 ease-in-out
+                  ${isHovered ? "scale-102 shadow-xl z-10 border-blue-500" : ""}
+                  ${isOtherHovered ? "opacity-70 scale-98" : ""}
+                  ${metaAlcancada ? "border-green-500/50" : ""}
+                `;
+
+                return (
                   <div
                     key={recorde.grupo}
-                    className="relative bg-neutral-50 p-4 rounded-lg hover:shadow-md transition-shadow"
+                    className={cardClasses}
+                    onMouseEnter={() => setHoveredRecord(recorde.grupo)}
+                    onMouseLeave={() => setHoveredRecord(null)}
                   >
-                    <div className="flex items-center mb-3">
+                    <div className="flex items-center mb-4">
                       <div
-                        className={` rounded-md ${
-                          !meta({
-                            recordeVolume: recorde.recordeVolume,
-                            metaVolume: recorde.metaVolume,
-                          })
-                            ? "bg-sky-700"
-                            : "bg-green-500"
+                        className={`p-2 rounded-lg ${
+                          metaAlcancada ? "bg-green-900/50" : "bg-slate-800"
                         }`}
                       >
                         {getIcon(recorde.grupo)}
                       </div>
-                      <h3 className="text-lg font-semibold ml-4">
+                      <h3 className="text-lg font-semibold ml-3 text-white">
                         {recorde.grupo}
                       </h3>
-                      <div className="flex items-center space-x-2 ml-auto">
-                        <span
-                          className={` text-2xl font-bold mr-2 ${
-                            !meta({
-                              recordeVolume: recorde.recordeVolume,
-                              metaVolume: recorde.metaVolume,
-                            })
-                              ? "text-sky-700"
-                              : "text-green-700"
-                          }`}
-                        >
-                          {recorde.recordeVolume}/{recorde.metaVolume}
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          {" "}
-                          Volume/Meta{" "}
-                        </span>
-                      </div>
+                      {metaAlcancada && (
+                        <Award size={18} className="ml-auto text-green-400" />
+                      )}
+                    </div>
+
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-slate-400">
+                        Volume Atual / Meta:
+                      </span>
+                      <span
+                        className={`text-2xl font-bold ${
+                          metaAlcancada ? "text-green-400" : "text-blue-400"
+                        }`}
+                      >
+                        {recorde.recordeVolume}/{recorde.metaVolume}
+                      </span>
                     </div>
 
                     {/* Barra de progresso */}
-                    <div className="h-5 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-6 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
                       <div
                         className={`h-full rounded-full ${
-                          !meta({
-                            recordeVolume: recorde.recordeVolume,
-                            metaVolume: recorde.metaVolume,
-                          })
-                            ? "bg-gradient-to-r from-sky-700 to-sky-400"
-                            : "bg-gradient-to-r from-green-700 to-green-400"
+                          metaAlcancada
+                            ? "bg-gradient-to-r from-green-700 to-green-500"
+                            : "bg-gradient-to-r from-blue-700 to-blue-500"
                         }`}
                         style={{
                           width: `${Math.min(
@@ -428,67 +426,107 @@ const Home = () => {
                             (recorde.recordeVolume / recorde.metaVolume) * 100
                           )}%`,
                         }}
-                      ></div>
-                    </div>
-                    <div>
-                      <Alcancoumeta
-                        recordeVolume={recorde.recordeVolume}
-                        metaVolume={recorde.metaVolume}
-                      />
+                      >
+                        <div className="h-full flex items-center justify-center">
+                          <span className="text-xs font-bold text-white">
+                            {Math.min(
+                              100,
+                              Math.round(
+                                (recorde.recordeVolume / recorde.metaVolume) *
+                                  100
+                              )
+                            )}
+                            %
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="mt-3 text-sm text-gray-600 flex items-center justify-between">
-                      <span className="font-medium mr-1">
-                        Data do treino: {recorde.data}
+                    <Alcancoumeta
+                      recordeVolume={recorde.recordeVolume}
+                      metaVolume={recorde.metaVolume}
+                    />
+
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-sm text-blue-300">
+                        Data: {recorde.data}
                       </span>
                       <button
                         onClick={() => openGoalModal(recorde.grupo)}
-                        className="ml-2 text-gray-500 hover:text-sky-700 flex items-center gap-1"
+                        className="text-slate-300 hover:text-blue-400 flex items-center gap-1 bg-slate-800 py-1 px-3 rounded-lg transition-colors hover:bg-slate-700"
                       >
-                        <Edit
-                          size={16}
-                          className={` ${
-                            !meta({
-                              recordeVolume: recorde.recordeVolume,
-                              metaVolume: recorde.metaVolume,
-                            })
-                              ? "text-sky-700"
-                              : "text-green-700"
-                          }`}
-                        />{" "}
+                        <Target size={14} />
                         <span>Alterar Meta</span>
                       </button>
                     </div>
                   </div>
-                ))}
-              </div>
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Volume Goal Edit Modal */}
       {isGoalModalOpen && (
-        <VolumeGoalModal
-          grupo={currentEditGroup}
-          currentGoal={
-            recordesMusculares.find((r) => r.grupo === currentEditGroup)
-              ?.metaVolume
-          }
-          onSave={updateVolumeGoal}
-          onCancel={() => setIsGoalModalOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-600">
+            <h2 className="text-2xl font-bold mb-4 text-white flex items-center">
+              <Target className="mr-2 text-blue-400" size={20} />
+              Editar Meta - {currentEditGroup}
+            </h2>
+            <div className="mb-4">
+              <label
+                htmlFor="volumeGoal"
+                className="block text-slate-300 text-sm font-medium mb-2"
+              >
+                Meta de Volume
+              </label>
+              <input
+                step={100}
+                type="number"
+                id="volumeGoal"
+                defaultValue={
+                  recordesMusculares.find((r) => r.grupo === currentEditGroup)
+                    ?.metaVolume
+                }
+                onChange={(e) => e.target.value}
+                className="w-full bg-slate-700 border border-slate-600 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={() => setIsGoalModalOpen(false)}
+                className="bg-slate-700 text-white font-medium py-2 px-5 rounded-lg hover:bg-slate-600 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  const input = document.getElementById("volumeGoal");
+                  updateVolumeGoal(currentEditGroup, input.value);
+                }}
+                className="bg-gradient-to-r from-indigo-700 to-blue-800 text-white font-medium py-2 px-5 rounded-lg hover:opacity-90 transition-colors"
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Modal de Edição de Perfil */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-xl shadow-2xl w-full max-w-lg p-6 border border-slate-600">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-neutral-800">
-                Editar Perfil
+              <h2 className="text-2xl font-bold text-white flex items-center">
+                <Edit className="mr-2 text-blue-400" size={20} />
+                Atualizar Perfil
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-slate-400 hover:text-white bg-slate-700 rounded-full p-1"
               >
                 <svg
                   className="h-6 w-6"
@@ -514,55 +552,6 @@ const Home = () => {
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-// Volume Goal Edit Modal Component
-const VolumeGoalModal = ({ grupo, currentGoal, onSave, onCancel }) => {
-  const [newGoal, setNewGoal] = useState(currentGoal);
-
-  const handleSave = () => {
-    onSave(grupo, newGoal);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-        <h2 className="text-2xl font-bold mb-4">
-          Editar Meta de Volume - {grupo}
-        </h2>
-        <div className="mb-4">
-          <label
-            htmlFor="volumeGoal"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Meta de Volume
-          </label>
-          <input
-            step={100}
-            type="number"
-            id="volumeGoal"
-            value={newGoal}
-            onChange={(e) => setNewGoal(Number(e.target.value))}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div className="flex justify-end space-x-2">
-          <button
-            onClick={onCancel}
-            className="bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-400"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleSave}
-            className="bg-gradient-to-r from-neutral-800 to-neutral-700 text-white font-semibold py-2 px-4 rounded-md hover:opacity-90"
-          >
-            Salvar
-          </button>
-        </div>
-      </div>
     </div>
   );
 };
@@ -598,141 +587,151 @@ const ProfileEditForm = ({ userData, onSave, onCancel }) => {
     onSave(formData);
   };
 
+  const inputClasses =
+    "w-full bg-slate-700 border border-slate-600 rounded-lg py-2.5 px-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent";
+
   return (
     <form onSubmit={handleSubmit}>
-      <div className="mb-4">
-        <label
-          className="block text-gray-700 text-sm font-bold mb-2"
-          htmlFor="nome"
-        >
-          Nome
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="nome"
-          name="nome"
-          type="text"
-          value={formData.nome}
-          onChange={handleChange}
-          required
-        />
-      </div>
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label
+              className="block text-slate-300 text-sm font-medium mb-1"
+              htmlFor="nome"
+            >
+              Nome
+            </label>
+            <input
+              className={inputClasses}
+              id="nome"
+              name="nome"
+              type="text"
+              value={formData.nome}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-      <div className="mb-4">
-        <label
-          className="block text-gray-700 text-sm font-bold mb-2"
-          htmlFor="email"
-        >
-          Email
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-      </div>
-
-      <div className="mb-4">
-        <label
-          className="block text-gray-700 text-sm font-bold mb-2"
-          htmlFor="telefone"
-        >
-          Telefone
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="telefone"
-          name="telefone"
-          type="tel"
-          value={formData.telefone}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="mb-4">
-        <label
-          className="block text-gray-700 text-sm font-bold mb-2"
-          htmlFor="nome"
-        >
-          Cidade
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="cidade"
-          name="cidade"
-          type="text"
-          value={formData.cidade}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <div className="grid grid-cols-3 gap-4">
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="idade"
-          >
-            Idade
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="idade"
-            name="idade"
-            type="number"
-            value={formData.idade}
-            onChange={handleChange}
-          />
+          <div>
+            <label
+              className="block text-slate-300 text-sm font-medium mb-1"
+              htmlFor="email"
+            >
+              Email
+            </label>
+            <input
+              className={inputClasses}
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
 
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="altura"
-          >
-            Altura (cm)
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="altura"
-            name="altura"
-            type="number"
-            value={formData.altura}
-            onChange={handleChange}
-          />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label
+              className="block text-slate-300 text-sm font-medium mb-1"
+              htmlFor="telefone"
+            >
+              Telefone
+            </label>
+            <input
+              className={inputClasses}
+              id="telefone"
+              name="telefone"
+              type="tel"
+              value={formData.telefone}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label
+              className="block text-slate-300 text-sm font-medium mb-1"
+              htmlFor="cidade"
+            >
+              Cidade
+            </label>
+            <input
+              className={inputClasses}
+              id="cidade"
+              name="cidade"
+              type="text"
+              value={formData.cidade}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
 
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="peso"
-          >
-            Peso (kg)
-          </label>
-          <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="peso"
-            name="peso"
-            type="number"
-            value={formData.peso}
-            onChange={handleChange}
-          />
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label
+              className="block text-slate-300 text-sm font-medium mb-1"
+              htmlFor="idade"
+            >
+              Idade
+            </label>
+            <input
+              className={inputClasses}
+              id="idade"
+              name="idade"
+              type="number"
+              value={formData.idade}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div>
+            <label
+              className="block text-slate-300 text-sm font-medium mb-1"
+              htmlFor="altura"
+            >
+              Altura (cm)
+            </label>
+            <input
+              className={inputClasses}
+              id="altura"
+              name="altura"
+              type="number"
+              value={formData.altura}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div>
+            <label
+              className="block text-slate-300 text-sm font-medium mb-1"
+              htmlFor="peso"
+            >
+              Peso (kg)
+            </label>
+            <input
+              className={inputClasses}
+              id="peso"
+              name="peso"
+              type="number"
+              value={formData.peso}
+              onChange={handleChange}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="flex justify-end mt-6">
+      <div className="flex justify-end mt-6 space-x-3">
         <button
           type="button"
           onClick={onCancel}
-          className="bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-400 mr-2"
+          className="bg-slate-700 text-white font-medium py-2 px-5 rounded-lg hover:bg-slate-600 transition-colors"
         >
           Cancelar
         </button>
         <button
           type="submit"
-          className="bg-gradient-to-r from-neutral-800 to-neutral-700 text-white font-semibold py-2 px-4 rounded-md hover:opacity-90"
+          className="bg-gradient-to-r from-indigo-700 to-blue-800 text-white font-medium py-2 px-5 rounded-lg hover:opacity-90 transition-colors"
         >
           Salvar
         </button>

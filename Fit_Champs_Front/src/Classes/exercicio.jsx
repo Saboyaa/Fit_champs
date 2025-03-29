@@ -94,11 +94,10 @@ const exerciciosPorTipo = {
     { nome: "Pássaro", subgrupo: "Deltóide Posterior" },
     { nome: "Elevação Lateral na Polia", subgrupo: "Deltóide Lateral" },
     { nome: "Desenvolvimento na Máquina", subgrupo: "Deltóide Anterior" },
-    { nome: "Remada Alta", subgrupo: "Trapézio/Deltóide Lateral" },
+    { nome: "Remada Alta", subgrupo: "Trapézio/Deltóide Lat" },
     { nome: "Desenvolvimento Sentado", subgrupo: "Deltóide Geral" },
     { nome: "Shrugs com Halteres", subgrupo: "Trapézio" },
     { nome: "W-Raise", subgrupo: "Deltóide Posterior" },
-    { nome: "Y-Raise", subgrupo: "Trapézio/Posterior" },
   ],
   "Day Off": [],
 };

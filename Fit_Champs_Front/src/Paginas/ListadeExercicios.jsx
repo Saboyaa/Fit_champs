@@ -10,6 +10,9 @@ import {
   Info,
   ArrowLeft,
   BarChart2,
+  Dumbbell,
+  Calendar,
+  Filter,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TreinoTipoSumario from "../Components/ComponentsListaExercicios/resumoSemanal";
@@ -26,6 +29,7 @@ function ListadeExercicios() {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const navigate = useNavigate();
   const [trainingDateAndVolume, setTrainingDateAndVolume] = useState({});
+  const [activeView, setActiveView] = useState("list"); // 'list' or 'summary'
 
   // Inicializar exercícios para todos os treinos ao carregar
   useEffect(() => {
@@ -223,266 +227,327 @@ function ListadeExercicios() {
     navigate("/TreinosSemanais");
   };
 
+  const hasExercicios = treinos.some(
+    (treino) =>
+      treino.descripition !== "Day Off" &&
+      exerciciosPorTreino[treino.id] &&
+      exerciciosPorTreino[treino.id].length > 0
+  );
+
   return (
-    <div className="w-screen min-h-screen bg-sky-950 flex justify-center p-6 overflow-y-auto">
+    <div className="w-screen min-h-screen bg-gradient-to-b from-slate-900 via-sky-900 to-slate-900 flex justify-center p-6 overflow-y-auto">
       <div
         className={`rounded-md mt-6 transition-all duration-300 ${
           isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
         }`}
       >
-        <div className="bg-sky-950 p-6 rounded-lg mb-6 shadow-lg">
-          <div className="flex items-center justify-center mb-3">
-            <Activity className="text-blue-300 mr-2" size={24} />
-            <h1 className="text-2xl text-slate-100 font-bold">
+        {/* Cabeçalho moderno */}
+        <div className="text-center bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 p-6 rounded-2xl mt-2 w-full md:w-[80%] mx-auto mb-6 shadow-xl border border-indigo-500/30 backdrop-blur-sm">
+          <div className="flex justify-center items-center gap-3 mb-2">
+            <Dumbbell className="text-blue-400" size={32} />
+            <h1 className="text-3xl font-bold text-white">
               Lista de Exercícios
             </h1>
           </div>
+          <p className="text-blue-200 mt-2 text-lg">
+            Selecione os exercícios para cada dia de treino
+          </p>
 
-          <div className="bg-sky-900/50 p-3 rounded-lg">
-            <p className="text-blue-100 text-center font-medium">
-              Selecione os exercícios para cada dia de treino
-            </p>
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={voltarParaTreinosSemanais}
+              className="flex items-center gap-2 text-blue-300 hover:text-blue-100 bg-slate-800 py-2 px-4 rounded-lg transition-colors hover:bg-slate-700"
+            >
+              <ArrowLeft size={16} />
+              <span>Voltar para Treinos Semanais</span>
+            </button>
           </div>
-
-          <button
-            onClick={voltarParaTreinosSemanais}
-            className="mt-4 flex items-center gap-2 text-blue-300 hover:text-blue-100 transition-colors"
-          >
-            <ArrowLeft size={16} />
-            <span>Voltar para Treinos Semanais</span>
-          </button>
         </div>
 
-        {treinos.length > 0 &&
-        treinos.some(
-          (treino) =>
-            treino.descripition !== "Day Off" &&
-            exerciciosPorTreino[treino.id] &&
-            exerciciosPorTreino[treino.id].length > 0
-        ) ? (
-          <div className="space-y-4">
-            {treinos.map((treino) => {
-              if (treino.descripition === "Day Off") return null;
-
-              // Only render the training day if it has exercises
-              if (
-                !exerciciosPorTreino[treino.id] ||
-                exerciciosPorTreino[treino.id].length === 0
-              ) {
-                return null;
-              }
-
-              const stats = calcularTotalPorTreino(treino.id);
-              const isExpanded = expandedTreino === treino.id;
-
-              return (
-                <div
-                  key={treino.id}
-                  className="bg-sky-950 rounded-lg shadow-lg overflow-hidden"
-                >
-                  <div
-                    className="p-4 bg-sky-900/50 flex justify-between items-center cursor-pointer hover:bg-sky-900 transition-colors"
-                    onClick={() => toggleExpandTreino(treino.id)}
-                  >
-                    <div>
-                      <h2 className="text-xl font-bold text-white flex items-center">
-                        {treino.text} ({treino.data}) - {treino.descripition}
-                      </h2>
-                      <div className="flex gap-4 mt-1 text-blue-200 ">
-                        <span className="text-sky-400">
-                          {stats.exercicios}/{stats.exerciciosTotal} exercícios
-                        </span>
-                        <span className="text-sky-400">
-                          Volume total: {stats.volume}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-white">
-                      {isExpanded ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M18 15l-6-6-6 6" />
-                        </svg>
-                      ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
-                      )}
-                    </div>
-                  </div>
-
-                  {isExpanded && (
-                    <div className="bg-neutral-800 p-4">
-                      <div className="space-y-3">
-                        <div className="grid grid-cols-12 gap-3 text-blue-200 font-medium bg-sky-950 p-3 rounded-lg text-sm">
-                          <div className="col-span-3">Nome do Exercício</div>
-                          <div className="col-span-2">Subgrupo Muscular</div>
-                          <div className="col-span-2">Repetições</div>
-                          <div className="col-span-2">Peso (kg)</div>
-                          <div className="col-span-2">Volume</div>
-                          <div className="col-span-1">Deletar Exercicio</div>
-                        </div>
-
-                        {exerciciosPorTreino[treino.id].map(
-                          (exercicio, index) => (
-                            <div
-                              key={exercicio.id}
-                              className="grid grid-cols-12 gap-2 items-center bg-neutral-800 p-3 rounded-lg hover:bg-neutral-700 transition-colors"
-                            >
-                              <div className="col-span-3">
-                                <CustomDropdown
-                                  options={
-                                    exerciciosPorTipo[treino.descripition]?.map(
-                                      (exercicioOpt) => ({
-                                        value: exercicioOpt.nome,
-                                        label: exercicioOpt.nome,
-                                      })
-                                    ) || []
-                                  }
-                                  value={exercicio.nome}
-                                  onChange={(e) =>
-                                    atualizarExercicio(
-                                      treino.id,
-                                      exercicio.id,
-                                      "nome",
-                                      e.target.value
-                                    )
-                                  }
-                                  placeholder="Selecione um exercício"
-                                />
-                              </div>
-
-                              <div className="col-span-2 text-white p-2 bg-neutral-700 rounded-md flex items-center justify-center font-medium">
-                                {exercicio.subgrupo}
-                              </div>
-
-                              <div className="col-span-2">
-                                <CustomDropdown
-                                  options={[
-                                    { value: "3 x 12", label: "3 x 12" },
-                                    { value: "4 x 10", label: "4 x 10" },
-                                    { value: "3 x 15", label: "3 x 15" },
-                                    { value: "5 x 5", label: "5 x 5" },
-                                    { value: "3 x 8", label: "3 x 8" },
-                                    { value: "4 x 8", label: "4 x 8" },
-                                    { value: "3 x 10", label: "3 x 10" },
-                                  ]}
-                                  value={exercicio.repeticoes}
-                                  onChange={(e) =>
-                                    atualizarExercicio(
-                                      treino.id,
-                                      exercicio.id,
-                                      "repeticoes",
-                                      e.target.value
-                                    )
-                                  }
-                                  placeholder="Selecione repetições"
-                                />
-                              </div>
-
-                              <div className="col-span-2">
-                                <input
-                                  type="number"
-                                  className="w-full p-2 bg-neutral-700 text-white rounded-md border border-neutral-600 focus:ring-2 focus:ring-sky-600 focus:border-transparent"
-                                  value={exercicio.peso}
-                                  onChange={(e) =>
-                                    atualizarExercicio(
-                                      treino.id,
-                                      exercicio.id,
-                                      "peso",
-                                      e.target.value
-                                    )
-                                  }
-                                  min="0"
-                                  step="0.5"
-                                />
-                              </div>
-
-                              <div className="col-span-2 text-white p-2 bg-neutral-700 rounded-md flex items-center justify-center font-medium">
-                                {exercicio.volume}
-                              </div>
-
-                              <div className="col-span-1 flex justify-center">
-                                <button
-                                  onClick={() =>
-                                    removerExercicio(treino.id, exercicio.id)
-                                  }
-                                  className="p-2 rounded-full bg-sky-700 text-white hover:bg-red-400 transition-colors"
-                                  title="Remover exercício"
-                                >
-                                  <Trash size={16} />
-                                </button>
-                              </div>
-                            </div>
-                          )
-                        )}
-                      </div>
-
-                      <div className="mt-4 flex justify-center">
-                        <button
-                          onClick={() => adicionarExercicio(treino.id)}
-                          className="bg-sky-800 text-white p-2 px-4 rounded-md flex items-center gap-2 hover:bg-sky-700 transition-colors shadow-md"
-                        >
-                          <PlusCircle size={18} />
-                          Adicionar Exercício
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            <div className="sticky bottom-6 mt-6 flex justify-center">
+        {/* Controles de visualização */}
+        {hasExercicios && (
+          <div className="flex flex-wrap justify-center gap-4 mb-6 w-full md:w-[90%] mx-auto">
+            <div className="bg-slate-800/90 backdrop-blur-sm p-3 rounded-xl shadow-lg flex space-x-2 border border-slate-700">
               <button
-                onClick={salvarTreino}
-                disabled={isSaving}
-                className={`py-3 px-6 rounded-lg shadow-lg flex items-center gap-2 font-bold text-white transition-all duration-300 ${
-                  saveSuccess ? "bg-green-600" : "bg-sky-800 hover:bg-sky-700"
+                onClick={() => setActiveView("list")}
+                className={`px-4 py-2 rounded-lg flex items-center transition-all duration-200 ${
+                  activeView === "list"
+                    ? "bg-gradient-to-r from-indigo-700 to-blue-800 text-white shadow-md"
+                    : "bg-slate-700 hover:bg-slate-600 text-slate-200"
                 }`}
               >
-                {isSaving ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Salvando...</span>
-                  </>
-                ) : saveSuccess ? (
-                  <>
-                    <Check size={20} />
-                    <span>Treino Salvo!</span>
-                  </>
-                ) : (
-                  <>
-                    <Save size={20} />
-                    <span>Salvar Treino Completo</span>
-                  </>
-                )}
+                <Filter size={16} className="mr-2" />
+                <span>Lista de Exercícios</span>
+              </button>
+              <button
+                onClick={() => setActiveView("summary")}
+                className={`px-4 py-2 rounded-lg flex items-center transition-all duration-200 ${
+                  activeView === "summary"
+                    ? "bg-gradient-to-r from-indigo-700 to-blue-800 text-white shadow-md"
+                    : "bg-slate-700 hover:bg-slate-600 text-slate-200"
+                }`}
+              >
+                <BarChart2 size={16} className="mr-2" />
+                <span>Resumo Semanal</span>
               </button>
             </div>
           </div>
+        )}
+
+        {hasExercicios ? (
+          <div className="space-y-6 w-full md:w-[90%] mx-auto">
+            {activeView === "list" && (
+              <>
+                {treinos.map((treino) => {
+                  if (treino.descripition === "Day Off") return null;
+
+                  // Only render the training day if it has exercises
+                  if (
+                    !exerciciosPorTreino[treino.id] ||
+                    exerciciosPorTreino[treino.id].length === 0
+                  ) {
+                    return null;
+                  }
+
+                  const stats = calcularTotalPorTreino(treino.id);
+                  const isExpanded = expandedTreino === treino.id;
+
+                  return (
+                    <div
+                      key={treino.id}
+                      className="bg-slate-800/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-slate-700 transition-all duration-300 hover:shadow-2xl"
+                    >
+                      <div
+                        className="p-5 bg-gradient-to-r from-slate-800 to-indigo-900/70 flex justify-between items-center cursor-pointer hover:from-slate-700 hover:to-indigo-800/70 transition-colors"
+                        onClick={() => toggleExpandTreino(treino.id)}
+                      >
+                        <div>
+                          <h2 className="text-xl font-bold text-white flex items-center">
+                            <Calendar
+                              className="mr-2 text-blue-300"
+                              size={20}
+                            />
+                            {treino.text} ({treino.data}) -{" "}
+                            {treino.descripition}
+                          </h2>
+                          <div className="flex gap-4 mt-2">
+                            <span className="text-blue-200 bg-slate-700/70 px-3 py-1 rounded-lg text-sm">
+                              {stats.exercicios}/{stats.exerciciosTotal}{" "}
+                              exercícios
+                            </span>
+                            <span className="text-blue-200 bg-slate-700/70 px-3 py-1 rounded-lg text-sm">
+                              Volume total: {stats.volume}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-white bg-slate-700/50 p-2 rounded-full">
+                          {isExpanded ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M18 15l-6-6-6 6" />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M6 9l6 6 6-6" />
+                            </svg>
+                          )}
+                        </div>
+                      </div>
+
+                      {isExpanded && (
+                        <div className="bg-slate-900/90 p-5">
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-12 gap-3 text-blue-200 font-medium bg-indigo-900/50 p-3 rounded-lg text-sm border border-indigo-800/50">
+                              <div className="col-span-3">
+                                Nome do Exercício
+                              </div>
+                              <div className="col-span-2">
+                                Subgrupo Muscular
+                              </div>
+                              <div className="col-span-2">Repetições</div>
+                              <div className="col-span-2">Peso (kg)</div>
+                              <div className="col-span-2">Volume</div>
+                              <div className="col-span-1">Ações</div>
+                            </div>
+
+                            {exerciciosPorTreino[treino.id].map(
+                              (exercicio, index) => (
+                                <div
+                                  key={exercicio.id}
+                                  className="grid grid-cols-12 gap-2 items-center bg-slate-800/50 p-3 rounded-lg hover:bg-slate-700/50 transition-colors border border-slate-700/50"
+                                >
+                                  <div className="col-span-3">
+                                    <CustomDropdown
+                                      options={
+                                        exerciciosPorTipo[
+                                          treino.descripition
+                                        ]?.map((exercicioOpt) => ({
+                                          value: exercicioOpt.nome,
+                                          label: exercicioOpt.nome,
+                                        })) || []
+                                      }
+                                      value={exercicio.nome}
+                                      onChange={(e) =>
+                                        atualizarExercicio(
+                                          treino.id,
+                                          exercicio.id,
+                                          "nome",
+                                          e.target.value
+                                        )
+                                      }
+                                      placeholder="Selecione um exercício"
+                                    />
+                                  </div>
+
+                                  <div className="col-span-2 text-white p-2 bg-indigo-900/50 rounded-md flex items-center justify-center font-medium border border-indigo-800/30">
+                                    {exercicio.subgrupo}
+                                  </div>
+
+                                  <div className="col-span-2">
+                                    <CustomDropdown
+                                      options={[
+                                        { value: "3 x 12", label: "3 x 12" },
+                                        { value: "4 x 10", label: "4 x 10" },
+                                        { value: "3 x 15", label: "3 x 15" },
+                                        { value: "5 x 5", label: "5 x 5" },
+                                        { value: "3 x 8", label: "3 x 8" },
+                                        { value: "4 x 8", label: "4 x 8" },
+                                        { value: "3 x 10", label: "3 x 10" },
+                                      ]}
+                                      value={exercicio.repeticoes}
+                                      onChange={(e) =>
+                                        atualizarExercicio(
+                                          treino.id,
+                                          exercicio.id,
+                                          "repeticoes",
+                                          e.target.value
+                                        )
+                                      }
+                                      placeholder="Selecione repetições"
+                                    />
+                                  </div>
+
+                                  <div className="col-span-2">
+                                    <input
+                                      type="number"
+                                      className="w-full p-2 bg-slate-700 text-white rounded-md border border-slate-600 focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                                      value={exercicio.peso}
+                                      onChange={(e) =>
+                                        atualizarExercicio(
+                                          treino.id,
+                                          exercicio.id,
+                                          "peso",
+                                          e.target.value
+                                        )
+                                      }
+                                      min="0"
+                                      step="0.5"
+                                    />
+                                  </div>
+
+                                  <div className="col-span-2 text-white p-2 bg-blue-900/50 rounded-md flex items-center justify-center font-medium border border-blue-800/30">
+                                    {exercicio.volume}
+                                  </div>
+
+                                  <div className="col-span-1 flex justify-center">
+                                    <button
+                                      onClick={() =>
+                                        removerExercicio(
+                                          treino.id,
+                                          exercicio.id
+                                        )
+                                      }
+                                      className="p-2 rounded-full bg-gradient-to-r from-red-500/70 to-red-700/70 text-white hover:from-red-600 hover:to-red-800 transition-colors"
+                                      title="Remover exercício"
+                                    >
+                                      <Trash size={16} />
+                                    </button>
+                                  </div>
+                                </div>
+                              )
+                            )}
+                          </div>
+
+                          <div className="mt-6 flex justify-center">
+                            <button
+                              onClick={() => adicionarExercicio(treino.id)}
+                              className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-2 px-6 rounded-lg flex items-center gap-2 hover:from-blue-700 hover:to-indigo-800 transition-colors shadow-md transform hover:scale-105 transition-transform"
+                            >
+                              <PlusCircle size={18} />
+                              Adicionar Exercício
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                <div className="sticky bottom-6 mt-6 flex justify-center">
+                  <button
+                    onClick={salvarTreino}
+                    disabled={isSaving}
+                    className={`py-3 px-8 rounded-xl shadow-xl flex items-center gap-2 font-bold text-white transition-all duration-300 transform hover:scale-105 ${
+                      saveSuccess
+                        ? "bg-gradient-to-r from-green-600 to-emerald-700"
+                        : "bg-gradient-to-r from-blue-600 to-indigo-800 hover:from-blue-700 hover:to-indigo-900"
+                    }`}
+                  >
+                    {isSaving ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Salvando...</span>
+                      </>
+                    ) : saveSuccess ? (
+                      <>
+                        <Check size={20} />
+                        <span>Treino Salvo!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save size={20} />
+                        <span>Salvar Treino Completo</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {activeView === "summary" && hasExercicios && (
+              <div className="w-full">
+                <TreinoTipoSumario
+                  treinos={treinos}
+                  exerciciosPorTreino={exerciciosPorTreino}
+                />
+              </div>
+            )}
+          </div>
         ) : (
-          <div className="bg-neutral-800 p-8 rounded-lg text-center shadow-lg">
+          <div className="bg-slate-800/90 backdrop-blur-sm p-8 rounded-2xl text-center shadow-lg border border-slate-700 w-full md:w-[80%] mx-auto">
             <div className="flex flex-col items-center gap-4">
-              <Info size={40} className="text-blue-300" />
+              <div className="bg-indigo-900/50 p-4 rounded-full">
+                <Info size={40} className="text-blue-300" />
+              </div>
               <p className="text-blue-100 text-lg">
                 Nenhum treino foi adicionado ou todos os exercícios foram
                 removidos. Por favor, vá para a página "Treinos Semanais" e
@@ -490,7 +555,7 @@ function ListadeExercicios() {
               </p>
               <button
                 onClick={voltarParaTreinosSemanais}
-                className="mt-4 bg-sky-800 hover:bg-sky-700 text-white py-2 px-4 rounded-md flex items-center gap-2 transition-colors"
+                className="mt-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white py-3 px-6 rounded-xl flex items-center gap-2 transition-colors transform hover:scale-105 shadow-lg"
               >
                 <ArrowLeft size={16} />
                 Ir para Treinos Semanais
@@ -499,18 +564,6 @@ function ListadeExercicios() {
           </div>
         )}
       </div>
-      {treinos.length > 0 &&
-        treinos.some(
-          (treino) =>
-            treino.descripition !== "Day Off" &&
-            exerciciosPorTreino[treino.id] &&
-            exerciciosPorTreino[treino.id].length > 0
-        ) && (
-          <TreinoTipoSumario
-            treinos={treinos}
-            exerciciosPorTreino={exerciciosPorTreino}
-          />
-        )}
     </div>
   );
 }
