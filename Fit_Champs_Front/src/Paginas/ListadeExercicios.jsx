@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import TreinoTipoSumario from "../Components/ComponentsListaExercicios/resumoSemanal";
 // Importando o banco de dados de exercícios do arquivo separado
 import exerciciosPorTipo, { encontrarExercicio } from "../Classes/exercicio";
-import CustomDropdown from "../Components/selectmo";
+import CustomDropdown from "../Components/ComponentsListaExercicios/selectmo";
 
 function ListadeExercicios() {
   const { isMenuOpen } = useGlobalContext();

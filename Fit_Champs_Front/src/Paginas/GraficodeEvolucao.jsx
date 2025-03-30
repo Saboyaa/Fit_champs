@@ -1,3 +1,4 @@
+// src/components/GraficosEvolucao/index.jsx
 import React, { useState } from "react";
 import { useGlobalContext } from "../Context/ContextoGlobal";
 
