@@ -1,6 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import icone from "../images/icone.png";
 import { Link } from "react-router-dom";
+import {
+  User,
+  Lock,
+  Mail,
+  Phone,
+  MapPin,
+  UserCheck,
+  Info,
+  ArrowLeft,
+} from "lucide-react";
 
 const Cadastro = () => {
   // Estados para os campos do formulário
@@ -15,10 +25,6 @@ const Cadastro = () => {
     cidade: "",
     sexo: "masculino", // Default value
     altura: "",
-    imc: {
-      value: null,
-      classification: "",
-    },
   });
 
   // Estado para notificações
@@ -40,13 +46,6 @@ const Cadastro = () => {
 
   // Estado para rastrear o campo em foco
   const [focusedField, setFocusedField] = useState(null);
-
-  // Estado para o display do IMC (separado do formData)
-  const [imcDisplay, setImcDisplay] = useState({
-    value: null,
-    classification: "",
-    color: "",
-  });
 
   // Função para atualizar os dados do formulário
   const handleChange = (e) => {
@@ -95,24 +94,13 @@ const Cadastro = () => {
   // Função para determinar a classe de estilo do campo
   const getFieldStyle = (fieldId) => {
     const baseStyle =
-      "w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-sky-600 transition-all duration-300";
+      "w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-300 bg-slate-700 text-white border";
 
     if (fieldId === focusedField) {
-      return `${baseStyle} border-sky-700 bg-orange-50 shadow-md transform scale-[1.02]`;
+      return `${baseStyle} border-blue-500 ring-blue-500/50 shadow-lg transform scale-[1.02]`;
     }
 
-    return `${baseStyle} border-gray-300`;
-  };
-
-  // Função para determinar a classe de estilo do container do campo
-  const getFieldContainerStyle = (fieldId) => {
-    const baseStyle = "mb-4 transition-all duration-300";
-
-    if (fieldId === focusedField) {
-      return `${baseStyle} bg-neutral-100 p-3 rounded-lg`;
-    }
-
-    return baseStyle;
+    return `${baseStyle} border-slate-600 hover:border-slate-500 focus:border-blue-500`;
   };
 
   // Função para calcular a força da senha
@@ -131,62 +119,6 @@ const Cadastro = () => {
 
     setPasswordStrength({ score, color });
   };
-
-  // Função para calcular o IMC
-  const calculateIMC = () => {
-    if (formData.altura && formData.weight) {
-      const heightInMeters = parseFloat(formData.altura) / 100;
-      const weightInKg = parseFloat(formData.weight);
-
-      if (heightInMeters > 0 && weightInKg > 0) {
-        const imcValue = weightInKg / (heightInMeters * heightInMeters);
-
-        let classification = "";
-        let color = "";
-
-        if (imcValue < 18.5) {
-          classification = "Abaixo do peso";
-          color = "text-blue-600";
-        } else if (imcValue < 25) {
-          classification = "Peso normal";
-          color = "text-green-600";
-        } else if (imcValue < 30) {
-          classification = "Sobrepeso";
-          color = "text-yellow-600";
-        } else if (imcValue < 35) {
-          classification = "Obesidade Grau I";
-          color = "text-orange-600";
-        } else if (imcValue < 40) {
-          classification = "Obesidade Grau II";
-          color = "text-red-600";
-        } else {
-          classification = "Obesidade Grau III";
-          color = "text-red-800";
-        }
-
-        // Atualizar o display do IMC
-        setImcDisplay({
-          value: imcValue.toFixed(2),
-          classification,
-          color,
-        });
-
-        // Armazenar o IMC nos dados do formulário
-        setFormData((prevData) => ({
-          ...prevData,
-          imc: {
-            value: imcValue.toFixed(2),
-            classification,
-          },
-        }));
-      }
-    }
-  };
-
-  // Calcular IMC quando altura ou peso forem atualizados
-  useEffect(() => {
-    calculateIMC();
-  }, [formData.altura, formData.weight]);
 
   // Função para mostrar notificação
   const showNotification = (message, type) => {
@@ -240,14 +172,9 @@ const Cadastro = () => {
       altura: "",
       cidade: "",
       sexo: "masculino",
-      imc: {
-        value: null,
-        classification: "",
-      },
     });
 
     setPasswordStrength({ score: 0, color: "" });
-    setImcDisplay({ value: null, classification: "", color: "" });
   };
 
   // Toggle para mostrar/esconder senha
@@ -260,11 +187,14 @@ const Cadastro = () => {
   };
 
   return (
-    <div className="h-full w-[100vw] bg-sky-950 p-6 rounded-md ">
-      <div className="bg-darkblue rounded-lg shadow-xl p-8 w-[70%] mb-4 text-center mx-auto border-b-4 border-sky-600">
+    <div className="min-h-screen w-screen bg-gradient-to-b from-slate-900 via-sky-900 to-slate-900 p-6 overflow-y-auto">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 rounded-2xl shadow-xl p-6 w-full max-w-4xl mx-auto mb-6 border border-indigo-500/30 backdrop-blur-sm">
         <div className="text-center">
-          <div className="flex justify-center items-center gap-3">
-            <h1 className="text-3xl font-bold text-white mb-0">Fit Champs</h1>
+          <div className="flex justify-center items-center gap-3 mb-2">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-100 to-blue-400 bg-clip-text text-transparent">
+              Fit Champs
+            </h1>
             <img src={icone} alt="icone" className="h-10 w-10" />
           </div>
           <span className="text-blue-200 mt-2 block">
@@ -272,31 +202,35 @@ const Cadastro = () => {
           </span>
         </div>
       </div>
-      <div className="bg-white rounded-lg shadow-lg p-8 w-[70%] mx-auto border-t-4 border-sky-600">
-        <h1 className="text-2xl font-bold text-center text-neutral-800 mb-6">
+
+      {/* Formulário de cadastro */}
+      <div className="bg-gradient-to-br from-slate-800/90 to-indigo-900/20 backdrop-blur-sm rounded-xl shadow-xl p-8 w-full max-w-4xl mx-auto border border-indigo-500/20">
+        <h1 className="text-2xl font-bold text-center bg-gradient-to-r from-blue-100 to-blue-300 bg-clip-text text-transparent mb-6 flex items-center justify-center">
+          <UserCheck className="mr-2 text-blue-400" size={28} />
           Cadastro de Usuário
         </h1>
 
         {notification.visible && (
           <div
-            className={`p-3 mb-4 text-center rounded-md ${
+            className={`p-4 mb-6 text-center rounded-xl shadow-lg ${
               notification.type === "error"
-                ? "bg-red-500 text-white"
-                : "bg-green-500 text-white"
-            }`}
+                ? "bg-gradient-to-r from-red-600 to-red-700 text-white"
+                : "bg-gradient-to-r from-green-600 to-green-700 text-white"
+            } transform animate-pulse`}
           >
             {notification.message}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className={getFieldContainerStyle("name")}>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
               <label
                 htmlFor="name"
-                className="block font-medium mb-2 text-gray-700"
+                className="block font-medium text-blue-200 flex items-center"
               >
-                Nome Completo:
+                <User className="mr-2 text-blue-300" size={16} />
+                Nome Completo
               </label>
               <input
                 type="text"
@@ -306,16 +240,18 @@ const Cadastro = () => {
                 onFocus={() => handleFocus("name")}
                 onBlur={handleBlur}
                 className={getFieldStyle("name")}
+                placeholder="Seu nome completo"
                 required
               />
             </div>
 
-            <div className={getFieldContainerStyle("email")}>
+            <div className="space-y-2">
               <label
                 htmlFor="email"
-                className="block font-medium mb-2 text-gray-700"
+                className="block font-medium text-blue-200 flex items-center"
               >
-                E-mail:
+                <Mail className="mr-2 text-blue-300" size={16} />
+                E-mail
               </label>
               <input
                 type="email"
@@ -325,16 +261,18 @@ const Cadastro = () => {
                 onFocus={() => handleFocus("email")}
                 onBlur={handleBlur}
                 className={getFieldStyle("email")}
+                placeholder="seu.email@exemplo.com"
                 required
               />
             </div>
 
-            <div className={getFieldContainerStyle("cidade")}>
+            <div className="space-y-2">
               <label
                 htmlFor="cidade"
-                className="block font-medium mb-2 text-gray-700"
+                className="block font-medium text-blue-200 flex items-center"
               >
-                Cidade:
+                <MapPin className="mr-2 text-blue-300" size={16} />
+                Cidade
               </label>
               <input
                 type="text"
@@ -344,16 +282,18 @@ const Cadastro = () => {
                 onFocus={() => handleFocus("cidade")}
                 onBlur={handleBlur}
                 className={getFieldStyle("cidade")}
+                placeholder="Sua cidade"
                 required
               />
             </div>
 
-            <div className={getFieldContainerStyle("sexo")}>
+            <div className="space-y-2">
               <label
                 htmlFor="sexo"
-                className="block font-medium mb-2 text-gray-700"
+                className="block font-medium text-blue-200 flex items-center"
               >
-                Sexo:
+                <User className="mr-2 text-blue-300" size={16} />
+                Sexo
               </label>
               <select
                 id="sexo"
@@ -369,12 +309,13 @@ const Cadastro = () => {
               </select>
             </div>
 
-            <div className={getFieldContainerStyle("age")}>
+            <div className="space-y-2">
               <label
                 htmlFor="age"
-                className="block font-medium mb-2 text-gray-700"
+                className="block font-medium text-blue-200 flex items-center"
               >
-                Idade:
+                <Info className="mr-2 text-blue-300" size={16} />
+                Idade
               </label>
               <input
                 type="number"
@@ -386,16 +327,18 @@ const Cadastro = () => {
                 onFocus={() => handleFocus("age")}
                 onBlur={handleBlur}
                 className={getFieldStyle("age")}
+                placeholder="Sua idade"
                 required
               />
             </div>
 
-            <div className={getFieldContainerStyle("phone")}>
+            <div className="space-y-2">
               <label
                 htmlFor="phone"
-                className="block font-medium mb-2 text-gray-700"
+                className="block font-medium text-blue-200 flex items-center"
               >
-                Telefone:
+                <Phone className="mr-2 text-blue-300" size={16} />
+                Telefone
               </label>
               <input
                 type="tel"
@@ -410,12 +353,13 @@ const Cadastro = () => {
               />
             </div>
 
-            <div className={getFieldContainerStyle("altura")}>
+            <div className="space-y-2">
               <label
                 htmlFor="altura"
-                className="block font-medium mb-2 text-gray-700"
+                className="block font-medium text-blue-200 flex items-center"
               >
-                Altura (cm):
+                <Info className="mr-2 text-blue-300" size={16} />
+                Altura (cm)
               </label>
               <input
                 type="number"
@@ -428,16 +372,18 @@ const Cadastro = () => {
                 onFocus={() => handleFocus("altura")}
                 onBlur={handleBlur}
                 className={getFieldStyle("altura")}
+                placeholder="Sua altura em cm"
                 required
               />
             </div>
 
-            <div className={getFieldContainerStyle("weight")}>
+            <div className="space-y-2">
               <label
                 htmlFor="weight"
-                className="block font-medium mb-2 text-gray-700"
+                className="block font-medium text-blue-200 flex items-center"
               >
-                Peso (kg):
+                <Info className="mr-2 text-blue-300" size={16} />
+                Peso (kg)
               </label>
               <input
                 type="number"
@@ -450,43 +396,20 @@ const Cadastro = () => {
                 onFocus={() => handleFocus("weight")}
                 onBlur={handleBlur}
                 className={getFieldStyle("weight")}
+                placeholder="Seu peso em kg"
                 required
               />
             </div>
           </div>
 
-          {/* IMC Display Section */}
-          {imcDisplay.value && (
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
-              <h3 className="font-semibold text-lg text-gray-800 mb-2">
-                Seu IMC:
-              </h3>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-lg font-bold">{imcDisplay.value}</p>
-                  <p className={`${imcDisplay.color} font-medium`}>
-                    {imcDisplay.classification}
-                  </p>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <p>IMC = peso(kg) / altura²(m)</p>
-                </div>
-              </div>
-              <div className="mt-3 text-xs text-gray-700 bg-gray-100 p-2 rounded">
-                <p className="font-medium">
-                  Este valor será salvo no seu cadastro
-                </p>
-              </div>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className={getFieldContainerStyle("password")}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <div className="space-y-2">
               <label
                 htmlFor="password"
-                className="block font-medium mb-2 text-gray-700"
+                className="block font-medium text-blue-200 flex items-center"
               >
-                Senha:
+                <Lock className="mr-2 text-blue-300" size={16} />
+                Senha
               </label>
               <div className="relative">
                 <input
@@ -497,26 +420,27 @@ const Cadastro = () => {
                   onFocus={() => handleFocus("password")}
                   onBlur={handleBlur}
                   className={getFieldStyle("password")}
+                  placeholder="Crie uma senha forte"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => togglePasswordVisibility("password")}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-blue-400 transition-colors"
                 >
                   {showPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
               </div>
               {/* Indicador de força da senha */}
-              <div className="h-1 mt-2 rounded-full bg-gray-200">
+              <div className="h-1 mt-2 rounded-full bg-slate-600">
                 <div
                   className={`h-1 rounded-full transition-all duration-300 ${passwordStrength.color}`}
                   style={{ width: `${passwordStrength.score}%` }}
                 ></div>
               </div>
               {/* Tooltip com dicas de senha */}
-              <div className="mt-1 text-xs text-gray-500 flex items-center">
-                <span className="mr-1">?</span>
+              <div className="mt-1 text-xs text-slate-400 flex items-center bg-slate-800/50 p-2 rounded-lg">
+                <Info className="text-blue-300 mr-1" size={14} />
                 <span>
                   A senha deve ter pelo menos 8 caracteres, incluindo
                   maiúsculas, números e símbolos
@@ -524,12 +448,13 @@ const Cadastro = () => {
               </div>
             </div>
 
-            <div className={getFieldContainerStyle("confirmPassword")}>
+            <div className="space-y-2">
               <label
                 htmlFor="confirmPassword"
-                className="block font-medium mb-2 text-gray-700"
+                className="block font-medium text-blue-200 flex items-center"
               >
-                Confirmar Senha:
+                <Lock className="mr-2 text-blue-300" size={16} />
+                Confirmar Senha
               </label>
               <div className="relative">
                 <input
@@ -540,12 +465,13 @@ const Cadastro = () => {
                   onFocus={() => handleFocus("confirmPassword")}
                   onBlur={handleBlur}
                   className={getFieldStyle("confirmPassword")}
+                  placeholder="Confirme sua senha"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => togglePasswordVisibility("confirmPassword")}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-blue-400 transition-colors"
                 >
                   {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
                 </button>
@@ -553,16 +479,17 @@ const Cadastro = () => {
             </div>
           </div>
 
-          <div className="flex justify-between items-center mt-6">
+          <div className="flex justify-between items-center mt-8">
             <Link
               to="/"
-              className="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition-colors flex items-center"
+              className="bg-gradient-to-r from-slate-700 to-slate-800 text-white py-3 px-6 rounded-xl flex items-center gap-2 hover:from-slate-600 hover:to-slate-700 transition-colors shadow-md transform hover:scale-105"
             >
-              <span className="mr-1">←</span> Login
+              <ArrowLeft size={18} />
+              <span>Voltar para Login</span>
             </Link>
             <button
               type="submit"
-              className="bg-sky-600 text-white py-2 px-6 rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors shadow-md"
+              className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-3 px-8 rounded-xl hover:from-blue-700 hover:to-indigo-800 transition-colors shadow-lg transform hover:scale-105 font-medium"
             >
               Cadastrar
             </button>

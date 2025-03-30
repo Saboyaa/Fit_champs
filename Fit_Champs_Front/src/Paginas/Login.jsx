@@ -148,9 +148,11 @@ export default function Login() {
                   Lembrar-me
                 </label>
               </div>
-              <a href="#" className="text-sm text-blue-400 hover:text-blue-200">
-                Esqueci a senha
-              </a>
+              <div>
+                <button className="text-sm text-blue-400 hover:text-blue-200">
+                  <NavLink to="/ForgotPassword">Esqueci a senha</NavLink>
+                </button>
+              </div>
             </div>
 
             {/* Login Button */}

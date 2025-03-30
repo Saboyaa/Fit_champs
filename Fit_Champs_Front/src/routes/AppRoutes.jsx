@@ -6,6 +6,7 @@ import GraficodeEvolucao from "../Paginas/GraficodeEvolucao";
 import Cadastro from "../Paginas/Cadastro";
 import Login from "../Paginas/Login";
 import RankingSemanal from "../Paginas/RankingSemanal";
+import ForgotPassword from "../Paginas/EsqueciSenha";
 
 const AppRoutes = () => {
   return (
@@ -17,6 +18,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Login />} />
       <Route path="/Rank" element={<RankingSemanal />} />
       <Route path="/Cadastro" element={<Cadastro />} />
+      <Route path="/ForgotPassword" element={<ForgotPassword />} />
     </Routes>
   );
 };

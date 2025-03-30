@@ -11,10 +11,11 @@ function Layout() {
 
   const isHomePage = location.pathname === "/";
   const isCadastroPage = location.pathname === "/Cadastro";
+  const isForgotPasswordPage = location.pathname === "/ForgotPassword";
   return (
     <div className=" flex justify-center ">
       <AppRoutes />
-      {!isHomePage && !isCadastroPage && (
+      {!isHomePage && !isCadastroPage && !isForgotPasswordPage && (
         <>
           <BarraMenu />
           <TopMenu />
