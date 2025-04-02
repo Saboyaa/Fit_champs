@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowUp, ArrowDown, Minus } from "lucide-react";
+import { getPositionChangeIcon, formatPositionChange } from "./utils/iconUtils";
 
 const RankingPositionCard = ({
   category,
@@ -8,47 +9,27 @@ const RankingPositionCard = ({
   onClick,
   renderCategoryIcon,
 }) => {
-  // Função para obter ícone de mudança de posição
-  const getPositionChangeIcon = (current, previous) => {
-    const diff = previous - current;
-    if (diff > 0) {
-      return <ArrowUp className="text-green-500" size={16} />;
-    } else if (diff < 0) {
-      return <ArrowDown className="text-red-500" size={16} />;
-    } else {
-      return <Minus className="text-gray-500" size={16} />;
-    }
-  };
-
-  // Função para formatar a mudança de posição
-  const formatPositionChange = (current, previous) => {
-    const diff = previous - current;
-    if (diff > 0) {
-      return `+${diff}`;
-    } else if (diff < 0) {
-      return `${diff}`;
-    } else {
-      return "=";
-    }
-  };
-
   return (
     <div
-      className={`bg-sky-800/60 p-3 rounded-lg shadow-md ${
-        isActive ? "ring-2 ring-blue-400" : ""
-      } hover:bg-sky-700/60 transition-colors cursor-pointer`}
+      className={`bg-gradient-to-br from-slate-800/80 to-indigo-900/30 p-3 rounded-xl shadow-md ${
+        isActive
+          ? "border border-blue-500/50 shadow-blue-500/20"
+          : "border border-slate-700/30"
+      } hover:shadow-lg transition-all cursor-pointer transform hover:scale-105 hover:border-blue-400/50`}
       onClick={onClick}
     >
       <div className="flex items-center justify-center mb-2">
-        {renderCategoryIcon(category)}
-        <h3 className="text-lg font-semibold ml-2 text-white">{category}</h3>
+        <div className="bg-indigo-900/50 p-2 rounded-lg mr-2">
+          {renderCategoryIcon(category)}
+        </div>
+        <h3 className="text-lg font-semibold text-white">{category}</h3>
       </div>
       <div className="flex items-center justify-center">
-        <span className="text-2xl font-bold text-white">{data.posicao}</span>
+        <span className="text-3xl font-bold text-white">{data.posicao}</span>
         <span className="text-blue-200 text-sm ml-1">/{data.total}</span>
       </div>
-      <div className="mt-1 flex justify-center">
-        <div className="flex items-center">
+      <div className="mt-2 flex justify-center">
+        <div className="flex items-center bg-slate-800/50 px-3 py-1 rounded-full">
           {getPositionChangeIcon(data.posicao, data.posicaoAnterior)}
           <span
             className={`text-xs ml-1 ${
@@ -63,8 +44,8 @@ const RankingPositionCard = ({
           </span>
         </div>
       </div>
-      <div className="mt-1 text-center">
-        <span className="text-sm font-medium text-blue-100">
+      <div className="mt-2 text-center">
+        <span className="text-sm font-medium bg-indigo-900/50 px-3 py-1 rounded-full text-blue-100 inline-block">
           {data.pontos} pts
         </span>
       </div>

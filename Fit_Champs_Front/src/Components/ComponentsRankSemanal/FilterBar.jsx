@@ -12,16 +12,16 @@ const FilterBar = ({
 }) => {
   return (
     <>
-      <div className="mb-4 bg-sky-800/50 p-4 rounded-lg mx-auto max-w-md border border-sky-700/50">
+      <div className="mb-4 bg-gradient-to-r from-slate-800 to-indigo-900/50 p-5 rounded-xl mx-auto max-w-md border border-indigo-700/30 shadow-lg">
         <div className="text-white font-semibold mb-3 flex items-center justify-center">
-          <User className="mr-2" size={18} />
+          <User className="mr-2 bg-blue-500/20 p-1 rounded-full" size={20} />
           <span>Seu Perfil</span>
         </div>
-        <div className="flex flex-wrap justify-center gap-2">
-          <div className="bg-blue-500/30 px-3 py-1 rounded-full text-white">
+        <div className="flex flex-wrap justify-center gap-3">
+          <div className="bg-gradient-to-r from-blue-600/40 to-blue-500/30 px-4 py-2 rounded-full text-white shadow-sm">
             <span className="font-medium">{userInfo.sexo}</span>
           </div>
-          <div className="bg-green-500/30 px-3 py-1 rounded-full text-white">
+          <div className="bg-gradient-to-r from-green-600/40 to-green-500/30 px-4 py-2 rounded-full text-white shadow-sm">
             <span className="font-medium">
               Faixa etária: {userInfo.faixaEtaria}
             </span>
@@ -30,22 +30,27 @@ const FilterBar = ({
       </div>
 
       <div className="flex flex-col md:flex-row justify-center mb-6 gap-4">
-        <div className="bg-sky-800 p-3 rounded-lg shadow-md">
-          <div className="flex items-center text-white font-medium mb-2">
-            <Filter size={16} className="mr-2 text-blue-300" />
+        <div className="bg-gradient-to-br from-slate-800 to-indigo-900/30 p-4 rounded-xl shadow-lg border border-indigo-500/20">
+          <div className="flex items-center text-white font-medium mb-3">
+            <Filter
+              size={18}
+              className="mr-2 text-blue-300 bg-blue-500/20 p-1 rounded-full"
+            />
             <span>Filtrar por Sexo</span>
           </div>
           <div className="flex flex-wrap justify-center gap-2">
             {sexos.map((sexo) => (
               <button
                 key={sexo.id}
-                className={`py-2 px-4 rounded-md transition-all ${
+                className={`py-2 px-4 rounded-lg transition-all duration-300 shadow-md ${
                   activeSexo === sexo.id
                     ? sexo.id === "Masculino"
-                      ? "bg-blue-600 text-white"
-                      : "bg-pink-500 text-white"
-                    : "bg-sky-900 text-white hover:bg-sky-700"
-                } ${userInfo.sexo === sexo.id ? "ring-2 ring-blue-300" : ""}`}
+                      ? "bg-gradient-to-r from-blue-700 to-blue-600 text-white"
+                      : "bg-gradient-to-r from-pink-600 to-pink-500 text-white"
+                    : "bg-slate-700 text-white hover:bg-slate-600"
+                } ${
+                  userInfo.sexo === sexo.id ? "ring-2 ring-blue-300" : ""
+                } transform hover:scale-105`}
                 onClick={() => setActiveSexo(sexo.id)}
               >
                 {sexo.label}
@@ -54,24 +59,27 @@ const FilterBar = ({
           </div>
         </div>
 
-        <div className="bg-sky-800 p-3 rounded-lg shadow-md">
-          <div className="flex items-center text-white font-medium mb-2">
-            <Filter size={16} className="mr-2 text-blue-300" />
+        <div className="bg-gradient-to-br from-slate-800 to-indigo-900/30 p-4 rounded-xl shadow-lg border border-indigo-500/20">
+          <div className="flex items-center text-white font-medium mb-3">
+            <Filter
+              size={18}
+              className="mr-2 text-blue-300 bg-green-500/20 p-1 rounded-full"
+            />
             <span>Filtrar por Idade</span>
           </div>
           <div className="flex flex-wrap justify-center gap-2">
             {faixasEtarias.map((faixa) => (
               <button
                 key={faixa.id}
-                className={`py-2 px-3 rounded-md transition-all ${
+                className={`py-2 px-3 rounded-lg transition-all duration-300 shadow-md ${
                   activeFaixaEtaria === faixa.id
-                    ? "bg-green-600 text-white"
-                    : "bg-sky-900 text-white hover:bg-sky-700"
+                    ? "bg-gradient-to-r from-green-700 to-green-600 text-white"
+                    : "bg-slate-700 text-white hover:bg-slate-600"
                 } ${
                   userInfo.faixaEtaria === faixa.id
                     ? "ring-2 ring-green-300"
                     : ""
-                }`}
+                } transform hover:scale-105`}
                 onClick={() => setActiveFaixaEtaria(faixa.id)}
               >
                 {faixa.label}

@@ -1,79 +1,70 @@
 import React from "react";
 import { User, ArrowUp, ArrowDown, Minus } from "lucide-react";
 import { Medal } from "lucide-react";
+import { getPositionChangeIcon, formatPositionChange } from "./utils/iconUtils";
 
 const RankingTableRow = ({ user, index, isCurrentUser }) => {
   // Função para renderizar medalha baseada na posição
   const renderMedal = (position) => {
     if (position === 1) {
-      return <Medal size={24} className="text-yellow-500" />;
+      return (
+        <div className="bg-yellow-400/20 p-2 rounded-full">
+          <Medal size={24} className="text-yellow-500" />
+        </div>
+      );
     } else if (position === 2) {
-      return <Medal size={24} className="text-gray-400" />;
+      return (
+        <div className="bg-gray-400/20 p-2 rounded-full">
+          <Medal size={24} className="text-gray-400" />
+        </div>
+      );
     } else if (position === 3) {
-      return <Medal size={24} className="text-amber-700" />;
+      return (
+        <div className="bg-amber-700/20 p-2 rounded-full">
+          <Medal size={24} className="text-amber-700" />
+        </div>
+      );
     }
     return (
-      <span className="text-lg font-bold ml-2 w-6 text-center">{position}</span>
+      <div className="bg-slate-700/30 p-2 rounded-full flex items-center justify-center w-10 h-10">
+        <span className="text-lg font-bold text-slate-300">{position}</span>
+      </div>
     );
-  };
-
-  // Função para obter ícone de mudança de posição
-  const getPositionChangeIcon = (current, previous) => {
-    const diff = previous - current;
-    if (diff > 0) {
-      return <ArrowUp className="text-green-500" size={16} />;
-    } else if (diff < 0) {
-      return <ArrowDown className="text-red-500" size={16} />;
-    } else {
-      return <Minus className="text-gray-500" size={16} />;
-    }
-  };
-
-  // Função para formatar a mudança de posição
-  const formatPositionChange = (current, previous) => {
-    const diff = previous - current;
-    if (diff > 0) {
-      return `+${diff}`;
-    } else if (diff < 0) {
-      return `${diff}`;
-    } else {
-      return "=";
-    }
   };
 
   return (
     <tr
       className={`transition-colors ${
         isCurrentUser
-          ? "bg-blue-900/50"
+          ? "bg-blue-900/20 hover:bg-blue-900/30"
           : index % 2 === 0
-          ? "bg-sky-900/30"
-          : "bg-sky-900/10"
-      } hover:bg-sky-800/30`}
+          ? "bg-slate-800/20 hover:bg-slate-800/40"
+          : "bg-slate-900/20 hover:bg-slate-800/40"
+      }`}
     >
-      <td className="px-6 py-4 whitespace-nowrap">
+      <td className="px-6 py-5 whitespace-nowrap">
         <div className="flex items-center">{renderMedal(index + 1)}</div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
+      <td className="px-6 py-5 whitespace-nowrap">
         <div className="flex items-center">
-          <div className="flex-shrink-0 h-10 w-10">
+          <div className="flex-shrink-0 h-12 w-12">
             {user.foto ? (
               <img
-                className="h-10 w-10 rounded-full object-cover"
+                className="h-12 w-12 rounded-full object-cover border-2 border-slate-700/50"
                 src={user.foto}
                 alt={user.nome}
               />
             ) : (
-              <div className="h-10 w-10 rounded-full bg-blue-800/50 flex items-center justify-center">
-                <User className="h-6 w-6 text-blue-300" />
+              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-indigo-700 to-blue-600 flex items-center justify-center">
+                <User className="h-6 w-6 text-blue-100" />
               </div>
             )}
           </div>
           <div className="ml-4">
-            <div className="text-sm font-medium text-white flex items-center">
+            <div className="text-base font-medium text-white flex items-center">
               {user.nome}
               {isCurrentUser && (
-                <span className="ml-2 inline-block bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">
+                <span className="ml-2 inline-block bg-gradient-to-r from-blue-600 to-blue-500 text-white text-xs px-3 py-1 rounded-full">
                   Você
                 </span>
               )}
@@ -82,16 +73,16 @@ const RankingTableRow = ({ user, index, isCurrentUser }) => {
           </div>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-white bg-sky-800/50 rounded-full px-3 py-1 inline-block text-center">
+      <td className="px-6 py-5 whitespace-nowrap">
+        <div className="text-sm text-white bg-gradient-to-r from-indigo-900/70 to-slate-800/70 rounded-full px-4 py-2 inline-block text-center font-medium border border-indigo-700/30">
           {user.pontos} pts
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="flex items-center">
+      <td className="px-6 py-5 whitespace-nowrap">
+        <div className="flex items-center bg-slate-800/50 px-3 py-1 rounded-lg inline-flex">
           {getPositionChangeIcon(index + 1, user.posicaoAnterior)}
           <span
-            className={`ml-1 ${
+            className={`ml-1 font-medium ${
               user.posicaoAnterior > index + 1
                 ? "text-green-400"
                 : user.posicaoAnterior < index + 1

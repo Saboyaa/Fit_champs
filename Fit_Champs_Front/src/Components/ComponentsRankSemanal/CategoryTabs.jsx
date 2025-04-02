@@ -11,15 +11,21 @@ const CategoryTabs = ({
       {categories.map((category) => (
         <button
           key={category}
-          className={`py-2.5 px-4 rounded-lg flex items-center transition-all ${
+          className={`py-2.5 px-5 rounded-xl flex items-center transition-all duration-300 ${
             activeTab === category
-              ? "bg-sky-700 text-white shadow-md"
-              : "bg-sky-800/50 text-white hover:bg-sky-700/50"
+              ? "bg-gradient-to-r from-indigo-700 to-blue-600 text-white shadow-lg transform scale-105"
+              : "bg-slate-800/50 text-white hover:bg-slate-700/50 hover:scale-105"
+          } border ${
+            activeTab === category
+              ? "border-blue-500/50"
+              : "border-slate-700/30"
           }`}
           onClick={() => setActiveTab(category)}
         >
-          {renderCategoryIcon(category)}
-          <span className="ml-2">{category}</span>
+          <div className="bg-indigo-900/50 p-1 rounded-lg mr-2">
+            {renderCategoryIcon(category)}
+          </div>
+          <span className="font-medium">{category}</span>
         </button>
       ))}
     </div>
