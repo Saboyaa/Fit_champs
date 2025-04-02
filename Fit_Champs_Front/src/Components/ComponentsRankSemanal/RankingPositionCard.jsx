@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowUp, ArrowDown, Minus } from "lucide-react";
-import { getPositionChangeIcon, formatPositionChange } from "./utils/iconUtils";
+import { getPositionChangeIcon, formatPositionChange } from "./iconsUtils";
 
 const RankingPositionCard = ({
   category,

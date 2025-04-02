@@ -125,17 +125,18 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
       </div>
 
       {Object.keys(treinoTipoSummary).length > 0 ? (
-        <div className="mt-6 space-y-8 max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="mt-6 space-y-8 max-w-1xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {detalhamentoTipos.map((item) => {
               const intensityLevel = getIntensityLevel(item.averageVolume);
 
               return (
                 <div
                   key={item.tipo}
-                  className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group border border-indigo-500/20 hover:border-indigo-500/40"
+                  className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 group border border-indigo-500/20 hover:border-indigo-500/40 
+                 "
                 >
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex justify-between items-center mb-4 ">
                     <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-indigo-300">
                       {item.tipo}
                     </h3>
@@ -194,7 +195,7 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
                       <div className="mt-4 bg-indigo-900/20 p-4 rounded-xl border border-indigo-800/30">
                         <h4 className="text-blue-200 mb-4 font-semibold flex items-center">
                           <Target className="mr-2 text-blue-300" size={18} />
-                          Subgrupos Musculares
+                          Subgrupos Musculares Fadigados :
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                           {Object.entries(item.muscleGroups).map(

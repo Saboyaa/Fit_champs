@@ -1,7 +1,7 @@
 import React from "react";
 import { User, ArrowUp, ArrowDown, Minus } from "lucide-react";
 import { Medal } from "lucide-react";
-import { getPositionChangeIcon, formatPositionChange } from "./utils/iconUtils";
+import { getPositionChangeIcon, formatPositionChange } from "./iconsUtils";
 
 const RankingTableRow = ({ user, index, isCurrentUser }) => {
   // Função para renderizar medalha baseada na posição
