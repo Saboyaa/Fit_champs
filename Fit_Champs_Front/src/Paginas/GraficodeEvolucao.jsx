@@ -5,7 +5,7 @@ import { useGlobalContext } from "../Context/ContextoGlobal";
 // Componentes
 import Header from "../Components/ComponentsGraficoEvolucao/Header";
 import ChartControls from "../Components/ComponentsGraficoEvolucao/ChartControls";
-import GroupChartView from "../Components/ComponentsGraficoEvolucao/GroupChartView";
+import GroupChartView from "../Components/ComponentsGraficoEvolucao/GroupChartview";
 import ComparisonChart from "../Components/ComponentsGraficoEvolucao/ComparisonChart";
 import SummaryChart from "../Components/ComponentsGraficoEvolucao/SummaryChart";
 

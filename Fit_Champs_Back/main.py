@@ -9,6 +9,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 # from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from .auth.controller import auth_router
+from .user.controller import user_router
 
 
 app = FastAPI()
@@ -29,6 +30,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
+app.include_router(user_router)
 
 # Dependency
 # def get_db():

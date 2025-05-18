@@ -1,7 +1,7 @@
 // src/components/GraficosEvolucao/ProgressIndicator.jsx
 import React from "react";
 import { Award } from "lucide-react";
-import { calculateProgress } from "./utils";
+import { calculateProgress } from "./Utils";
 
 const ProgressIndicator = ({ type, data, meta }) => {
   const progress = calculateProgress(data, meta);

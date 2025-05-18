@@ -1,5 +1,3 @@
-from typing import Literal
-
 from sqlalchemy import Column, Integer, String
 from pydantic import BaseModel, Field, PositiveInt
 
@@ -33,14 +31,16 @@ class User(Base):
 
 User.metadata.create_all(bind=engine)
 
-class UserCreate(BaseModel):
+class UserDataUpdate(BaseModel):
+    token: str
     username: str
     email: str
-    password: str
-    confirm_password: str
     city: str
-    sex: Literal['Masculino', 'Feminino']
     age: PositiveInt
     phone: str = Field(pattern=r'\d{11}')
     height: PositiveInt
     weight: PositiveInt
+
+class UserGoalUpdate(BaseModel):
+    token: str
+    goal: int
