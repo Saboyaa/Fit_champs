@@ -3,7 +3,7 @@ import React from "react";
 import TrainingChart from "./TrainingChart";
 import TrendIndicator from "./TrendIndicator";
 import ProgressIndicator from "./ProgressIndicator";
-import { calculateTrend } from "./utils";
+import { calculateTrend } from "./Utils";
 
 const TrainingCard = ({
   type,

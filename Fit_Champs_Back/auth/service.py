@@ -13,7 +13,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = "your_secret_key"
+SECRET_KEY = "fit_champs_is_an_app"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -23,6 +23,8 @@ def get_user_by_username(db: Session, username: str):
 
 # Cria usuário
 def create_user(db: Session, user: UserCreate):
+    if user.password != user.confirm_password:
+        return False
     hashed_password = pwd_context.hash(user.password)
     db_user = User(username=user.username, hashed_password=hashed_password)
     db.add(db_user)
@@ -44,7 +46,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     if expires_delta:
         expire = datetime.now(ZoneInfo("America/Sao_Paulo")) + expires_delta
     else:
-        expire = datetime.now("America/Sao_Paulo") + timedelta(minutes=15)
+        expire = datetime.now(ZoneInfo("America/Sao_Paulo")) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -53,9 +55,9 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 def verify_token(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise HTTPException(status_code=403, detail="Token is invalid or expired")
+        id: str = payload.get("sub")
+        if id is None:
+            raise HTTPException(status_code=403, detail="O token é inválido ou expirado!")
         return payload
     except JWTError:
-        raise HTTPException(status_code=403, detail="Token is invalid or expired")
+        raise HTTPException(status_code=403, detail="O token é inválido ou expirado!")
