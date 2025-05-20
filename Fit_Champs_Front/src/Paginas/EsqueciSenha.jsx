@@ -6,7 +6,6 @@ import {
   KeySquare,
   CheckCircle,
   ArrowLeft,
-  AlertCircle,
   Info,
   Send,
   RefreshCw,

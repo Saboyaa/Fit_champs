@@ -5,7 +5,6 @@ import {
   Save,
   PlusCircle,
   Trash,
-  Activity,
   Check,
   Info,
   ArrowLeft,
