@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from .models import UserCreate
-from .service import get_user_by_username, create_user, authenticate_user, create_access_token, verify_token
+from .models import UserCreate, Token
+from .service import get_user_by_username, create_user, authenticate_user, create_access_token
 from ..database.utils import get_db
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -30,7 +30,7 @@ def register_user(
 
 @auth_router.post("/login")
 def login_for_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(), 
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
     db: Session = Depends(get_db)
 ):
     user = authenticate_user(form_data.username, form_data.password, db)
@@ -42,11 +42,6 @@ def login_for_access_token(
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.id}, expires_delta=access_token_expires
+        data={"sub": str(user.id)}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
-
-@auth_router.get("/verify-token/{token}")
-def verify_user_token(token: str):
-    verify_token(token=token)
-    return {"message": "O token é válido!"}
+    return Token(access_token=access_token, token_type="bearer")

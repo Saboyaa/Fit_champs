@@ -1,20 +1,22 @@
-from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
+from datetime import datetime, timedelta, timezone
+from typing import Annotated
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
+from ..database.utils import get_db
 from ..database.models import User
-from .models import UserCreate
+from ..user.service import get_user_by_id
+from .models import UserCreate, TokenData
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = "fit_champs_is_an_app"
+SECRET_KEY = "499db2db186e24893434b7a938277d6e2dac36a8e807a77bc96356287778be2f"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -55,20 +57,29 @@ def authenticate_user(username: str, password: str, db: Session):
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.now(ZoneInfo("America/Sao_Paulo")) + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(ZoneInfo("America/Sao_Paulo")) + timedelta(minutes=15)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
-
-# Verifique o usuário
-def verify_token(token: str = Depends(oauth2_scheme)):
+    
+# Verifica o usuário logado atualmente
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Não foi possível validar as credenciais",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        id: str = payload.get("sub")
+        id = payload.get("sub")
         if id is None:
-            raise HTTPException(status_code=403, detail="O token é inválido ou expirado!")
-        return payload
+            raise credentials_exception
+        token_data = TokenData(id=id)
     except JWTError:
-        raise HTTPException(status_code=403, detail="O token é inválido ou expirado!")
+      raise credentials_exception
+    user = get_user_by_id(db=db, user_id=token_data.id)
+    if user is None:
+        raise credentials_exception
+    return user
