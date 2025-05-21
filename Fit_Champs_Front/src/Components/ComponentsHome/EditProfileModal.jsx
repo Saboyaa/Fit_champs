@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { Edit } from "lucide-react";
 
-const EditProfileModal = ({ userData, onSave, onCancel }) => {
+const EditProfileModal = ({
+  userData,
+  onSave,
+  onCancel,
+  //loading = false
+}) => {
   const [formData, setFormData] = useState({
     nome: userData.nome || "",
     email: userData.email || "",
@@ -79,6 +84,7 @@ const EditProfileModal = ({ userData, onSave, onCancel }) => {
                   type="text"
                   value={formData.nome}
                   onChange={handleChange}
+                  // disabled={loading}
                   required
                 />
               </div>
@@ -97,6 +103,7 @@ const EditProfileModal = ({ userData, onSave, onCancel }) => {
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
+                  // disabled={loading}
                   required
                 />
               </div>
@@ -117,6 +124,7 @@ const EditProfileModal = ({ userData, onSave, onCancel }) => {
                   type="tel"
                   value={formData.telefone}
                   onChange={handleChange}
+                  //  disabled={loading}
                 />
               </div>
               <div>
@@ -134,6 +142,7 @@ const EditProfileModal = ({ userData, onSave, onCancel }) => {
                   value={formData.cidade}
                   onChange={handleChange}
                   required
+                  //  disabled={loading}
                 />
               </div>
             </div>
@@ -153,6 +162,7 @@ const EditProfileModal = ({ userData, onSave, onCancel }) => {
                   type="number"
                   value={formData.idade}
                   onChange={handleChange}
+                  // disabled={loading}
                 />
               </div>
 
@@ -169,6 +179,7 @@ const EditProfileModal = ({ userData, onSave, onCancel }) => {
                   name="altura"
                   type="number"
                   value={formData.altura}
+                  // disabled={loading}
                   onChange={handleChange}
                 />
               </div>
@@ -187,6 +198,7 @@ const EditProfileModal = ({ userData, onSave, onCancel }) => {
                   type="number"
                   value={formData.peso}
                   onChange={handleChange}
+                  //disabled={loading}
                 />
               </div>
             </div>
@@ -196,14 +208,24 @@ const EditProfileModal = ({ userData, onSave, onCancel }) => {
             <button
               type="button"
               onClick={onCancel}
+              //disabled={loading}
               className="bg-slate-700 text-white font-medium py-2 px-5 rounded-lg hover:bg-slate-600 transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
+              // disabled={loading || Object.keys(errors).length > 0}
               className="bg-gradient-to-r from-indigo-700 to-blue-800 text-white font-medium py-2 px-5 rounded-lg hover:opacity-90 transition-colors"
             >
+              {/* {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Salvando...</span>
+                </>
+              ) : (
+                <span>Salvar</span>
+              )} */}{" "}
               Salvar
             </button>
           </div>

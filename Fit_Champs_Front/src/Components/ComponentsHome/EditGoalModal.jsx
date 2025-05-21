@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Target, Info, Plus, Minus, X } from "lucide-react";
 
-const EditGoalModal = ({ grupo, initialValue, onSave, onCancel }) => {
+const EditGoalModal = ({
+  grupo,
+  initialValue,
+  onSave,
+  onCancel,
+  //loading = false,
+}) => {
   const [goalValue, setGoalValue] = useState(initialValue || 0);
   const [originalValue] = useState(initialValue || 0);
   const [changePercent, setChangePercent] = useState(0);
@@ -68,10 +74,10 @@ const EditGoalModal = ({ grupo, initialValue, onSave, onCancel }) => {
             Meta de Volume
           </label>
 
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => incrementValue(-100)}
-              className="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-l-lg transition-colors"
+              className="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors"
               disabled={goalValue <= 0}
             >
               <Minus size={20} />
@@ -82,14 +88,14 @@ const EditGoalModal = ({ grupo, initialValue, onSave, onCancel }) => {
               id="volumeGoal"
               value={goalValue}
               onChange={handleInputChange}
-              className="w-full bg-slate-700 border-y border-slate-600 py-3 px-4 text-white text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full bg-slate-700 border-y border-slate-600 py-3 px-4 text-white text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-xl"
               min="0"
               step="100"
             />
 
             <button
               onClick={() => incrementValue(100)}
-              className="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-r-lg transition-colors"
+              className="bg-slate-700 hover:bg-slate-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors"
             >
               <Plus size={20} />
             </button>
@@ -112,6 +118,7 @@ const EditGoalModal = ({ grupo, initialValue, onSave, onCancel }) => {
         <div className="flex justify-between items-center">
           <button
             onClick={onCancel}
+            //disabled={loading}
             className="bg-slate-700 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-slate-600 transition-colors"
           >
             Cancelar
@@ -132,9 +139,10 @@ const EditGoalModal = ({ grupo, initialValue, onSave, onCancel }) => {
                   ? "bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800"
                   : "bg-slate-700"
               } text-white font-medium py-2.5 px-6 rounded-lg transition-all shadow-lg hover:shadow-blue-900/20`}
-              disabled={goalValue === originalValue}
+              //disabled={loading || goalValue === originalValue}
             >
               Salvar
+              {/* {loading ? "Salvando..." : "Salvar"} quando a funcionalidade estiver pronta */}
             </button>
           </div>
         </div>
