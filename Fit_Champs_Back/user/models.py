@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
 
 class UserDataUpdate(BaseModel):
-    token: str
     username: str = Field(title="Nome do usuário", max_length=50)
     email: str = Field(title="Email do usuário", max_length=50)
     city: str = Field(title="Cidade em que o usuário mora", max_length=50)
@@ -11,5 +10,4 @@ class UserDataUpdate(BaseModel):
     weight: int = Field(gt=0, title="Peso do usuário", description="É necessário ser maior que zero")
 
 class UserGoalUpdate(BaseModel):
-    token: str
     goal: int = Field(gt=0, title="Nova meta do usuário", description="É necessário ser maior que zero")

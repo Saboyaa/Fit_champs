@@ -1,7 +1,7 @@
 """create users table
 
 Revision ID: de387240f621
-Revises: ddb648a92c9c
+Revises: 
 Create Date: 2025-05-20 15:22:14.815992
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = 'de387240f621'
-down_revision: Union[str, None] = 'ddb648a92c9c'
+down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -41,7 +41,7 @@ def upgrade() -> None:
             rank_back INT CHECK(rank_back >= 0) DEFAULT 0, 
             rank_leg INT CHECK(rank_leg >= 0) DEFAULT 0,
             rank_shoulder INT CHECK(rank_shoulder >= 0) DEFAULT 0,
-            rank_arm INT CHECK(rank_arm >= 0) DEFAULT 0
+            rank_arm INT CHECK(rank_arm >= 0) DEFAULT 0,
             goal_chest INT CHECK(goal_chest >= 0) DEFAULT 0,
             goal_back INT CHECK(goal_back >= 0) DEFAULT 0,
             goal_leg INT CHECK(goal_leg >= 0) DEFAULT 0,

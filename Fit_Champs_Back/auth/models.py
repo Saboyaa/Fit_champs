@@ -1,10 +1,17 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    id: str | None = None
 
 class UserCreate(BaseModel):
     username: str = Field(title="Nome do usuário", max_length=50)
-    email: str = Field(title="Email do usuário", max_length=50)
+    email: EmailStr = Field(title="Email do usuário", max_length=50)
     password: str = Field(title="Senha do usuário")
     confirm_password: str = Field(title="Confirmação de senha do usuário")
     city: str = Field(title="Cidade em que o usuário mora", max_length=50)
