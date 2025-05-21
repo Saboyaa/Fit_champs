@@ -131,7 +131,7 @@ const Cadastro = () => {
     // Esconder notificação após 5 segundos
     setTimeout(() => {
       setNotification((prev) => ({ ...prev, visible: false }));
-    }, 5000);
+    }, 4000);
   };
 
   // Função para validar e enviar o formulário
