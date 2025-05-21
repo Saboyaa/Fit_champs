@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, status, Path, Body
 from sqlalchemy.orm import Session
 
 from .models import UserDataUpdate, UserGoalUpdate
@@ -19,7 +21,11 @@ user_router = APIRouter(
 )
 
 @user_router.patch("/{user_id}")
-def update_user(user_id: str, user: UserDataUpdate, db: Session = Depends(get_db)):
+def update_user(
+    user_id: Annotated[str, Path(title="A ID do usuário")], 
+    user: Annotated[UserDataUpdate, Body(embed=True)], 
+    db: Session = Depends(get_db)
+):
     payload = verify_token(token=user.token)
     if user_id != payload.get("sub"):
         user_id = payload.get("sub")
@@ -33,7 +39,11 @@ def update_user(user_id: str, user: UserDataUpdate, db: Session = Depends(get_db
     return "complete"
 
 @user_router.patch("/chest_goal/{user_id}")
-def update_chest_goal(user_id: str, user: UserGoalUpdate, db: Session = Depends(get_db)):
+def update_chest_goal(
+    user_id: Annotated[str, Path(title="A ID do usuário")], 
+    user: Annotated[UserGoalUpdate, Body(embed=True)],
+    db: Session = Depends(get_db)
+):
     payload = verify_token(token=user.token)
     if user_id != payload.get("sub"):
         user_id = payload.get("sub")
@@ -47,7 +57,11 @@ def update_chest_goal(user_id: str, user: UserGoalUpdate, db: Session = Depends(
     return "complete"
 
 @user_router.patch("/back_goal/{user_id}")
-def update_back_goal(user_id: str, user: UserGoalUpdate, db: Session = Depends(get_db)):
+def update_back_goal(
+    user_id: Annotated[str, Path(title="A ID do usuário")], 
+    user: Annotated[UserGoalUpdate, Body(embed=True)],
+    db: Session = Depends(get_db)
+):
     payload = verify_token(token=user.token)
     if user_id != payload.get("sub"):
         user_id = payload.get("sub")
@@ -61,7 +75,11 @@ def update_back_goal(user_id: str, user: UserGoalUpdate, db: Session = Depends(g
     return "complete"
 
 @user_router.patch("/leg_goal/{user_id}")
-def update_leg_goal(user_id: str, user: UserGoalUpdate, db: Session = Depends(get_db)):
+def update_leg_goal(
+    user_id: Annotated[str, Path(title="A ID do usuário")], 
+    user: Annotated[UserGoalUpdate, Body(embed=True)],
+    db: Session = Depends(get_db)
+):
     payload = verify_token(token=user.token)
     if user_id != payload.get("sub"):
         user_id = payload.get("sub")
@@ -75,7 +93,11 @@ def update_leg_goal(user_id: str, user: UserGoalUpdate, db: Session = Depends(ge
     return "complete"
 
 @user_router.patch("/shoulder_goal/{user_id}")
-def update_shoulder_goal(user_id: str, user: UserGoalUpdate, db: Session = Depends(get_db)):
+def update_shoulder_goal(
+    user_id: Annotated[str, Path(title="A ID do usuário")], 
+    user: Annotated[UserGoalUpdate, Body(embed=True)],
+    db: Session = Depends(get_db)
+):
     payload = verify_token(token=user.token)
     if user_id != payload.get("sub"):
         user_id = payload.get("sub")
@@ -89,7 +111,11 @@ def update_shoulder_goal(user_id: str, user: UserGoalUpdate, db: Session = Depen
     return "complete"
 
 @user_router.patch("/arm_goal/{user_id}")
-def update_arm_goal(user_id: str, user: UserGoalUpdate, db: Session = Depends(get_db)):
+def update_arm_goal(
+    user_id: Annotated[str, Path(title="A ID do usuário")], 
+    user: Annotated[UserGoalUpdate, Body(embed=True)],
+    db: Session = Depends(get_db)
+):
     payload = verify_token(token=user.token)
     if user_id != payload.get("sub"):
         user_id = payload.get("sub")

@@ -7,7 +7,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from .models import User, UserCreate
+from ..database.models import User
+from .models import UserCreate
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -26,7 +27,17 @@ def create_user(db: Session, user: UserCreate):
     if user.password != user.confirm_password:
         return False
     hashed_password = pwd_context.hash(user.password)
-    db_user = User(username=user.username, hashed_password=hashed_password)
+    db_user = User(
+        username=user.username,
+        email=user.email,
+        hashed_password=hashed_password,
+        city=user.city,
+        sex=user.sex,
+        age=user.age,
+        phone=user.phone,
+        height=user.height,
+        weight=user.weight
+    )
     db.add(db_user)
     db.commit()
     return "complete"

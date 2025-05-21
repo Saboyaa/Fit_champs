@@ -1,46 +1,15 @@
-from sqlalchemy import Column, Integer, String
-from pydantic import BaseModel, Field, PositiveInt
-
-from ..database.core import Base
-from ..database.core import engine
-
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key = True, index = True)
-    username = Column(String, unique=True, index = True)
-    email = Column(String, unique=True)
-    hashed_password = Column(String)
-    city = Column(String)
-    sex = Column(String(9))
-    age = Column(Integer)
-    phone = Column(String(11))
-    height = Column(Integer)
-    weight = Column(Integer)
-    rank_chest = Column(Integer, default=None, nullable=True)
-    rank_back = Column(Integer, default=None, nullable=True)
-    rank_leg = Column(Integer, default=None, nullable=True)
-    rank_shoulder = Column(Integer, default=None, nullable=True)
-    rank_arm = Column(Integer, default=None, nullable=True)
-    goal_chest = Column(Integer, default=None, nullable=True)
-    goal_back = Column(Integer, default=None, nullable=True)
-    goal_lef = Column(Integer, default=None, nullable=True)
-    goal_shoulder = Column(Integer, default=None, nullable=True)
-    goal_arm = Column(Integer, default=None, nullable=True)
-
-
-User.metadata.create_all(bind=engine)
+from pydantic import BaseModel, Field
 
 class UserDataUpdate(BaseModel):
     token: str
-    username: str
-    email: str
-    city: str
-    age: PositiveInt
-    phone: str = Field(pattern=r'\d{11}')
-    height: PositiveInt
-    weight: PositiveInt
+    username: str = Field(title="Nome do usuário", max_length=50)
+    email: str = Field(title="Email do usuário", max_length=50)
+    city: str = Field(title="Cidade em que o usuário mora", max_length=50)
+    age: int = Field(ge=10, title="Idade do usuário", description="É necessário ser maior ou igual a dez")
+    phone: str = Field(pattern=r'\d{11}', title="Telefone do usuário")
+    height: int = Field(gt=0, title="Altura do usuário", description="É necessário ser maior que zero")
+    weight: int = Field(gt=0, title="Peso do usuário", description="É necessário ser maior que zero")
 
 class UserGoalUpdate(BaseModel):
     token: str
-    goal: int
+    goal: int = Field(gt=0, title="Nova meta do usuário", description="É necessário ser maior que zero")
