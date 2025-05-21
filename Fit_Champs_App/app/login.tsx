@@ -21,14 +21,16 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    if (!username || !password) {
-      Alert.alert("Erro", "Preencha todos os campos.");
-      return;
-    }
+    // if (!username || !password) {
+    //   Alert.alert("Erro", "Preencha todos os campos.");
+    //   return;
+    // }
 
     // Lógica de autenticação aqui...
-    Alert.alert("Login efetuado!", `Bem-vindo, ${username}`);
     // router.push("/home"); // criar a rota /home depois
+
+    router.push("/treinosSemanais")
+
   };
 
   return (
