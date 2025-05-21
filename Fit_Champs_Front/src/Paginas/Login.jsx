@@ -1,14 +1,54 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import icone from "../images/icone.png";
+import authService from "../services/authService"; // Importando o authService
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, SetError] = useState("");
+  const [username, setUsername] = useState(""); // para o remenber me
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  //Qaundo formos fazer a sincronia com o backend, vamos usar o authService, ale´m isso precisamos chamar essa função no onSubmit do form
+
+  // const handleLogin = (e) => {
+  //   e.preventDefault();
+  //   if(!username||!password) {
+  //     SetError("Preencha todos os campos");
+  //   return;
+  //   }
+  //   try {
+  //     SetError("");
+
+  //     await authService.login(username, password);
+
+  //     if (rememberMe) {
+  //       localStorage.setItem("rememberMe", "true");
+  //       localStorage.setItem("savedUsername", username);
+  //     } else {
+  //       localStorage.removeItem("rememberMe");
+  //       localStorage.removeItem("savedUsername");
+
+  //     }
+  //     navigate("/Home");
+  //   } catch (error) {
+  //     SetError(error.message|| "Erro ao fazer login. Verifique suas credenciais.");
+  //   }};
+
+  //   // vamos fazer a função para verificar o remember me
+  //   useState (() => {
+  //     const savedUsername = localStorage.getItem("savedUsername");
+  //     const rememberMe = localStorage.getItem("rememberMe") === "true";
+
+  //     if (rememberMe && savedUsername) {
+  //       setUsername(savedUsername);
+  //       setRememberMe(true);
+  //     }
+  //   } , []);
 
   return (
     <div className=" w-[100vw]  bg-gradient-to-br from-slate-950 to-slate-700  flex flex-col items-center justify-center p-6 rounded-md shadow-2xl">
