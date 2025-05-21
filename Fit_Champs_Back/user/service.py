@@ -1,7 +1,8 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from .models import User, UserDataUpdate, UserGoalUpdate
+from ..database.models import User
+from .models import UserDataUpdate, UserGoalUpdate
 
 # Procura usuário pelo seu id
 def get_user_by_id(db: Session, user_id: str):
