@@ -1,4 +1,6 @@
-from sqlalchemy import String
+import datetime
+
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from ..database.core import engine
@@ -14,7 +16,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(50), unique=True)
     hashed_password: Mapped[str]
     city: Mapped[str] = mapped_column(String(50))
-    sex: Mapped[str] = mapped_column(String(9), nullable=True)
+    sex: Mapped[str] = mapped_column(String(9), nullable=False)
     age: Mapped[int] = mapped_column(nullable=False, default=10)
     phone: Mapped[str] = mapped_column(String(11))
     height: Mapped[int] = mapped_column(nullable=False, default=0)
@@ -30,5 +32,17 @@ class User(Base):
     goal_shoulder: Mapped[int] = mapped_column(nullable=False, default=0)
     goal_arm: Mapped[int] = mapped_column(nullable=False, default=0)
 
-
 User.metadata.create_all(bind=engine)
+
+class Exercise(Base):
+    __tablename__ = "exercises"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    repetitions: Mapped[str] = mapped_column(String(4), nullable=False, default="0x0")
+    load: Mapped[int] = mapped_column(nullable=False, default=0)
+    train_date: Mapped[datetime.date] = mapped_column(nullable=False)
+    muscular_group: Mapped[str] = mapped_column(nullable=False)
+    exercise: Mapped[str] = mapped_column(nullable=False)
+
+Exercise.metadata.create_all(bind=engine)

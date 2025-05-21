@@ -1,4 +1,3 @@
-from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..database.models import User
@@ -31,7 +30,7 @@ def update_goal_chest_by_id(db: Session, user_id: str, user_goal: UserGoalUpdate
         .query(User) \
         .filter(User.id == user_id) \
         .update({
-            User.goal_chest: UserGoalUpdate.goal
+            User.goal_chest: user_goal.goal
         })
     db.commit()
     return "complete"
@@ -41,7 +40,7 @@ def update_goal_back_by_id(db: Session, user_id: str, user_goal: UserGoalUpdate)
         .query(User) \
         .filter(User.id == user_id) \
         .update({
-            User.goal_back: UserGoalUpdate.goal
+            User.goal_back: user_goal.goal
         })
     db.commit()
     return "complete"
@@ -51,7 +50,7 @@ def update_goal_leg_by_id(db: Session, user_id: str, user_goal: UserGoalUpdate):
         .query(User) \
         .filter(User.id == user_id) \
         .update({
-            User.goal_leg: UserGoalUpdate.goal
+            User.goal_leg: user_goal.goal
         })
     db.commit()
     return "complete"
@@ -61,7 +60,7 @@ def update_goal_shoulder_by_id(db: Session, user_id: str, user_goal: UserGoalUpd
         .query(User) \
         .filter(User.id == user_id) \
         .update({
-            User.goal_shoulder: UserGoalUpdate.goal
+            User.goal_shoulder: user_goal.goal
         })
     db.commit()
     return "complete"
@@ -71,7 +70,7 @@ def update_goal_arm_by_id(db: Session, user_id: str, user_goal: UserGoalUpdate):
         .query(User) \
         .filter(User.id == user_id) \
         .update({
-            User.goal_arm: UserGoalUpdate.goal
+            User.goal_arm: user_goal.goal
         })
     db.commit()
     return "complete"
