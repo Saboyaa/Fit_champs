@@ -10,8 +10,10 @@ import {
   Send,
   RefreshCw,
 } from "lucide-react";
+import { useNotificationState } from "../Context/notification";
 
 const ForgotPassword = () => {
+  const { notification, showNotification } = useNotificationState();
   // Estados para os diferentes passos do processo
   const [step, setStep] = useState("email"); // email, verification, reset, success
   const [email, setEmail] = useState("");
@@ -25,27 +27,6 @@ const ForgotPassword = () => {
     score: 0,
     color: "",
   });
-
-  // Estado para notificações
-  const [notification, setNotification] = useState({
-    message: "",
-    type: "",
-    visible: false,
-  });
-
-  // Função para mostrar notificação
-  const showNotification = (message, type) => {
-    setNotification({
-      message,
-      type,
-      visible: true,
-    });
-
-    // Esconder notificação após 5 segundos
-    setTimeout(() => {
-      setNotification((prev) => ({ ...prev, visible: false }));
-    }, 5000);
-  };
 
   // Função para solicitar código de verificação
   const requestVerificationCode = (e) => {

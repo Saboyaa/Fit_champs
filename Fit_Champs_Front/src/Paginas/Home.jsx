@@ -5,6 +5,7 @@ import UserProfileCard from "../Components/ComponentsHome/UserProfileCard";
 import MuscleRecordsCard from "../Components/ComponentsHome/MuscleRecordCard";
 import EditProfileModal from "../Components/ComponentsHome/EditProfileModal";
 import EditGoalModal from "../Components/ComponentsHome/EditGoalModal";
+import { useNotificationState } from "../Context/notification";
 
 //import userService from "../services/userService"; // Importar o serviço de usuário para update de perfil
 
@@ -40,12 +41,7 @@ const Home = () => {
   //     loadUserData(); // Esta função já chama loadTrainingData internamente
   //   }, []);
 
-  //  Estados para notificações
-  // const [notification, setNotification] = useState({
-  //   message: "",
-  //   type: "",
-  //   visible: false,
-  // });
+  const { notification, showNotification } = useNotificationState();
 
   // Função para carregar dados do usuário do servidor
   // const loadUserData = async () => {
@@ -161,18 +157,6 @@ const Home = () => {
       }));
     }
   };
-
-  //   const showNotification = (message, type) => {
-  //   setNotification({
-  //     message,
-  //     type,
-  //     visible: true,
-  //   });
-
-  //   setTimeout(() => {
-  //     setNotification(prev => ({ ...prev, visible: false }));
-  //   }, 4000);
-  // };
 
   // Function to open goal edit modal
   const openGoalModal = (grupo) => {

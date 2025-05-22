@@ -11,8 +11,10 @@ import {
   Info,
   ArrowLeft,
 } from "lucide-react";
+import { useNotificationState } from "../Context/notification";
 
 const Cadastro = () => {
+  const { notification, showNotification } = useNotificationState();
   // Estados para os campos do formulário
   const [formData, setFormData] = useState({
     name: "",
@@ -28,11 +30,6 @@ const Cadastro = () => {
   });
 
   // Estado para notificações
-  const [notification, setNotification] = useState({
-    message: "",
-    type: "",
-    visible: false,
-  });
 
   // Estado para a força da senha
   const [passwordStrength, setPasswordStrength] = useState({
@@ -118,20 +115,6 @@ const Cadastro = () => {
     else color = "bg-blue-500";
 
     setPasswordStrength({ score, color });
-  };
-
-  // Função para mostrar notificação
-  const showNotification = (message, type) => {
-    setNotification({
-      message,
-      type,
-      visible: true,
-    });
-
-    // Esconder notificação após 5 segundos
-    setTimeout(() => {
-      setNotification((prev) => ({ ...prev, visible: false }));
-    }, 4000);
   };
 
   // Função para validar e enviar o formulário
