@@ -32,16 +32,68 @@ const Home = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [currentEditGroup, setCurrentEditGroup] = useState(null);
 
-  // const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false); isso habilitara todos os loading
   // const [error, setError] = useState("");
   // const [updating, setUpdating] = useState(false);
 
-  // // Estados para notificações
+  //  useEffect(() => {
+  //     loadUserData(); // Esta função já chama loadTrainingData internamente
+  //   }, []);
+
+  //  Estados para notificações
   // const [notification, setNotification] = useState({
   //   message: "",
   //   type: "",
   //   visible: false,
   // });
+
+  // Função para carregar dados do usuário do servidor
+  // const loadUserData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     setError("");
+
+  //     // Buscar dados do perfil do usuário (inclui metas)
+  //     const response = await userService.getCurrentUser();
+  //     const user = response.user || response;
+
+  //     // Calcular IMC e atualizar estado
+  //     const userWithIMC = {
+  //       ...user,
+  //       imc: userService.calculateIMC(user.altura, user.peso)
+  //     };
+
+  //     setUserData(userWithIMC);
+
+  //     // Buscar histórico de treinos e calcular recordes
+  //     await loadTrainingData(user.metas || {});
+
+  //   } catch (error) {
+  //     console.error("Erro ao carregar dados do usuário:", error);
+  //     setError(error.message);
+
+  //     // Em caso de erro, manter os dados de exemplo para desenvolvimento
+  //     console.log("Usando dados de exemplo devido ao erro");
+
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  //  NOVA FUNÇÃO para carregar dados de treino:
+  // // Função para carregar histórico de treinos e calcular recordes
+  // const loadTrainingData = async (metas = {}) => {
+  //   try {
+  //     const response = await userService.getTrainingHistory();
+  //     const treinos = response.treinos || response;
+
+  //     // Calcular recordes dinamicamente a partir do histórico
+  //     const recordesCalculados = userService.calculateRecordsFromHistory(treinos, metas);
+
+  //     setRecordesMusculares(recordesCalculados);
+
+  //   } catch (error) {
+  //     console.error("Erro ao carregar dados de treino:", error);}};
 
   // Dados de exemplo dos recordes de peso
   const [recordesMusculares, setRecordesMusculares] = useState([

@@ -2,6 +2,18 @@
 import api from "./apiConfig";
 
 const userService = {
+  // Função para pegar dados do usuário
+  getCurrentUser: async () => {
+    try {
+      const response = await api.get("users/profile");
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Erro ao buscar dados do usuário"
+      );
+    }
+  },
+
   // Função para atualizar perfil do usuário
   updateProfile: async (userData) => {
     try {
@@ -32,6 +44,48 @@ const userService = {
         error.response?.data?.message || "Erro ao atualizar meta de volume"
       );
     }
+  },
+
+  getTrainingHistory: async () => {
+    try {
+      const response = await api.get("users/training-history");
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Erro ao buscar histórico de treinos"
+      );
+    }
+  },
+
+  // Função para calcular recordes a partir do histórico
+  calculateRecordsFromHistory: (treinos, metas) => {
+    const grupos = ["Peito", "Costas", "Perna", "Ombro", "Braço"];
+
+    return grupos.map((grupo) => {
+      // Filtrar treinos deste grupo muscular
+      const treinosDoGrupo = treinos.filter((t) => t.grupoMuscular === grupo);
+
+      if (treinosDoGrupo.length === 0) {
+        return {
+          grupo,
+          recordeVolume: 0,
+          metaVolume: metas[grupo] || 0,
+          data: null,
+        };
+      }
+
+      // Encontrar o treino com maior volume
+      const melhorTreino = treinosDoGrupo.reduce((max, atual) =>
+        atual.volumeTotal > max.volumeTotal ? atual : max
+      );
+
+      return {
+        grupo,
+        recordeVolume: melhorTreino.volumeTotal,
+        metaVolume: metas[grupo] || 0,
+        data: melhorTreino.data,
+      };
+    });
   },
 
   // Função para calcular IMC

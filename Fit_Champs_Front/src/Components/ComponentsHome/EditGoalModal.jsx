@@ -6,7 +6,7 @@ const EditGoalModal = ({
   initialValue,
   onSave,
   onCancel,
-  //loading = false,
+  //loading = false, adicionar quando a funcionalidade estiver pronta
 }) => {
   const [goalValue, setGoalValue] = useState(initialValue || 0);
   const [originalValue] = useState(initialValue || 0);
