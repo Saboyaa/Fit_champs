@@ -5,6 +5,9 @@ import UserProfileCard from "../Components/ComponentsHome/UserProfileCard";
 import MuscleRecordsCard from "../Components/ComponentsHome/MuscleRecordCard";
 import EditProfileModal from "../Components/ComponentsHome/EditProfileModal";
 import EditGoalModal from "../Components/ComponentsHome/EditGoalModal";
+import { useNotificationState } from "../Context/notification";
+
+//import userService from "../services/userService"; // Importar o serviço de usuário para update de perfil
 
 const Home = () => {
   const { isMenuOpen } = useGlobalContext();
@@ -22,12 +25,71 @@ const Home = () => {
     sexo: "Masculino",
     cidade: "São Paulo",
     imc: { value: null, classification: "" },
+    //imc: userService.calculateIMC(178, 75), ficará assim depois de integrar com o backend
   });
 
   // State para gerenciar os modais
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [currentEditGroup, setCurrentEditGroup] = useState(null);
+
+  // const [loading, setLoading] = useState(false); isso habilitara todos os loading
+  // const [error, setError] = useState("");
+  // const [updating, setUpdating] = useState(false);
+
+  //  useEffect(() => {
+  //     loadUserData(); // Esta função já chama loadTrainingData internamente
+  //   }, []);
+
+  const { notification, showNotification } = useNotificationState();
+
+  // Função para carregar dados do usuário do servidor
+  // const loadUserData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     setError("");
+
+  //     // Buscar dados do perfil do usuário (inclui metas)
+  //     const response = await userService.getCurrentUser();
+  //     const user = response.user || response;
+
+  //     // Calcular IMC e atualizar estado
+  //     const userWithIMC = {
+  //       ...user,
+  //       imc: userService.calculateIMC(user.altura, user.peso)
+  //     };
+
+  //     setUserData(userWithIMC);
+
+  //     // Buscar histórico de treinos e calcular recordes
+  //     await loadTrainingData(user.metas || {});
+
+  //   } catch (error) {
+  //     console.error("Erro ao carregar dados do usuário:", error);
+  //     setError(error.message);
+
+  //     // Em caso de erro, manter os dados de exemplo para desenvolvimento
+  //     console.log("Usando dados de exemplo devido ao erro");
+
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  //  NOVA FUNÇÃO para carregar dados de treino:
+  // // Função para carregar histórico de treinos e calcular recordes
+  // const loadTrainingData = async (metas = {}) => {
+  //   try {
+  //     const response = await userService.getTrainingHistory();
+  //     const treinos = response.treinos || response;
+
+  //     // Calcular recordes dinamicamente a partir do histórico
+  //     const recordesCalculados = userService.calculateRecordsFromHistory(treinos, metas);
+
+  //     setRecordesMusculares(recordesCalculados);
+
+  //   } catch (error) {
+  //     console.error("Erro ao carregar dados de treino:", error);}};
 
   // Dados de exemplo dos recordes de peso
   const [recordesMusculares, setRecordesMusculares] = useState([
@@ -63,12 +125,12 @@ const Home = () => {
     },
   ]);
 
-  // Calcular IMC quando o componente montar ou quando altura/peso mudar
+  // Calcular IMC quando o componente montar ou quando altura/peso mudar TIRAR ISSO DPS DE INTEGRAR COM O BACKEND
   useEffect(() => {
     calculateIMC(userData.altura, userData.peso);
   }, [userData.altura, userData.peso]);
 
-  // Função para calcular o IMC e sua classificação
+  // Função para calcular o IMC e sua classificação TIRAR ISSO DPS DE INTEGRAR COM O BACKEND
   const calculateIMC = (altura, peso) => {
     if (altura && peso) {
       const heightInMeters = altura / 100;
@@ -102,6 +164,33 @@ const Home = () => {
     setIsGoalModalOpen(true);
   };
 
+  //  const updateVolumeGoal = async (grupo, newGoal) => {
+  //   try {
+  //     setUpdating(true);
+
+  //     // Atualizar no servidor usando o userService
+  //     await userService.updateVolumeGoal(grupo, newGoal);
+
+  //     // Atualizar estado local apenas se a requisição foi bem-sucedida
+  //     setRecordesMusculares(prev =>
+  //       prev.map(recorde =>
+  //         recorde.grupo === grupo
+  //           ? { ...recorde, metaVolume: Number(newGoal) }
+  //           : recorde
+  //       )
+  //     );
+
+  //     showNotification("Meta atualizada com sucesso!", "success");
+  //     setIsGoalModalOpen(false);
+
+  //   } catch (error) {
+  //     console.error("Erro ao atualizar meta:", error);
+  //     showNotification(error.message, "error");
+  //   } finally {
+  //     setUpdating(false);
+  //   }
+  // };
+
   // Function to update volume goal
   const updateVolumeGoal = (grupo, newGoal) => {
     setRecordesMusculares((prev) =>
@@ -113,6 +202,34 @@ const Home = () => {
     );
     setIsGoalModalOpen(false);
   };
+
+  // Função para salvar os dados do usuário
+  // const handleSaveUserData = async (updatedData) => {
+  //   try {
+  //     setUpdating(true);
+  //     setError("");
+
+  //     // Atualizar no servidor usando o userService
+  //     const response = await userService.updateProfile(updatedData);
+
+  //     // Calcular novo IMC
+  //     const newIMC = userService.calculateIMC(updatedData.altura, updatedData.peso);
+
+  //     // Atualizar estado local
+  //     setUserData({
+  //       ...updatedData,
+  //       imc: newIMC
+  //     });
+
+  //     showNotification("Perfil atualizado com sucesso!", "success");
+  //     setIsProfileModalOpen(false);
+
+  //   } catch (error) {
+  //     console.error("Erro ao atualizar perfil:", error);
+  //     showNotification(error.message, "error");
+  //   } finally {
+  //     setUpdating(false);
+  //   }};
 
   // Função para salvar os dados do usuário
   const handleSaveUserData = (updatedData) => {
@@ -128,6 +245,18 @@ const Home = () => {
           isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
         }`}
       >
+        {/* Notificação
+        {notification.visible && (
+          <div
+            className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-lg transform transition-all duration-300 ${
+              notification.type === "error"
+                ? "bg-gradient-to-r from-red-600 to-red-700 text-white"
+                : "bg-gradient-to-r from-green-600 to-green-700 text-white"
+            }`}
+          >
+            {notification.message}
+          </div>
+        )} */}
         {/* Cabeçalho moderno */}
         <Header />
 
@@ -156,6 +285,7 @@ const Home = () => {
           }
           onSave={updateVolumeGoal}
           onCancel={() => setIsGoalModalOpen(false)}
+          // loading={updating}
         />
       )}
 
@@ -165,6 +295,7 @@ const Home = () => {
           userData={userData}
           onSave={handleSaveUserData}
           onCancel={() => setIsProfileModalOpen(false)}
+          //loading={updating}
         />
       )}
     </div>
