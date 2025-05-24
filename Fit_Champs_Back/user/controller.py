@@ -26,74 +26,56 @@ def get_user(
 ):
     return current_user
 
-@user_router.patch("/{user_id}")
+@user_router.patch()
 def update_user(
-    user_id: Annotated[str, Path(title="A ID do usuário")], 
     user_data: Annotated[UserDataUpdate, Body(embed=True)], 
     current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
 ):
-    if user_id != current_user.id:
-        user_id = current_user.id
-    update_user_data_by_id(db=db, user_id=user_id, user_data=user_data)
+    update_user_data_by_id(db=db, user_id=current_user.id, user_data=user_data)
     return "complete"
 
-@user_router.patch("/chest_goal/{user_id}")
+@user_router.patch("/chest_goal")
 def update_chest_goal(
-    user_id: Annotated[str, Path(title="A ID do usuário")], 
     user: Annotated[UserGoalUpdate, Body(embed=True)],
     current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db)
 ):
-    if user_id != current_user.id:
-        user_id = current_user.id
-    update_goal_chest_by_id(db=db, user_id=user_id, user_goal=user)
+    update_goal_chest_by_id(db=db, user_id=current_user.id, user_goal=user)
     return "complete"
 
-@user_router.patch("/back_goal/{user_id}")
+@user_router.patch("/back_goal")
 def update_back_goal(
-    user_id: Annotated[str, Path(title="A ID do usuário")], 
     user_goal: Annotated[UserGoalUpdate, Body(embed=True)],
     current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db)
 ):
-    if user_id != current_user.id:
-        user_id = current_user.id
-    update_goal_back_by_id(db=db, user_id=user_id, user_goal=user_goal)
+    update_goal_back_by_id(db=db, user_id=current_user.id, user_goal=user_goal)
     return "complete"
 
-@user_router.patch("/leg_goal/{user_id}")
+@user_router.patch("/leg_goal")
 def update_leg_goal(
-    user_id: Annotated[str, Path(title="A ID do usuário")], 
     user_goal: Annotated[UserGoalUpdate, Body(embed=True)],
     current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db)
 ):
-    if user_id != current_user.id:
-        user_id = current_user.id
-    update_goal_leg_by_id(db=db, user_id=user_id, user_goal=user_goal)
+    update_goal_leg_by_id(db=db, user_id=current_user.id, user_goal=user_goal)
     return "complete"
 
-@user_router.patch("/shoulder_goal/{user_id}")
+@user_router.patch("/shoulder_goal")
 def update_shoulder_goal(
-    user_id: Annotated[str, Path(title="A ID do usuário")], 
     user_goal: Annotated[UserGoalUpdate, Body(embed=True)],
     current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db)
 ):
-    if user_id != current_user.id:
-        user_id = current_user.id
-    update_goal_shoulder_by_id(db=db, user_id=user_id, user_goal=user_goal)
+    update_goal_shoulder_by_id(db=db, user_id=current_user.id, user_goal=user_goal)
     return "complete"
 
-@user_router.patch("/arm_goal/{user_id}")
+@user_router.patch("/arm_goal")
 def update_arm_goal(
-    user_id: Annotated[str, Path(title="A ID do usuário")], 
     user_goal: Annotated[UserGoalUpdate, Body(embed=True)],
     current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db)
 ):
-    if user_id != current_user.id:
-        user_id = current_user.id
-    update_goal_arm_by_id(db=db, user_id=user_id, user_goal=user_goal)
+    update_goal_arm_by_id(db=db, user_id=current_user.id, user_goal=user_goal)
     return "complete"
