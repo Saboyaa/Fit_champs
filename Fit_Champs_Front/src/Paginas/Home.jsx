@@ -6,6 +6,7 @@ import MuscleRecordsCard from "../Components/ComponentsHome/MuscleRecordCard";
 import EditProfileModal from "../Components/ComponentsHome/EditProfileModal";
 import EditGoalModal from "../Components/ComponentsHome/EditGoalModal";
 import { useNotificationState } from "../Context/notification";
+import peito from "../images/peito.png";
 
 //import userService from "../services/userService"; // Importar o serviço de usuário para update de perfil
 
@@ -15,7 +16,7 @@ const Home = () => {
   // Dados de exemplo do usuário com IMC adicionado
   const [userData, setUserData] = useState({
     nome: "João Silva",
-    foto: "imagem",
+    foto: peito,
     telefone: "(11) 98765-4321",
     email: "joao.silva@email.com",
     idade: 28,

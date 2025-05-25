@@ -113,26 +113,6 @@ function Tasks({ initialTasks = [], onTasksUpdate, weekStartDate }) {
     });
   };
 
-  // Define a cor de fundo com base no tipo de treino
-  const getTrainingTypeColor = (type) => {
-    switch (type) {
-      case "Treino de Peito":
-        return "from-blue-700 to-blue-900";
-      case "Treino de Costas":
-        return "from-green-700 to-green-900";
-      case "Treino de Braço":
-        return "from-amber-700 to-amber-900";
-      case "Treino de Perna":
-        return "from-purple-700 to-purple-900";
-      case "Treino de Ombro":
-        return "from-pink-700 to-pink-900";
-      case "Day Off":
-        return "from-gray-700 to-gray-900";
-      default:
-        return "from-sky-700 to-sky-900";
-    }
-  };
-
   return (
     <div>
       <div className="bg-gradient-to-r from-neutral-800 to-neutral-700 p-6 shadow-lg rounded-xl border border-neutral-700">
@@ -179,12 +159,11 @@ function Tasks({ initialTasks = [], onTasksUpdate, weekStartDate }) {
                 <option value="Treino de Braço">Braço</option>
                 <option value="Treino de Perna">Perna</option>
                 <option value="Treino de Ombro">Ombro</option>
-                <option value="Day Off">Day Off</option>
               </select>
             </div>
 
             <div className="transition-all duration-200 hover:shadow-md">
-              <label className="block text-blue-100 mb-2 font-semibold flex items-center">
+              <label className=" text-blue-100 mb-2 font-semibold flex items-center">
                 <CheckCircle className="text-blue-300 mr-2" size={18} />
                 Número de Exercícios
               </label>

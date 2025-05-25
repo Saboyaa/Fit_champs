@@ -14,6 +14,22 @@ const userService = {
     }
   },
 
+  //Função para o TopMenu pegar dados do usuário
+  getUserDisplay: async () => {
+    try {
+      const response = await api.get("users/profile");
+      return {
+        nome: response.data.nome,
+        foto: response.data.foto,
+      };
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message ||
+          "Erro ao buscar dados de exibição do usuário"
+      );
+    }
+  },
+
   // Função para atualizar perfil do usuário
   updateProfile: async (userData) => {
     try {

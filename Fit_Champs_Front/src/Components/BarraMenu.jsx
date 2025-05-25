@@ -35,7 +35,7 @@ function BarraMenu() {
           <ul className="space-y-3 mt-12">
             <li className=" hover:bg-slate-600 p-2 rounded-lg cursor-pointer">
               <NavLink to="/Home" className="text-white flex gap-2">
-                Home <LucideHome size={16} className="mt-1" />
+                Seu Perfil <LucideHome size={16} className="mt-1" />
               </NavLink>
             </li>
             <li className=" hover:bg-slate-600 p-2 rounded-lg cursor-pointer">
