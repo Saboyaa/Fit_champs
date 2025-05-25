@@ -14,9 +14,12 @@ const UserProfileCard = ({ userData, openProfileModal }) => {
             </h2>
             <p className="text-blue-300">{userData.email}</p>
           </div>
-          <div className="bg-slate-800 p-4 rounded-full shadow-lg transform hover:scale-105 transition-transform border border-indigo-500/50">
-            <User className="h-12 w-12 text-blue-400" />
-          </div>
+
+          <img
+            src={userData.foto}
+            alt={userData.nome}
+            className="w-14  h-14 rounded-full  border-black bg-white "
+          />
         </div>
       </div>
 

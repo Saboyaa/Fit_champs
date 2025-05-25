@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import icone from "../images/icone.png";
-import { Link } from "react-router-dom";
+
 import {
   User,
   Lock,
@@ -10,11 +11,14 @@ import {
   UserCheck,
   Info,
   ArrowLeft,
+  RefreshCw,
+  CheckCircle,
 } from "lucide-react";
 import { useNotificationState } from "../Context/notification";
 
 const Cadastro = () => {
   const { notification, showNotification } = useNotificationState();
+  const navigate = useNavigate();
   // Estados para os campos do formulário
   const [formData, setFormData] = useState({
     name: "",
@@ -40,6 +44,8 @@ const Cadastro = () => {
   // Estados para mostrar/esconder senha
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [isSucess, setIsSucess] = useState(false);
 
   // Estado para rastrear o campo em foco
   const [focusedField, setFocusedField] = useState(null);
@@ -134,30 +140,44 @@ const Cadastro = () => {
     }
 
     // Preparar dados para envio (removendo confirmPassword)
-    const dataToSubmit = {
-      ...formData,
-      confirmPassword: undefined,
-    };
+    try {
+      const dataToSubmit = {
+        ...formData,
+        confirmPassword: undefined,
+      };
 
-    // Aqui você enviaria os dados para o servidor (API)
-    console.log("Dados enviados:", dataToSubmit);
-    showNotification("Cadastro realizado com sucesso!", "success");
+      //const response = await authService.register(dataToSubmit);
 
-    // Limpar formulário
-    setFormData({
-      name: "",
-      email: "",
-      age: "",
-      weight: "",
-      phone: "",
-      password: "",
-      confirmPassword: "",
-      altura: "",
-      cidade: "",
-      sexo: "masculino",
-    });
+      // Aqui você enviaria os dados para o servidor (API)
+      console.log("Dados enviados:", dataToSubmit);
+      setIsSucess(true);
+      showNotification("Cadastro realizado com sucesso!", "success");
 
-    setPasswordStrength({ score: 0, color: "" });
+      // Limpar formulário
+      setFormData({
+        name: "",
+        email: "",
+        age: "",
+        weight: "",
+        phone: "",
+        password: "",
+        confirmPassword: "",
+        altura: "",
+        cidade: "",
+        sexo: "masculino",
+      });
+
+      setPasswordStrength({ score: 0, color: "" });
+
+      setTimeout(() => {
+        navigate("/Home");
+      }, 2000);
+    } catch (error) {
+      console.error("Erro no cadastro:", error);
+      showNotification(error.message, "error");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Toggle para mostrar/esconder senha
@@ -168,6 +188,29 @@ const Cadastro = () => {
       setShowConfirmPassword(!showConfirmPassword);
     }
   };
+
+  if (isSucess) {
+    return (
+      <div className="min-h-screen w-screen bg-gradient-to-b from-slate-900 via-sky-900 to-slate-900 flex items-center justify-center p-6">
+        <div className="bg-gradient-to-br from-slate-800/90 to-indigo-900/20 backdrop-blur-sm rounded-xl shadow-xl p-8 w-full max-w-md text-center border border-indigo-500/20">
+          <div className="bg-green-900/30 rounded-full p-4 w-20 h-20 mx-auto mb-6 flex items-center justify-center border border-green-500/30">
+            <CheckCircle className="text-green-400" size={40} />
+          </div>
+          <h2 className="text-2xl font-bold text-green-400 mb-4">
+            Cadastro Realizado!
+          </h2>
+          <p className="text-slate-300 mb-6">
+            Sua conta foi criada com sucesso. Você será redirecionado para a
+            página inicial.
+          </p>
+          <div className="flex items-center justify-center gap-2 text-blue-300">
+            <RefreshCw className="animate-spin" size={16} />
+            <span>Redirecionando...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-screen bg-gradient-to-b from-slate-900 via-sky-900 to-slate-900 p-6 overflow-y-auto">

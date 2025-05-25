@@ -1,4 +1,5 @@
 .env
+fit_champs/
 __pycache__
 .venv
 database/__pycache__
