@@ -14,7 +14,7 @@ import {
   RefreshCw,
   CheckCircle,
 } from "lucide-react";
-import { useNotificationState } from "../Context/notification";
+import { useNotificationState } from "../Hooks/notification";
 
 const Cadastro = () => {
   const { notification, showNotification } = useNotificationState();

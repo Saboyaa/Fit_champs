@@ -3,8 +3,8 @@ import BarraMenu from "./Components/BarraMenu";
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes";
 import TopMenu from "./Components/TopMenu";
-import { GlobalProvider } from "./Context/ContextoGlobal"; // Importa o contexto global
-import { ExerciciosProvider } from "./Context/ExerciciosContext"; // Importa o contexto de exercícios
+import { GlobalProvider } from "./Hooks/ContextoGlobal"; // Importa o contexto global
+import { ExerciciosProvider } from "./Hooks/ExerciciosContext"; // Importa o contexto de exercícios
 
 function Layout() {
   const location = useLocation();

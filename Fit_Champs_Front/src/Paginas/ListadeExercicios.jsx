@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useExercicios } from "../Context/ExerciciosContext";
-import { useGlobalContext } from "../Context/ContextoGlobal";
+import { useExercicios } from "../Hooks/ExerciciosContext";
+import { useGlobalContext } from "../Hooks/ContextoGlobal";
 import {
   Save,
   PlusCircle,

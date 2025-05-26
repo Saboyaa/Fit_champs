@@ -10,7 +10,7 @@ import {
   Send,
   RefreshCw,
 } from "lucide-react";
-import { useNotificationState } from "../Context/notification";
+import { useNotificationState } from "../Hooks/notification";
 
 const ForgotPassword = () => {
   const { notification, showNotification } = useNotificationState();

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useGlobalContext } from "../Context/ContextoGlobal";
+import { useGlobalContext } from "../Hooks/ContextoGlobal";
 import Header from "../Components/ComponentsHome/Header";
 import UserProfileCard from "../Components/ComponentsHome/UserProfileCard";
 import MuscleRecordsCard from "../Components/ComponentsHome/MuscleRecordCard";
 import EditProfileModal from "../Components/ComponentsHome/EditProfileModal";
 import EditGoalModal from "../Components/ComponentsHome/EditGoalModal";
-import { useNotificationState } from "../Context/notification";
+import { useNotificationState } from "../Hooks/notification";
 import peito from "../images/peito.png";
 
 //import userService from "../services/userService"; // Importar o serviço de usuário para update de perfil

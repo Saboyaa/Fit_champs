@@ -8,7 +8,7 @@ import {
   TrophyIcon,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { useGlobalContext } from "../Context/ContextoGlobal"; // Importa o contexto global
+import { useGlobalContext } from "../Hooks/ContextoGlobal"; // Importa o contexto global
 
 function BarraMenu() {
   const { isMenuOpen, setIsMenuOpen } = useGlobalContext(); // Usa o contexto
@@ -35,7 +35,7 @@ function BarraMenu() {
           <ul className="space-y-3 mt-12">
             <li className=" hover:bg-slate-600 p-2 rounded-lg cursor-pointer">
               <NavLink to="/Home" className="text-white flex gap-2">
-                Seu Perfil <LucideHome size={16} className="mt-1" />
+                Meu Perfil <LucideHome size={16} className="mt-1" />
               </NavLink>
             </li>
             <li className=" hover:bg-slate-600 p-2 rounded-lg cursor-pointer">

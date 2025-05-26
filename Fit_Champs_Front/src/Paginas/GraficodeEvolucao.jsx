@@ -1,6 +1,8 @@
-// src/components/GraficosEvolucao/index.jsx
-import React, { useState } from "react";
-import { useGlobalContext } from "../Context/ContextoGlobal";
+// src/Paginas/GraficodeEvolucao.jsx
+import React, { useState, useEffect } from "react";
+import { useGlobalContext } from "../Hooks/ContextoGlobal";
+import trainingService from "../services/trainingService";
+import userService from "../services/userService";
 
 // Componentes
 import Header from "../Components/ComponentsGraficoEvolucao/Header";
@@ -15,22 +17,22 @@ import perna from "../images/perna.png";
 import ombro from "../images/ombro.png";
 import costas from "../images/costas.png";
 import braco from "../images/musculo.png";
+import { LucideRefreshCcw, ChevronLeft, ChevronRight } from "lucide-react";
 
 const GraficosEvolucao = () => {
   const { isMenuOpen } = useGlobalContext();
-  const [hoveredChart, setHoveredChart] = useState(null);
-  const [viewMode, setViewMode] = useState("cards"); // cards, comparison, summary
-  const [visualizationType, setVisualizationType] = useState("line"); // line, bar
-  const [showMetas, setShowMetas] = useState(false);
 
-  // Dados de metas
-  const metas = {
-    Peito: 3500,
-    Costas: 3400,
-    Braço: 2100,
-    Perna: 4500,
-    Ombro: 2300,
-  };
+  // Estados para dados
+  const [trainingData, setTrainingData] = useState({});
+  const [metas, setMetas] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Estados para controles da interface
+  const [hoveredChart, setHoveredChart] = useState(null);
+  const [viewMode, setViewMode] = useState("cards");
+  const [visualizationType, setVisualizationType] = useState("line");
+  const [showMetas, setShowMetas] = useState(false);
 
   // Ícones para os grupos musculares
   const icons = {
@@ -41,52 +43,239 @@ const GraficosEvolucao = () => {
     braco,
   };
 
-  // Dados de exemplo para diferentes tipos de treino
-  const [trainingData] = useState({
-    Peito: [
-      { data: "10/01/2025", volume: 2400 },
-      { data: "17/01/2025", volume: 2600 },
-      { data: "24/01/2025", volume: 2550 },
-      { data: "31/01/2025", volume: 2800 },
-      { data: "07/02/2025", volume: 3000 },
-      { data: "14/02/2025", volume: 3200 },
-    ],
-    Costas: [
-      { data: "11/01/2025", volume: 2200 },
-      { data: "18/01/2025", volume: 2500 },
-      { data: "25/01/2025", volume: 2700 },
-      { data: "01/02/2025", volume: 2650 },
-      { data: "08/02/2025", volume: 2900 },
-      { data: "15/02/2025", volume: 3100 },
-    ],
-    Braço: [
-      { data: "12/01/2025", volume: 1400 },
-      { data: "19/01/2025", volume: 1500 },
-      { data: "26/01/2025", volume: 1700 },
-      { data: "02/02/2025", volume: 1650 },
-      { data: "09/02/2025", volume: 1800 },
-      { data: "16/02/2025", volume: 1900 },
-    ],
-    Perna: [
-      { data: "13/01/2025", volume: 3200 },
-      { data: "20/01/2025", volume: 3400 },
-      { data: "27/01/2025", volume: 3600 },
-      { data: "10/02/2025", volume: 3750 },
-      { data: "17/02/2025", volume: 4000 },
-      { data: "24/02/2025", volume: 3900 },
-    ],
-    Ombro: [
-      { data: "14/01/2025", volume: 1800 },
-      { data: "21/01/2025", volume: 1850 },
-      { data: "28/01/2025", volume: 1900 },
-      { data: "04/02/2025", volume: 2000 },
-      { data: "11/02/2025", volume: 1950 },
-      { data: "18/02/2025", volume: 2400 },
-    ],
-  });
+  // Função para carregar dados de treinos
+  const loadTrainingData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-  // Lista dos tipos de treino
-  const trainingTypes = Object.keys(trainingData);
+      // Buscar dados de treinos
+      const formattedTrainingData =
+        await trainingService.getFormattedTrainingData();
+      setTrainingData(formattedTrainingData);
+
+      // Buscar metas do usuário
+      try {
+        const userGoals = await userService.getUserGoals();
+
+        // Formatar metas para a estrutura esperada
+        const formattedGoals = {
+          Peito: userGoals.peito || userGoals.Peito || 3500,
+          Costas: userGoals.costas || userGoals.Costas || 3400,
+          Braço: userGoals.braco || userGoals.Braço || userGoals.braço || 2100,
+          Perna: userGoals.perna || userGoals.Perna || 4500,
+          Ombro: userGoals.ombro || userGoals.Ombro || 2300,
+        };
+
+        setMetas(formattedGoals);
+      } catch (goalsError) {
+        console.warn(
+          "Erro ao buscar metas, usando valores padrão:",
+          goalsError
+        );
+
+        // Usar metas padrão em caso de erro
+        setMetas({
+          Peito: 3500,
+          Costas: 3400,
+          Braço: 2100,
+          Perna: 4500,
+          Ombro: 2300,
+        });
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error("Erro ao carregar dados:", err);
+
+      // Dados vazios em caso de erro
+      setTrainingData(trainingService.getEmptyChartData());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Carregar dados quando o componente é montado
+  useEffect(() => {
+    loadTrainingData();
+  }, []);
+
+  // Verificar se existem dados para mostrar
+  const hasTrainingData =
+    Object.keys(trainingData).length > 0 &&
+    Object.values(trainingData).some(
+      (data) => Array.isArray(data) && data.length > 0
+    );
+
+  // Obter tipos de treino que têm dados
+  const trainingTypes = Object.keys(trainingData).filter(
+    (type) =>
+      trainingData[type] &&
+      Array.isArray(trainingData[type]) &&
+      trainingData[type].length > 0
+  );
+
+  // Adicione este estado no seu componente
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
+
+  // Modifique a função stats para incluir navegação por mês
+  const stats = {
+    totalWorkouts: Object.values(trainingData).reduce(
+      (total, workouts) =>
+        total + (Array.isArray(workouts) ? workouts.length : 0),
+      0
+    ),
+    muscleGroups: trainingTypes.length,
+
+    // Obter todos os meses disponíveis ordenados
+    availableMonths: Object.values(trainingData)
+      .flat()
+      .filter((workout) => workout && workout.data)
+      .map((workout) => {
+        const [day, month, year] = workout.data.split("/");
+        return `${year}-${String(month).padStart(2, "0")}`;
+      })
+      .filter((month, index, array) => array.indexOf(month) === index) // remover duplicatas
+      .sort() // ordenar cronologicamente
+      .reverse(), // mais recente primeiro
+
+    // Função para obter treinos do mês selecionado
+    getWorkoutsForMonth: (monthIndex) => {
+      const availableMonths = Object.values(trainingData)
+        .flat()
+        .filter((workout) => workout && workout.data)
+        .map((workout) => {
+          const [day, month, year] = workout.data.split("/");
+          return `${year}-${String(month).padStart(2, "0")}`;
+        })
+        .filter((month, index, array) => array.indexOf(month) === index)
+        .sort()
+        .reverse();
+
+      const selectedMonth = availableMonths[monthIndex];
+      if (!selectedMonth) return 0;
+
+      return Object.values(trainingData)
+        .flat()
+        .filter((workout) => {
+          if (!workout || !workout.data) return false;
+          const [day, month, year] = workout.data.split("/");
+          const workoutMonth = `${year}-${String(month).padStart(2, "0")}`;
+          return workoutMonth === selectedMonth;
+        }).length;
+    },
+  };
+
+  // Função para formatar o mês para exibição
+  const formatMonthDisplay = (monthKey) => {
+    if (!monthKey) return "N/A";
+    const [year, month] = monthKey.split("-");
+    const monthNames = [
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro",
+    ];
+    return `${monthNames[parseInt(month) - 1]} ${year}`;
+  };
+
+  // Funções para navegar
+  const handlePreviousMonth = () => {
+    setCurrentMonthIndex((prev) =>
+      prev < stats.availableMonths.length - 1 ? prev + 1 : prev
+    );
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonthIndex((prev) => (prev > 0 ? prev - 1 : prev));
+  };
+  // Calcular estatísticas básicas
+  // const stats = {
+  //   totalWorkouts: Object.values(trainingData).reduce(
+  //     (total, workouts) =>
+  //       total + (Array.isArray(workouts) ? workouts.length : 0),
+  //     0
+  //   ),
+  //   muscleGroups: trainingTypes.length,
+  // };
+
+  // Função para recarregar dados
+  const handleRefreshData = () => {
+    loadTrainingData();
+  };
+
+  // Componente de loading
+  if (loading) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-b from-slate-900 via-sky-900 to-slate-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
+          <p className="text-slate-300 text-lg">
+            Carregando dados de treino...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Componente de erro
+  if (error) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-b from-slate-900 via-sky-900 to-slate-900">
+        <div className="text-center bg-slate-800/90 p-8 rounded-xl border border-red-500/30">
+          <div className="text-red-400 text-xl mb-4">
+            ⚠️ Erro ao carregar dados
+          </div>
+          <p className="text-slate-300 mb-6">{error}</p>
+          <button
+            onClick={handleRefreshData}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+          >
+            Tentar Novamente
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Componente para quando não há dados
+  if (!hasTrainingData) {
+    return (
+      <div className="w-screen h-full flex justify-center bg-gradient-to-b from-slate-900 via-sky-900 to-slate-900 p-6">
+        <div
+          className={`rounded-md mt-6 transition-all duration-300 ${
+            isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
+          }`}
+        >
+          <Header />
+
+          <div className="text-center bg-slate-800/90 p-12 rounded-xl border border-slate-700 w-[80%] mx-auto">
+            <div className="text-slate-400 text-6xl mb-6">📊</div>
+            <h2 className="text-2xl font-bold text-slate-200 mb-4">
+              Nenhum treino encontrado
+            </h2>
+            <p className="text-slate-400 mb-6">
+              Comece registrando seus treinos para visualizar sua evolução nos
+              gráficos.
+            </p>
+            <button
+              onClick={handleRefreshData}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+            >
+              Atualizar Dados
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-screen h-full flex justify-center bg-gradient-to-b from-slate-900 via-sky-900 to-slate-900 p-6">
@@ -97,6 +286,91 @@ const GraficosEvolucao = () => {
       >
         {/* Cabeçalho */}
         <Header />
+
+        {/* Estatísticas resumidas */}
+
+        <div className="flex justify-center mb-6">
+          <div className="bg-slate-800/90 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-slate-700 flex space-x-6">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-400">
+                {stats.totalWorkouts}
+              </div>
+              <div className="text-sm text-slate-400">Total de Treinos</div>
+            </div>
+
+            {/* Nova seção para treinos por mês */}
+            <div className="text-center">
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handlePreviousMonth}
+                  disabled={
+                    currentMonthIndex >= stats.availableMonths.length - 1
+                  }
+                  className="bg-slate-700 hover:bg-sky-700 p-2 rounded-full text-white shadow-lg transition-all duration-300 transform hover:scale-110"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+
+                <div className="text-center min-w-[120px]">
+                  <div className="text-2xl font-bold text-green-400">
+                    {stats.getWorkoutsForMonth(currentMonthIndex)}
+                  </div>
+                  <div className="text-xs text-slate-400">
+                    Treinos mensais
+                    <br />
+                    {formatMonthDisplay(
+                      stats.availableMonths[currentMonthIndex]
+                    )}{" "}
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleNextMonth}
+                  disabled={currentMonthIndex <= 0}
+                  className="bg-slate-700 hover:bg-sky-700 p-2 rounded-full text-white shadow-lg transition-all duration-300 transform hover:scale-110"
+                  aria-label="Semana anterior"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <button
+                onClick={handleRefreshData}
+                className="text-slate-400 hover:text-blue-400 transition-colors"
+                title="Atualizar dados"
+              >
+                <LucideRefreshCcw />
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* <div className="flex justify-center mb-6">
+          <div className="bg-slate-800/90 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-slate-700 flex space-x-6">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-400">
+                {stats.totalWorkouts}
+              </div>
+              <div className="text-sm text-slate-400">Total de Treinos</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-400">
+                {stats.muscleGroups}
+              </div>
+              <div className="text-sm text-slate-400">Grupos Trabalhados</div>
+            </div>
+            <div className="text-center">
+              <button
+                onClick={handleRefreshData}
+                className="text-slate-400 hover:text-blue-400 transition-colors"
+                title="Atualizar dados"
+              >
+                <LucideRefreshCcw />
+              </button>
+            </div>
+          </div>
+        </div> */}
 
         {/* Controles */}
         <ChartControls

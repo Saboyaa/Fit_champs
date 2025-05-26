@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useGlobalContext } from "../Context/ContextoGlobal";
+import { useGlobalContext } from "../Hooks/ContextoGlobal";
 
 // Importação dos componentes
 import RankingHeader from "../Components/ComponentsRankSemanal/RankingHeader";

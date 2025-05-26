@@ -44,7 +44,7 @@ const TrainingCard = ({
     transition-all duration-500 ease-in-out
     ${
       isHovered
-        ? "scale-110 shadow-2xl z-30 border-2 border-blue-500 bg-gradient-to-br from-slate-800 via-indigo-900/80 to-slate-800 transform translate-y-[-10px]"
+        ? "scale-105 shadow-2xl z-30 border-2 border-blue-500 bg-gradient-to-br from-slate-800  to-slate-800 transform translate-y-[-10px]"
         : ""
     }
     ${isOtherHovered ? "opacity-50 scale-95 blur-[1px]" : ""}

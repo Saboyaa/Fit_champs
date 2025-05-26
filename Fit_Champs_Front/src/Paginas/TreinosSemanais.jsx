@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Tasks from "../Components/ComponentsTreinosSemanais/Tasks";
-import { useGlobalContext } from "../Context/ContextoGlobal";
-import { useExercicios } from "../Context/ExerciciosContext";
+import { useGlobalContext } from "../Hooks/ContextoGlobal";
+import { useExercicios } from "../Hooks/ExerciciosContext";
 import { useNavigate } from "react-router-dom";
 import {
   Calendar,

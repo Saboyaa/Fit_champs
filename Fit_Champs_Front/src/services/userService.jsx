@@ -62,17 +62,6 @@ const userService = {
     }
   },
 
-  getTrainingHistory: async () => {
-    try {
-      const response = await api.get("users/training-history");
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Erro ao buscar histórico de treinos"
-      );
-    }
-  },
-
   // Função para calcular recordes a partir do histórico
   calculateRecordsFromHistory: (treinos, metas) => {
     const grupos = ["Peito", "Costas", "Perna", "Ombro", "Braço"];
@@ -127,6 +116,17 @@ const userService = {
     }
 
     return { value: parseFloat(imcValue), classification };
+  },
+
+  getUserGoals: async () => {
+    try {
+      const response = await api.get("users/goals");
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Erro ao buscar metas do usuário"
+      );
+    }
   },
 };
 
