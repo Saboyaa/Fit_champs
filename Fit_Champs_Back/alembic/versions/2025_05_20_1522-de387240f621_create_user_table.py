@@ -20,14 +20,14 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.execute("""
-        CREATE DOMAIN gender AS VARCHAR(9)
+        CREATE DOMAIN gender AS VARCHAR(1)
         CHECK (
-            VALUE = 'Masculino'
-            OR VALUE = 'Feminino'
+            VALUE = 'M'
+            OR VALUE = 'F'
         );
                
         CREATE TABLE users (
-            id SERIAL,
+            id SERIAL PRIMARY KEY,
             username VARCHAR(50) UNIQUE,
             email VARCHAR(50) UNIQUE,
             hashed_password VARCHAR,

@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Path, Body
+from fastapi import APIRouter, Depends, Body
 from sqlalchemy.orm import Session
 
 from ..database.models import User
@@ -20,13 +20,13 @@ user_router = APIRouter(
     prefix = '/user'
 )
 
-@user_router.get()
+@user_router.get("")
 def get_user(
-    current_user: Annotated[User, Depends(get_current_user)],
+    current_user: Annotated[User, Depends(get_current_user)]
 ):
     return current_user
 
-@user_router.patch()
+@user_router.patch("")
 def update_user(
     user_data: Annotated[UserDataUpdate, Body(embed=True)], 
     current_user: Annotated[User, Depends(get_current_user)],

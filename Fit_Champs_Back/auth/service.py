@@ -1,10 +1,13 @@
+import os
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
+from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
+from sqlalchemy import select, or_
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
+from jose import JWTError, jwt, ExpiredSignatureError
 from passlib.context import CryptContext
 
 from ..database.utils import get_db
@@ -16,13 +19,15 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = "499db2db186e24893434b7a938277d6e2dac36a8e807a77bc96356287778be2f"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
 # Procura usuário pelo seu nome
-def get_user_by_username(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first()
+def get_user_by_username_or_email(db: Session, username: str, email: str):
+    return db.scalars(select(User).where(or_(User.username == username, User.email == email))).first()
 
 # Cria usuário
 def create_user(db: Session, user: UserCreate):
@@ -46,7 +51,7 @@ def create_user(db: Session, user: UserCreate):
 
 # Autentica o usuário
 def authenticate_user(username: str, password: str, db: Session):
-    user = db.query(User).filter(User.username == username).first()
+    user = db.scalars(select(User).where(User.username == username)).first()
     if not user:
         return False
     if not pwd_context.verify(password, user.hashed_password):
@@ -78,7 +83,13 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
             raise credentials_exception
         token_data = TokenData(id=id)
     except JWTError:
-      raise credentials_exception
+        raise credentials_exception
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Token expirado",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
     user = get_user_by_id(db=db, user_id=token_data.id)
     if user is None:
         raise credentials_exception
