@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple
 from datetime import date
 
-from sqlalchemy import select, and_, between, tuple_
+from sqlalchemy import select, and_, between, tuple_, delete
 from sqlalchemy.orm import Session, selectinload
 from fastapi import HTTPException, status
 
@@ -77,6 +77,11 @@ def create_train(db: Session, user_id: str, trains_data: List[TrainCreate]):
         train = train_lookup.get(key)
 
         if train:
+            # exercises_to_delete_id = [ex.exercise_id for ex in train.exercises]
+            # db.execute(
+            #     delete(TrainExercise) \
+            #     .where(TrainExercise.exercise_id.in_(exercises_to_delete_id))
+            # )
             train.exercises.clear()
         else:
             train = Train(
