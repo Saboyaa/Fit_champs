@@ -251,15 +251,7 @@ function ListadeExercicios() {
             Selecione os exercícios para cada dia de treino
           </p>
 
-          <div className="flex justify-center mt-4">
-            <button
-              onClick={voltarParaTreinosSemanais}
-              className="flex items-center gap-2 text-blue-300 hover:text-blue-100 bg-slate-800 py-2 px-4 rounded-lg transition-colors hover:bg-slate-700"
-            >
-              <ArrowLeft size={16} />
-              <span>Voltar para Treinos Semanais</span>
-            </button>
-          </div>
+          <div className="flex justify-center mt-4"></div>
         </div>
 
         {/* Controles de visualização */}
@@ -488,7 +480,7 @@ function ListadeExercicios() {
                           <div className="mt-6 flex justify-center">
                             <button
                               onClick={() => adicionarExercicio(treino.id)}
-                              className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-2 px-6 rounded-lg flex items-center gap-2 hover:from-blue-700 hover:to-indigo-800 transition-colors shadow-md transform hover:scale-105 transition-transform"
+                              className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-2 px-6 rounded-lg flex items-center gap-2 hover:from-blue-700 hover:to-indigo-800  shadow-md transform hover:scale-105 transition-transform"
                             >
                               <PlusCircle size={18} />
                               Adicionar Exercício

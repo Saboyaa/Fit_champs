@@ -247,7 +247,7 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
                 .map(([tipo, dados], index) => (
                   <div
                     key={tipo}
-                    className="flex justify-between items-center text-white bg-slate-800/70 p-4 rounded-xl hover:bg-slate-700/70 transition-colors border border-slate-700/30 transform hover:scale-[1.01] transition-transform"
+                    className="flex justify-between items-center text-white bg-slate-800/70 p-4 rounded-xl hover:bg-slate-700/70  border border-slate-700/30 transform hover:scale-[1.01] transition-transform"
                   >
                     <div className="flex items-center">
                       <div
