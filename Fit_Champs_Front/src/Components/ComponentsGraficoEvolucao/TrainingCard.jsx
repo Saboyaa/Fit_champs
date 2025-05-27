@@ -3,7 +3,7 @@ import React from "react";
 import TrainingChart from "./TrainingChart";
 import TrendIndicator from "./TrendIndicator";
 import ProgressIndicator from "./ProgressIndicator";
-import { calculateTrend } from "./Utils";
+import { calculateTrend, getIconComponent } from "./Utils";
 
 const TrainingCard = ({
   type,
@@ -20,24 +20,6 @@ const TrainingCard = ({
   const isOtherHovered = hoveredChart !== null && hoveredChart !== type;
 
   // Obter ícone do grupo muscular
-  const getIcon = (grupo) => {
-    const { peito, perna, ombro, costas, braco } = icons;
-
-    switch (grupo.toLowerCase()) {
-      case "peito":
-        return <img src={peito} alt="Peito" className="w-8 h-8" />;
-      case "perna":
-        return <img src={perna} alt="Perna" className="w-8 h-8" />;
-      case "ombro":
-        return <img src={ombro} alt="Ombro" className="w-8 h-8" />;
-      case "costas":
-        return <img src={costas} alt="Costas" className="w-8 h-8" />;
-      case "braço":
-        return <img src={braco} alt="Braço" className="w-8 h-8" />;
-      default:
-        return null;
-    }
-  };
 
   const cardClasses = `
     bg-slate-800/90 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-slate-700
@@ -74,7 +56,7 @@ const TrainingCard = ({
                 : "bg-slate-700"
             } p-2 rounded-lg transition-colors duration-300`}
           >
-            {getIcon(type)}
+            {getIconComponent(type, icons)}
           </div>
           <h2
             className={`text-2xl font-bold ${

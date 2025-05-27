@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import { Calendar } from "lucide-react";
 import { prepareSummaryData } from "./Utils";
+import { calculateSummaryChartYAxis } from "./Utils";
 
 const SummaryChart = ({ trainingData, trainingTypes, visualizationType }) => {
   const data = prepareSummaryData(trainingData, trainingTypes);
@@ -24,6 +25,9 @@ const SummaryChart = ({ trainingData, trainingTypes, visualizationType }) => {
     Perna: "#8B5CF6",
     Ombro: "#EC4899",
   };
+
+  // Configuração do eixo Y usando função utilitária
+  const yAxisConfig = calculateSummaryChartYAxis(data, trainingTypes);
 
   return (
     <div className="bg-slate-800/90 backdrop-blur-sm p-6 rounded-xl shadow-lg w-full border border-slate-700">
@@ -45,6 +49,8 @@ const SummaryChart = ({ trainingData, trainingTypes, visualizationType }) => {
               />
               <XAxis dataKey="data" tick={{ fill: "#94a3b8" }} />
               <YAxis
+                domain={yAxisConfig.domain}
+                ticks={yAxisConfig.ticks}
                 label={{
                   value: "Volume (kg)",
                   angle: -90,
@@ -86,6 +92,8 @@ const SummaryChart = ({ trainingData, trainingTypes, visualizationType }) => {
               />
               <XAxis dataKey="data" tick={{ fill: "#94a3b8" }} />
               <YAxis
+                domain={yAxisConfig.domain}
+                ticks={yAxisConfig.ticks}
                 label={{
                   value: "Volume (kg)",
                   angle: -90,

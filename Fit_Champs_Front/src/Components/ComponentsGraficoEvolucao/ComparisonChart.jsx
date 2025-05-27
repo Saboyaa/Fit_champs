@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import { BarChart } from "lucide-react";
 import { prepareComparisonData } from "./Utils";
+import { calculateComparisonChartYAxis } from "./Utils";
 
 const ComparisonChart = ({
   trainingData,
@@ -23,36 +24,8 @@ const ComparisonChart = ({
 }) => {
   const comparisonData = prepareComparisonData(trainingData, metas);
 
-  // Calcular o domínio do eixo Y dinamicamente
-  const calculateYAxisDomain = () => {
-    if (comparisonData.length === 0) return [0, 100];
-
-    const volumes = comparisonData.map((item) => item.volume);
-    const maxVolume = Math.max(...volumes);
-    const minVolume = Math.min(...volumes);
-
-    let maxValue = maxVolume;
-    let minValue = Math.max(0, minVolume - maxVolume * 0.1); // 10% abaixo do mínimo
-
-    // Se as metas estão sendo mostradas, considerar as metas no cálculo
-    if (showMetas) {
-      const metaValues = comparisonData
-        .map((item) => item.meta)
-        .filter((meta) => meta > 0);
-
-      if (metaValues.length > 0) {
-        const maxMeta = Math.max(...metaValues);
-        maxValue = Math.max(maxValue, maxMeta);
-      }
-    }
-
-    // Adicionar um buffer de 15% acima do valor máximo
-    maxValue = maxValue * 1.15;
-
-    return [Math.floor(minValue), Math.ceil(maxValue)];
-  };
-
-  const yAxisDomain = calculateYAxisDomain();
+  // Configuração do eixo Y usando função utilitária
+  const yAxisConfig = calculateComparisonChartYAxis(comparisonData, showMetas);
 
   return (
     <div className="bg-slate-800/90 backdrop-blur-sm p-6 rounded-xl shadow-lg w-full border border-slate-700">
@@ -74,7 +47,8 @@ const ComparisonChart = ({
               />
               <XAxis dataKey="nome" tick={{ fill: "#94a3b8" }} />
               <YAxis
-                domain={yAxisDomain}
+                domain={yAxisConfig.domain}
+                ticks={yAxisConfig.ticks}
                 label={{
                   value: "Volume (kg)",
                   angle: -90,
@@ -133,7 +107,8 @@ const ComparisonChart = ({
               />
               <XAxis dataKey="nome" tick={{ fill: "#94a3b8" }} />
               <YAxis
-                domain={yAxisDomain}
+                domain={yAxisConfig.domain}
+                ticks={yAxisConfig.ticks}
                 label={{
                   value: "Volume (kg)",
                   angle: -90,

@@ -12,6 +12,7 @@ import {
   ComposedChart,
   Bar,
 } from "recharts";
+import { calculateTrainingChartYAxis } from "./Utils";
 
 const TrainingChart = ({
   type,
@@ -33,30 +34,8 @@ const TrainingChart = ({
     meta: showMetas ? metas[type] || 0 : 0,
   }));
 
-  // Calcular o domínio do eixo Y dinamicamente
-  const calculateYAxisDomain = () => {
-    if (data.length === 0) return [0, 100];
-
-    const volumes = data.map((item) => item.volume);
-    const maxVolume = Math.max(...volumes);
-    const minVolume = Math.min(...volumes);
-
-    let maxValue = maxVolume;
-    let minValue = Math.max(0, minVolume - maxVolume * 0.1); // 10% abaixo do mínimo, mas não negativo
-
-    // Se as metas estão sendo mostradas, considerar a meta no cálculo
-    if (showMetas && metas[type]) {
-      const metaValue = metas[type];
-      maxValue = Math.max(maxValue, metaValue);
-    }
-
-    // Adicionar um buffer de 15% acima do valor máximo para melhor visualização
-    maxValue = maxValue * 1.15;
-
-    return [Math.floor(minValue), Math.ceil(maxValue)];
-  };
-
-  const yAxisDomain = calculateYAxisDomain();
+  // Configuração do eixo Y usando função utilitária
+  const yAxisConfig = calculateTrainingChartYAxis(data, metas, type, showMetas);
 
   // Linha da meta para gráfico de linha
   const metaData = showMetas
@@ -92,7 +71,8 @@ const TrainingChart = ({
               axisLine={{ stroke: "#334155" }}
             />
             <YAxis
-              domain={yAxisDomain}
+              domain={yAxisConfig.domain}
+              ticks={yAxisConfig.ticks}
               label={{
                 value: "Volume (kg)",
                 angle: -90,
@@ -170,7 +150,8 @@ const TrainingChart = ({
               axisLine={{ stroke: "#334155" }}
             />
             <YAxis
-              domain={yAxisDomain}
+              domain={yAxisConfig.domain}
+              ticks={yAxisConfig.ticks}
               label={{
                 value: "Volume (kg)",
                 angle: -90,
