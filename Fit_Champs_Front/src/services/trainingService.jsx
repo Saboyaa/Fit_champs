@@ -30,10 +30,16 @@ const trainingService = {
     if (!exercicios || !Array.isArray(exercicios)) return 0;
 
     return exercicios.reduce((total, exercicio) => {
-      const series = parseInt(exercicio.series) || 0;
-      const repeticoes = parseInt(exercicio.repeticoes) || 0;
-      const peso = parseFloat(exercicio.peso) || 0;
-      return total + series * repeticoes * peso;
+      // Parse do formato "axb" para extrair séries e repetições
+      const seriesRepeticoes = exercicio.series || "0x0";
+      const [a, b] = seriesRepeticoes
+        .split("x")
+        .map((num) => parseInt(num.trim()) || 0);
+      const y = parseFloat(exercicio.peso) || 0;
+
+      const volumeExercicio = a * b * y;
+
+      return total + volumeExercicio;
     }, 0);
   },
 
@@ -43,7 +49,6 @@ const trainingService = {
   formatDateForChart: (dateString) => {
     if (!dateString) return "";
 
-    // Se já estiver no formato dd/mm/yyyy, retorna como está
     if (dateString.includes("/")) {
       return dateString;
     }
@@ -54,14 +59,12 @@ const trainingService = {
       return `${day}/${month}/${year}`;
     }
 
-    // Se estiver em formato ISO completo, extrai apenas a data
     if (dateString.includes("T")) {
       const datePart = dateString.split("T")[0];
       const [year, month, day] = datePart.split("-");
       return `${day}/${month}/${year}`;
     }
 
-    // Fallback para outros formatos
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
       console.warn(`Data inválida: ${dateString}`);
@@ -82,11 +85,7 @@ const trainingService = {
         const [year, month, day] = dateStr.split("-").map(Number);
         return new Date(year, month - 1, day);
       }
-      // Formato dd/mm/yyyy
-      else if (dateStr.includes("/")) {
-        const [day, month, year] = dateStr.split("/").map(Number);
-        return new Date(year, month - 1, day);
-      }
+
       // Fallback
       else {
         return new Date(dateStr);
@@ -152,14 +151,9 @@ const trainingService = {
         data: "2025-01-10",
         volumeTotal: 2400,
         exercicios: [
-          { nome: "Supino Reto", series: "4", repeticoes: "10", peso: "80" },
-          {
-            nome: "Supino Inclinado",
-            series: "3",
-            repeticoes: "12",
-            peso: "70",
-          },
-          { nome: "Fly Peck Deck", series: "3", repeticoes: "15", peso: "50" },
+          { nome: "Supino Reto", series: "4x10", peso: 80 },
+          { nome: "Supino Inclinado", series: "3x12", peso: 70 },
+          { nome: "Fly Peck Deck", series: "3x15", peso: 50 },
         ],
       },
       {
@@ -167,22 +161,15 @@ const trainingService = {
         nome: "Peito",
         data: "2025-01-17",
         exercicios: [
-          { nome: "Supino Reto", series: "4", repeticoes: "8", peso: "85" },
-          {
-            nome: "Supino Inclinado",
-            series: "3",
-            repeticoes: "10",
-            peso: "75",
-          },
+          { nome: "Supino Reto", series: "4x8", peso: 85 },
+          { nome: "Supino Inclinado", series: "3x10", peso: 75 },
         ],
       },
       {
         id: 3,
         nome: "Peito",
         data: "2025-01-24",
-        exercicios: [
-          { nome: "Supino Reto", series: "4", repeticoes: "10", peso: "82" },
-        ],
+        exercicios: [{ nome: "Supino Reto", series: "4x10", peso: 82 }],
       },
       { id: 4, nome: "Peito", data: "2025-01-31", volumeTotal: 2800 },
       { id: 5, nome: "Peito", data: "2025-02-07", volumeTotal: 3000 },
@@ -194,8 +181,8 @@ const trainingService = {
         nome: "Costas",
         data: "2025-01-11",
         exercicios: [
-          { nome: "Puxada Frontal", series: "4", repeticoes: "12", peso: "60" },
-          { nome: "Remada Curvada", series: "3", repeticoes: "10", peso: "70" },
+          { nome: "Puxada Frontal", series: "4x12", peso: 60 },
+          { nome: "Remada Curvada", series: "3x10", peso: 70 },
         ],
       },
       { id: 8, nome: "Costas", data: "2025-01-18", volumeTotal: 2500 },
@@ -210,8 +197,8 @@ const trainingService = {
         nome: "Braço",
         data: "2025-01-12",
         exercicios: [
-          { nome: "Rosca Direta", series: "3", repeticoes: "12", peso: "20" },
-          { nome: "Tríceps Pulley", series: "3", repeticoes: "15", peso: "25" },
+          { nome: "Rosca Direta", series: "3x12", peso: 20 },
+          { nome: "Tríceps Pulley", series: "3x15", peso: 25 },
         ],
       },
       { id: 14, nome: "Braço", data: "2025-01-19", volumeTotal: 1500 },

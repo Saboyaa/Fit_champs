@@ -3,6 +3,7 @@ import Tasks from "../Components/ComponentsTreinosSemanais/Tasks";
 import { useGlobalContext } from "../Hooks/ContextoGlobal";
 import { useExercicios } from "../Hooks/ExerciciosContext";
 import { useNavigate } from "react-router-dom";
+import { getWeekRange, changeWeek } from "../Hooks/getWeek";
 import {
   Calendar,
   Dumbbell,
@@ -20,21 +21,6 @@ function TreinosSemanais() {
   const navigate = useNavigate();
   const [tasksList, setTasksList] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const getWeekRange = () => {
-    const currentDate = new Date();
-    const startOfWeek = currentDate.getDate() - currentDate.getDay(); // Domingo
-    const endOfWeek = startOfWeek + 6; // Sábado
-
-    const start = new Date(currentDate.setDate(startOfWeek));
-    const end = new Date(currentDate.setDate(endOfWeek));
-
-    return {
-      start: start.toLocaleDateString(),
-      end: end.toLocaleDateString(),
-    };
-  };
-
   const [weekRange, setWeekRange] = useState(getWeekRange());
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
 
@@ -60,25 +46,8 @@ function TreinosSemanais() {
     setTasksList(tasks);
   };
 
-  const changeWeek = (offset) => {
-    const newOffset = currentWeekOffset + offset;
-
-    if (newOffset > 0) return;
-
-    setCurrentWeekOffset(newOffset);
-    const currentDate = new Date();
-    const startOfCurrentWeek = currentDate.getDate() - currentDate.getDay();
-    const newStartDate = new Date(
-      currentDate.setDate(startOfCurrentWeek + 7 * newOffset)
-    );
-    const newEndDate = new Date(
-      new Date(newStartDate).setDate(newStartDate.getDate() + 6)
-    );
-
-    setWeekRange({
-      start: newStartDate.toLocaleDateString(),
-      end: newEndDate.toLocaleDateString(),
-    });
+  const handleChangeWeek = (offset) => {
+    changeWeek(currentWeekOffset, offset, setCurrentWeekOffset, setWeekRange);
   };
 
   return (
@@ -101,7 +70,7 @@ function TreinosSemanais() {
 
           <div className="flex items-center justify-center gap-4 my-5">
             <button
-              onClick={() => changeWeek(-1)}
+              onClick={() => handleChangeWeek(-1)}
               className="bg-sky-800 hover:bg-sky-700 p-3 rounded-full text-white shadow-lg transition-all duration-300 transform hover:scale-110"
               aria-label="Semana anterior"
             >
@@ -115,7 +84,7 @@ function TreinosSemanais() {
             </div>
 
             <button
-              onClick={() => changeWeek(1)}
+              onClick={() => handleChangeWeek(1)}
               className={`bg-sky-800 hover:bg-sky-700 p-3 rounded-full text-white shadow-lg transition-all duration-300 transform hover:scale-110 ${
                 currentWeekOffset === 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
