@@ -1,11 +1,13 @@
 from datetime import date
-from typing import List, Optional
+from typing import List, Literal, Optional
 
-from sqlalchemy import String, ForeignKey, UniqueConstraint
+from sqlalchemy import String, ForeignKey, UniqueConstraint, Index
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 class Base(DeclarativeBase):
     pass
+
+type Gender = Literal["M", "F"]
 
 class User(Base):
     __tablename__ = "users"
@@ -15,7 +17,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(50), unique=True)
     hashed_password: Mapped[str]
     city: Mapped[str] = mapped_column(String(50))
-    sex: Mapped[str] = mapped_column(String(1), nullable=False)
+    sex: Mapped[Gender] = mapped_column(nullable=False)
     age: Mapped[int] = mapped_column(nullable=False, default=10)
     phone: Mapped[str] = mapped_column(String(11))
     height: Mapped[int] = mapped_column(nullable=False, default=0)
@@ -65,4 +67,82 @@ class Train(Base):
 
     __table_args__ = (
         UniqueConstraint("user_id", "train_date", "muscular_group", name="uq_user_date_group"),
+    )
+
+class ChestRank(Base):
+    __tablename__ = "rank_chest"
+
+    id: Mapped[int] = mapped_column(nullable=False)
+    username: Mapped[str] = mapped_column(String(50), nullable=False)
+    age: Mapped[int] = mapped_column(nullable=False)
+    sex: Mapped[str] = mapped_column(String(1), nullable=False)
+    total_volume: Mapped[int] = mapped_column(nullable=False)
+
+    __table_args__ = (
+        Index("gender_age_rank_chest_idx", "sex", "age"),
+    )
+
+class BackRank(Base):
+    __tablename__ = "rank_back"
+
+    id: Mapped[int] = mapped_column(nullable=False)
+    username: Mapped[str] = mapped_column(String(50), nullable=False)
+    age: Mapped[int] = mapped_column(nullable=False)
+    sex: Mapped[str] = mapped_column(String(1), nullable=False)
+    total_volume: Mapped[int] = mapped_column(nullable=False)
+
+    __table_args__ = (
+        Index("gender_age_rank_back_idx", "sex", "age"),
+    )
+
+class ShoulderRank(Base):
+    __tablename__ = "rank_shoulder"
+
+    id: Mapped[int] = mapped_column(nullable=False)
+    username: Mapped[str] = mapped_column(String(50), nullable=False)
+    age: Mapped[int] = mapped_column(nullable=False)
+    sex: Mapped[str] = mapped_column(String(1), nullable=False)
+    total_volume: Mapped[int] = mapped_column(nullable=False)
+
+    __table_args__ = (
+        Index("gender_age_rank_shoulder_idx", "sex", "age"),
+    )
+
+class LegRank(Base):
+    __tablename__ = "rank_leg"
+
+    id: Mapped[int] = mapped_column(nullable=False)
+    username: Mapped[str] = mapped_column(String(50), nullable=False)
+    age: Mapped[int] = mapped_column(nullable=False)
+    sex: Mapped[str] = mapped_column(String(1), nullable=False)
+    total_volume: Mapped[int] = mapped_column(nullable=False)
+
+    __table_args__ = (
+        Index("gender_age_rank_leg_idx", "sex", "age"),
+    )
+
+class ArmRank(Base):
+    __tablename__ = "rank_arm"
+
+    id: Mapped[int] = mapped_column(nullable=False)
+    username: Mapped[str] = mapped_column(String(50), nullable=False)
+    age: Mapped[int] = mapped_column(nullable=False)
+    sex: Mapped[str] = mapped_column(String(1), nullable=False)
+    total_volume: Mapped[int] = mapped_column(nullable=False)
+
+    __table_args__ = (
+        Index("gender_age_rank_arm_idx", "sex", "age"),
+    )
+
+class GeneralRank(Base):
+    __tablename__ = "general_rank"
+    
+    id: Mapped[int] = mapped_column(nullable=False)
+    username: Mapped[str] = mapped_column(String(50), nullable=False)
+    age: Mapped[int] = mapped_column(nullable=False)
+    sex: Mapped[str] = mapped_column(String(1), nullable=False)
+    positions: Mapped[float] = mapped_column(nullable=False)
+
+    __table_args__ = (
+        Index("gender_age_general_rank_idx", "sex", "age"),
     )
