@@ -1,4 +1,7 @@
 // src/components/GraficosEvolucao/utils.js
+import trainingService from "../../services/trainingService";
+
+// ========== FUNÇÕES DE ANÁLISE DOS DADOS ==========
 
 // Função para calcular a tendência (melhora ou piora)
 export const calculateTrend = (data) => {
@@ -20,6 +23,8 @@ export const calculateProgress = (data, meta) => {
   return ((lastVolume / meta) * 100).toFixed(1);
 };
 
+// ========== FUNÇÕES DE RENDERIZAÇÃO ==========
+
 // Função para obter o ícone do grupo muscular
 export const getIconComponent = (grupo, icons) => {
   const { peito, perna, ombro, costas, braco } = icons;
@@ -40,10 +45,12 @@ export const getIconComponent = (grupo, icons) => {
   }
 };
 
+// ========== FUNÇÕES DE PREPARAÇÃO DE DADOS PARA GRÁFICOS ==========
+
 // Prepara dados para gráfico de comparação
 export const prepareComparisonData = (trainingData, metas) => {
   const result = [];
-  // Usamos o último registro de cada tipo de treino
+
   Object.keys(trainingData).forEach((type) => {
     const data = trainingData[type];
     if (data.length > 0) {
@@ -55,10 +62,11 @@ export const prepareComparisonData = (trainingData, metas) => {
       });
     }
   });
+
   return result;
 };
 
-// Prepara dados para gráfico de progresso total
+// Prepara dados para gráfico de progresso total (resumo)
 export const prepareSummaryData = (trainingData, trainingTypes) => {
   // Criamos um conjunto de todas as datas
   const allDates = new Set();
@@ -66,26 +74,16 @@ export const prepareSummaryData = (trainingData, trainingTypes) => {
     data.forEach((entry) => allDates.add(entry.data));
   });
 
-  // Ordenamos as datas
-  const sortedDates = Array.from(allDates).sort((a, b) => {
-    const [dayA, monthA, yearA] = a.split("/").map(Number);
-    const [dayB, monthB, yearB] = b.split("/").map(Number);
-    return (
-      new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB)
-    );
-  });
+  // Ordenamos as datas usando a função centralizada do trainingService
+  const sortedDates = Array.from(allDates).sort(trainingService.compareDates);
 
-  // Criamos um array de objetos com a data e o volume total de todos os treinos naquela data
+  // Criamos um array de objetos com a data e o volume de cada tipo de treino
   return sortedDates.map((date) => {
     const entry = { data: date };
 
     trainingTypes.forEach((type) => {
       const matchingEntry = trainingData[type].find((e) => e.data === date);
-      if (matchingEntry) {
-        entry[type] = matchingEntry.volume;
-      } else {
-        entry[type] = 0;
-      }
+      entry[type] = matchingEntry ? matchingEntry.volume : 0;
     });
 
     return entry;

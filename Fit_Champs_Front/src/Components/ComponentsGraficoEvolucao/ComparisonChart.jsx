@@ -23,6 +23,37 @@ const ComparisonChart = ({
 }) => {
   const comparisonData = prepareComparisonData(trainingData, metas);
 
+  // Calcular o domínio do eixo Y dinamicamente
+  const calculateYAxisDomain = () => {
+    if (comparisonData.length === 0) return [0, 100];
+
+    const volumes = comparisonData.map((item) => item.volume);
+    const maxVolume = Math.max(...volumes);
+    const minVolume = Math.min(...volumes);
+
+    let maxValue = maxVolume;
+    let minValue = Math.max(0, minVolume - maxVolume * 0.1); // 10% abaixo do mínimo
+
+    // Se as metas estão sendo mostradas, considerar as metas no cálculo
+    if (showMetas) {
+      const metaValues = comparisonData
+        .map((item) => item.meta)
+        .filter((meta) => meta > 0);
+
+      if (metaValues.length > 0) {
+        const maxMeta = Math.max(...metaValues);
+        maxValue = Math.max(maxValue, maxMeta);
+      }
+    }
+
+    // Adicionar um buffer de 15% acima do valor máximo
+    maxValue = maxValue * 1.15;
+
+    return [Math.floor(minValue), Math.ceil(maxValue)];
+  };
+
+  const yAxisDomain = calculateYAxisDomain();
+
   return (
     <div className="bg-slate-800/90 backdrop-blur-sm p-6 rounded-xl shadow-lg w-full border border-slate-700">
       <h2 className="text-xl font-semibold mb-4 text-slate-100 flex items-center">
@@ -43,6 +74,7 @@ const ComparisonChart = ({
               />
               <XAxis dataKey="nome" tick={{ fill: "#94a3b8" }} />
               <YAxis
+                domain={yAxisDomain}
                 label={{
                   value: "Volume (kg)",
                   angle: -90,
@@ -52,7 +84,14 @@ const ComparisonChart = ({
                 tick={{ fill: "#94a3b8" }}
               />
               <Tooltip
-                formatter={(value) => [`${value} kg`, "Volume"]}
+                formatter={(value, name) => {
+                  if (name === "Volume Atual") {
+                    return [`${value} kg`, "Volume Atual"];
+                  } else if (name === "Meta") {
+                    return [`${value} kg`, "Meta"];
+                  }
+                  return [`${value} kg`, name];
+                }}
                 contentStyle={{
                   backgroundColor: "rgba(15, 23, 42, 0.9)",
                   borderRadius: "8px",
@@ -70,15 +109,17 @@ const ComparisonChart = ({
                 name="Volume Atual"
                 activeDot={{ r: 8 }}
               />
-              <Line
-                type="monotone"
-                dataKey="meta"
-                stroke="#10B981"
-                strokeDasharray="5 5"
-                strokeWidth={2}
-                name="Meta"
-                dot={false}
-              />
+              {showMetas && (
+                <Line
+                  type="monotone"
+                  dataKey="meta"
+                  stroke="#10B981"
+                  strokeDasharray="5 5"
+                  strokeWidth={2}
+                  name="Meta"
+                  dot={false}
+                />
+              )}
             </LineChart>
           ) : (
             <ComposedChart
@@ -92,6 +133,7 @@ const ComparisonChart = ({
               />
               <XAxis dataKey="nome" tick={{ fill: "#94a3b8" }} />
               <YAxis
+                domain={yAxisDomain}
                 label={{
                   value: "Volume (kg)",
                   angle: -90,
@@ -101,7 +143,14 @@ const ComparisonChart = ({
                 tick={{ fill: "#94a3b8" }}
               />
               <Tooltip
-                formatter={(value) => [`${value} kg`, "Volume"]}
+                formatter={(value, name) => {
+                  if (name === "Volume Atual") {
+                    return [`${value} kg`, "Volume Atual"];
+                  } else if (name === "Meta") {
+                    return [`${value} kg`, "Meta"];
+                  }
+                  return [`${value} kg`, name];
+                }}
                 contentStyle={{
                   backgroundColor: "rgba(15, 23, 42, 0.9)",
                   borderRadius: "8px",
