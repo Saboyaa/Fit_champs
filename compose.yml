@@ -1,5 +1,7 @@
+version: "1"
 services:
-    service:
-        build: ./Fit_Champs_Front
+    client:
+        image: saboyaa/fitfront:1.0
+        container_name: front-end-fit
         ports:
-            - "3000:3000"
+            - "5173:5173"
