@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   Activity,
   TrendingUp,
@@ -11,11 +11,25 @@ import {
   ChevronUp,
   Check,
   BarChart2,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import exerciciosPorTipo from "../../Classes/exercicio";
+import { getWeekRange, changeWeek } from "../../Hooks/getWeek";
 
 const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
   const [expandedType, setExpandedType] = useState(null);
+  const [weekRange, setWeekRange] = useState(getWeekRange());
+  const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
+
+  useEffect(() => {
+    setWeekRange(getWeekRange());
+  }, []);
+
+  const handleChangeWeek = (offset) => {
+    changeWeek(currentWeekOffset, offset, setCurrentWeekOffset, setWeekRange);
+  };
 
   // Função para obter todos os subgrupos possíveis para um tipo de treino
   const getTodosSubgruposPorTipo = (tipoTreino) => {
@@ -32,12 +46,35 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
     return Array.from(subgruposSet);
   };
 
+  // Função para verificar se um treino está na semana selecionada
+  const isTreinoInSelectedWeek = (treinoData) => {
+    if (!treinoData) return false;
+
+    // Converter data do treino para objeto Date
+    const [day, month, year] = treinoData.split("-").map(Number);
+    const treinoDate = new Date(2000 + year, month - 1, day);
+
+    // Converter datas da semana selecionada para objetos Date
+    const [startDay, startMonth, startYear] = weekRange.start
+      .split("/")
+      .map(Number);
+    const [endDay, endMonth, endYear] = weekRange.end.split("/").map(Number);
+
+    const weekStart = new Date(startYear, startMonth - 1, startDay);
+    const weekEnd = new Date(endYear, endMonth - 1, endDay);
+
+    return treinoDate >= weekStart && treinoDate <= weekEnd;
+  };
+
   const treinoTipoSummary = useMemo(() => {
     const summary = {};
 
-    treinos.forEach((treino) => {
-      if (treino.descripition === "Day Off") return;
+    // Filtrar treinos apenas da semana selecionada
+    const treinosDaSemana = treinos.filter(
+      (treino) => treino.descripition !== isTreinoInSelectedWeek(treino.data)
+    );
 
+    treinosDaSemana.forEach((treino) => {
       const exercises = exerciciosPorTreino[treino.id] || [];
 
       if (!summary[treino.descripition]) {
@@ -85,7 +122,7 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
     });
 
     return summary;
-  }, [exerciciosPorTreino, treinos]);
+  }, [exerciciosPorTreino, treinos, weekRange]);
 
   const detalhamentoTipos = Object.entries(treinoTipoSummary)
     .map(([tipo, dados]) => ({
@@ -109,8 +146,8 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
     .filter((item) => item.sessionCount > 0 && item.exerciseCount > 0);
 
   const getIntensityLevel = (averageVolume) => {
-    if (averageVolume < 3000) return { label: "Leve", color: "text-green-400" };
-    if (averageVolume < 5000)
+    if (averageVolume < 5000) return { label: "Leve", color: "text-green-400" };
+    if (averageVolume < 8000)
       return { label: "Moderado", color: "text-yellow-400" };
     return { label: "Intenso", color: "text-red-400" };
   };
@@ -122,6 +159,35 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
         <h1 className="text-3xl font-bold text-white bg-gradient-to-r from-blue-100 to-blue-400 bg-clip-text text-transparent">
           Resumo dos Meus Treinos
         </h1>
+      </div>
+
+      {/* Seletor de Semana */}
+      <div className="flex items-center justify-center gap-4 mb-8">
+        <button
+          onClick={() => handleChangeWeek(-1)}
+          className="bg-sky-800 hover:bg-sky-700 p-3 rounded-full text-white shadow-lg transition-all duration-300 transform hover:scale-110"
+          aria-label="Semana anterior"
+        >
+          <ChevronLeft size={20} />
+        </button>
+
+        <div className="bg-gradient-to-r from-sky-800 to-indigo-800 px-6 py-3 rounded-lg shadow-lg border border-sky-700/50 flex items-center gap-2">
+          <Calendar className="text-blue-200" size={20} />
+          <p className="text-blue-100 text-center font-medium">
+            {weekRange.start} - {weekRange.end}
+          </p>
+        </div>
+
+        <button
+          onClick={() => handleChangeWeek(1)}
+          className={`bg-sky-800 hover:bg-sky-700 p-3 rounded-full text-white shadow-lg transition-all duration-300 transform hover:scale-110 ${
+            currentWeekOffset === 0 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={currentWeekOffset === 0}
+          aria-label="Próxima semana"
+        >
+          <ChevronRight size={20} />
+        </button>
       </div>
 
       {Object.keys(treinoTipoSummary).length > 0 ? (
@@ -195,7 +261,7 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
                       <div className="mt-4 bg-indigo-900/20 p-4 rounded-xl border border-indigo-800/30">
                         <h4 className="text-blue-200 mb-4 font-semibold flex items-center">
                           <Target className="mr-2 text-blue-300" size={18} />
-                          Subgrupos Musculares Fadigados :
+                          Subgrupos Musculares Trabalhados:
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                           {Object.entries(item.muscleGroups).map(
@@ -292,10 +358,16 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
         </div>
       ) : (
         <div className="bg-slate-800/80 p-8 rounded-xl border border-slate-700/50 text-center">
-          <p className="text-blue-200 text-lg">
-            Nenhum dado de treino disponível ainda. Adicione exercícios aos seus
-            treinos para visualizar o resumo.
-          </p>
+          <div className="flex flex-col items-center gap-4">
+            <Calendar className="text-blue-300" size={48} />
+            <p className="text-blue-200 text-lg">
+              Nenhum treino encontrado para a semana selecionada.
+            </p>
+            <p className="text-blue-300 text-sm">
+              Selecione uma semana diferente ou adicione treinos para visualizar
+              o resumo.
+            </p>
+          </div>
         </div>
       )}
     </div>
