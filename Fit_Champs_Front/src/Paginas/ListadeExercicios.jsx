@@ -285,7 +285,7 @@ function ListadeExercicios() {
         )}
 
         {hasExercicios ? (
-          <div className="space-y-6 w-full md:w-[90%] mx-auto">
+          <div className="space-y-6 w-full md:w-[90%] mx-auto p-4">
             {activeView === "list" && (
               <>
                 {treinos.map((treino) => {
@@ -492,7 +492,7 @@ function ListadeExercicios() {
                   );
                 })}
 
-                <div className="sticky bottom-6 mt-6 flex justify-center">
+                <div className="sticky bottom-6  flex justify-center">
                   <button
                     onClick={salvarTreino}
                     disabled={isSaving}

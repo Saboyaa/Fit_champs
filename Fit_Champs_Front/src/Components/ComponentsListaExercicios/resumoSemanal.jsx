@@ -70,8 +70,8 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
     const summary = {};
 
     // Filtrar treinos apenas da semana selecionada
-    const treinosDaSemana = treinos.filter(
-      (treino) => treino.descripition !== isTreinoInSelectedWeek(treino.data)
+    const treinosDaSemana = treinos.filter((treino) =>
+      isTreinoInSelectedWeek(treino.data)
     );
 
     treinosDaSemana.forEach((treino) => {
@@ -146,8 +146,8 @@ const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
     .filter((item) => item.sessionCount > 0 && item.exerciseCount > 0);
 
   const getIntensityLevel = (averageVolume) => {
-    if (averageVolume < 5000) return { label: "Leve", color: "text-green-400" };
-    if (averageVolume < 8000)
+    if (averageVolume < 3000) return { label: "Leve", color: "text-green-400" };
+    if (averageVolume < 5000)
       return { label: "Moderado", color: "text-yellow-400" };
     return { label: "Intenso", color: "text-red-400" };
   };
