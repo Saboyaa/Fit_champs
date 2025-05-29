@@ -1,6 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
 import {
-  Activity,
   TrendingUp,
   ClipboardList,
   BicepsFlexedIcon,
@@ -9,7 +8,6 @@ import {
   Zap,
   ChevronDown,
   ChevronUp,
-  Check,
   BarChart2,
   Calendar,
   ChevronLeft,
