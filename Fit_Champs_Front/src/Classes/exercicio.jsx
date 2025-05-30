@@ -99,7 +99,6 @@ const exerciciosPorTipo = {
     { nome: "Shrugs com Halteres", subgrupo: "Trapézio" },
     { nome: "W-Raise", subgrupo: "Deltóide Posterior" },
   ],
-  "Day Off": [],
 };
 
 // Função para obter exercícios por tipo de treino

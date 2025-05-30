@@ -1,77 +1,91 @@
+// src/Paginas/Login.jsx
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import icone from "../images/icone.png";
-import authService from "../services/authService"; // Importando o authService
+import { useNavigate } from "react-router-dom";
+import authService from "../services/authService";
+
+// Importações dos componentes separados
+import LoginHeader from "../Components/ComponentsLogin/LoginHeader";
+import UsernameField from "../Components/ComponentsLogin/UsernameField";
+import PasswordField from "../Components/ComponentsLogin/PasswordField";
+import LoginOptions from "../Components/ComponentsLogin/LoginOptions";
+import LoginButton from "../Components/ComponentsLogin/LoginButton";
+import SignupSection from "../Components/ComponentsLogin/SignupSection";
+import MotivationBanner from "../Components/ComponentsLogin/MotivationBanner";
+import Footer from "../Components/ComponentsLogin/Footer";
+import ErrorMessage from "../Components/ComponentsLogin/ErrorMessage";
 
 export default function Login() {
+  // Estados do componente
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, SetError] = useState("");
-  const [username, setUsername] = useState(""); // para o remenber me
+  const [error, setError] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
+
+  // Função para alternar visibilidade da senha
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  //Qaundo formos fazer a sincronia com o backend, vamos usar o authService, ale´m isso precisamos chamar essa função no onSubmit do form
+  // Função de login (preparada para integração com backend)
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-  // const handleLogin = (e) => {
-  //   e.preventDefault();
-  //   if(!username||!password) {
-  //     SetError("Preencha todos os campos");
-  //   return;
+    if (!username || !password) {
+      setError("Preencha todos os campos");
+      return;
+    }
+
+    try {
+      setError("");
+      setLoading(true);
+
+      // Descomente quando o backend estiver pronto
+      // await authService.login(username, password);
+
+      if (rememberMe) {
+        localStorage.setItem("rememberMe", "true");
+        localStorage.setItem("savedUsername", username);
+      } else {
+        localStorage.removeItem("rememberMe");
+        localStorage.removeItem("savedUsername");
+      }
+
+      // Simular delay para mostrar loading
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      navigate("/Home");
+    } catch (error) {
+      setError(
+        error.message || "Erro ao fazer login. Verifique suas credenciais."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Verificar remember me no carregamento do componente
+  // useState(() => {
+  //   const savedUsername = localStorage.getItem("savedUsername");
+  //   const rememberMe = localStorage.getItem("rememberMe") === "true";
+
+  //   if (rememberMe && savedUsername) {
+  //     setUsername(savedUsername);
+  //     setRememberMe(true);
   //   }
-  //   try {
-  //     SetError("");
-
-  //     await authService.login(username, password);
-
-  //     if (rememberMe) {
-  //       localStorage.setItem("rememberMe", "true");
-  //       localStorage.setItem("savedUsername", username);
-  //     } else {
-  //       localStorage.removeItem("rememberMe");
-  //       localStorage.removeItem("savedUsername");
-
-  //     }
-  //     navigate("/Home");
-  //   } catch (error) {
-  //     SetError(error.message|| "Erro ao fazer login. Verifique suas credenciais.");
-  //   }};
-
-  //   // vamos fazer a função para verificar o remember me
-  //   useState (() => {
-  //     const savedUsername = localStorage.getItem("savedUsername");
-  //     const rememberMe = localStorage.getItem("rememberMe") === "true";
-
-  //     if (rememberMe && savedUsername) {
-  //       setUsername(savedUsername);
-  //       setRememberMe(true);
-  //     }
-  //   } , []);
+  // }, []);
 
   return (
-    <div className=" w-[100vw]  bg-gradient-to-br from-slate-950 to-slate-700  flex flex-col items-center justify-center p-6 rounded-md shadow-2xl">
-      {/* Logo Header */}
-      <div className="mb-8 flex flex-col items-center">
-        <div className="flex items-center gap-3 mb-2">
-          <img
-            src={icone}
-            alt="Fit Champs Logo"
-            className="h-12 w-12 animate-pulse"
-          />
-          <h1 className="text-4xl font-extrabold text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-400">
-            Fit Champs
-          </h1>
-        </div>
-        <p className="text-blue-300 text-lg font-medium">
-          Supere seus limites!
-        </p>
-      </div>
+    <div className="w-[100vw] bg-gradient-to-br from-slate-950 to-slate-700 flex flex-col items-center justify-center p-6 rounded-md shadow-2xl">
+      {/* Header com logo */}
+      <LoginHeader />
 
-      {/* Login Card - Wider */}
+      {/* Card principal de login */}
       <div className="w-full max-w-2xl bg-gradient-to-b from-sky-950 to-sky-950/90 rounded-2xl shadow-2xl overflow-hidden">
-        {/* Decorative Top Bar */}
+        {/* Barra decorativa superior */}
         <div className="h-2 bg-gradient-to-r from-blue-600 to-cyan-500"></div>
 
         <div className="p-10">
@@ -79,163 +93,46 @@ export default function Login() {
             Login
           </h2>
 
-          <form className="space-y-6">
-            {/* Username Field */}
-            <div>
-              <label className="block text-blue-200 font-medium mb-2">
-                Usuário
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </span>
-                <input
-                  type="text"
-                  className="w-full pl-10 pr-4 py-3 bg-sky-900/30 border border-sky-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
-                  placeholder="Digite seu nome de usuário"
-                />
-              </div>
-            </div>
+          <form onSubmit={handleLogin} className="space-y-6">
+            {/* Mensagem de erro */}
+            <ErrorMessage error={error} />
 
-            {/* Password Field */}
-            <div>
-              <label className="block text-blue-200 font-medium mb-2">
-                Senha
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </span>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  className="w-full pl-10 pr-12 py-3 bg-sky-900/30 border border-sky-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
-                  placeholder="Digite sua senha"
-                />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-white"
-                >
-                  {showPassword ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                      <path
-                        fillRule="evenodd"
-                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z"
-                        clipRule="evenodd"
-                      />
-                      <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-            </div>
+            {/* Campo de usuário */}
+            <UsernameField
+              username={username}
+              setUsername={setUsername}
+              disabled={loading}
+            />
 
-            {/* Login Options Row */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="remember"
-                  checked={rememberMe}
-                  onChange={() => setRememberMe(!rememberMe)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-500 rounded"
-                />
-                <label
-                  htmlFor="remember"
-                  className="ml-2 block text-sm text-blue-200"
-                >
-                  Lembrar-me
-                </label>
-              </div>
-              <div>
-                <button className="text-sm text-blue-400 hover:text-blue-200">
-                  <NavLink to="/ForgotPassword">Esqueci a senha</NavLink>
-                </button>
-              </div>
-            </div>
+            {/* Campo de senha */}
+            <PasswordField
+              password={password}
+              setPassword={setPassword}
+              showPassword={showPassword}
+              togglePasswordVisibility={togglePasswordVisibility}
+              disabled={loading}
+            />
 
-            {/* Login Button */}
-            <div className="pt-2">
-              <NavLink to="/Home" className="block w-full">
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
-                >
-                  ENTRAR
-                </button>
-              </NavLink>
-            </div>
+            {/* Opções de login (lembrar-me e esqueci senha) */}
+            <LoginOptions
+              rememberMe={rememberMe}
+              setRememberMe={setRememberMe}
+            />
 
-            {/* Signup Link - Two Column Layout */}
-            <div className=" gap-4 mt-6">
-              <div className="text-center p-4 border border-sky-800 rounded-lg bg-sky-900/20">
-                <p className="text-blue-200 mb-2">Novo por aqui?</p>
-                <NavLink
-                  to="/Cadastro"
-                  className="block w-full bg-sky-900 hover:bg-sky-800 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-                >
-                  Criar conta
-                </NavLink>
-              </div>
-            </div>
+            {/* Botão de login */}
+            <LoginButton loading={loading} disabled={!username || !password} />
+
+            {/* Seção de cadastro */}
+            <SignupSection />
           </form>
 
-          {/* Fitness Motivation Banner */}
-          <div className="mt-8 bg-sky-900 border border-sky-800 rounded-lg p-4 text-center">
-            <p className="text-blue-200 italic">
-              "O único treino ruim é aquele que você não fez."
-            </p>
-          </div>
+          {/* Banner motivacional */}
+          <MotivationBanner />
         </div>
       </div>
 
       {/* Footer */}
-      <div className="mt-6 text-center">
-        <p className="text-blue-400 text-sm">
-          © 2025 Fit Champs - Todos os direitos reservados
-        </p>
-      </div>
+      <Footer />
     </div>
   );
 }
