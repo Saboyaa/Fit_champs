@@ -20,17 +20,17 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.execute("""
-        CREATE TABLE trains (
-            id SERIAL PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS trains (
+            id BIGSERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES users(id),
             muscular_group VARCHAR(10) NOT NULL,
             train_date DATE NOT NULL,
             CONSTRAINT uq_user_date_group UNIQUE (user_id, train_date, muscular_group)
         );
 
-        CREATE TABLE trains_exercises (
-            id SERIAL PRIMARY KEY,
-            train_id INTEGER REFERENCES trains(id),
+        CREATE TABLE IF NOT EXISTS trains_exercises (
+            id BIGSERIAL PRIMARY KEY,
+            train_id BIGINT REFERENCES trains(id),
             exercise_id INTEGER REFERENCES exercises(id),
             repetitions VARCHAR(4),
             load INTEGER CHECK(load >= 0)

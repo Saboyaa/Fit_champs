@@ -1,5 +1,32 @@
+version: "3"
 services:
-    service:
-        build: ./Fit_Champs_Front
-        ports:
-            - "3000:3000"
+  db:
+    build: ./Fit_Champs_Db
+    environment:
+      POSTGRES_DB: fit_champs_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+
+  backend:
+    build: ./Fit_Champs_Back
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DB_URL: "postgresql+psycopg2://postgres:postgres@db:5432/fit_champs_db"
+      SECRET_KEY: "20c379638291d2e7d5d280c30d37980b733d89cf14b17d8bc57270777563367e"
+      ALGORITHM: "HS256"
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+    volumes:
+      - ./Fit_Champs_Back/app:/app
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./Fit_Champs_Front
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

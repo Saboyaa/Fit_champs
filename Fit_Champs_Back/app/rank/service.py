@@ -30,7 +30,8 @@ def get_chest_rank_by_age_and_gender(db: Session, rank_body: RankBody):
             detail="Gênero inválido para consulta"
         )
     
-    lower_age = 0, bigger_age = 0
+    lower_age = 0
+    bigger_age = 0
     if age >= 10 and age <= 20:
         lower_age = 10
         bigger_age = 20
@@ -68,7 +69,8 @@ def get_back_rank_by_age_and_gender(db: Session, rank_body: RankBody):
             detail="Gênero inválido para consulta"
         )
     
-    lower_age = 0, bigger_age = 0
+    lower_age = 0
+    bigger_age = 0
     if age >= 10 and age <= 20:
         lower_age = 10
         bigger_age = 20
@@ -106,7 +108,8 @@ def get_shoulder_rank_by_age_and_gender(db: Session, rank_body: RankBody):
             detail="Gênero inválido para consulta"
         )
     
-    lower_age = 0, bigger_age = 0
+    lower_age = 0
+    bigger_age = 0
     if age >= 10 and age <= 20:
         lower_age = 10
         bigger_age = 20
@@ -144,7 +147,8 @@ def get_leg_rank_by_age_and_gender(db: Session, rank_body: RankBody):
             detail="Gênero inválido para consulta"
         )
     
-    lower_age = 0, bigger_age = 0
+    lower_age = 0
+    bigger_age = 0
     if age >= 10 and age <= 20:
         lower_age = 10
         bigger_age = 20
@@ -182,7 +186,8 @@ def get_arm_rank_by_age_and_gender(db: Session, rank_body: RankBody):
             detail="Gênero inválido para consulta"
         )
     
-    lower_age = 0, bigger_age = 0
+    lower_age = 0
+    bigger_age = 0
     if age >= 10 and age <= 20:
         lower_age = 10
         bigger_age = 20
@@ -220,7 +225,8 @@ def get_general_rank_by_age_and_gender(db: Session, rank_body: RankBody):
             detail="Gênero inválido para consulta"
         )
     
-    lower_age = 0, bigger_age = 0
+    lower_age = 0
+    bigger_age = 0
     if age >= 10 and age <= 20:
         lower_age = 10
         bigger_age = 20

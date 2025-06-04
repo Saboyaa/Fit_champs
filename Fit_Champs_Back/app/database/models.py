@@ -72,7 +72,7 @@ class Train(Base):
 class ChestRank(Base):
     __tablename__ = "rank_chest"
 
-    id: Mapped[int] = mapped_column(nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
     username: Mapped[str] = mapped_column(String(50), nullable=False)
     age: Mapped[int] = mapped_column(nullable=False)
     sex: Mapped[str] = mapped_column(String(1), nullable=False)
@@ -81,11 +81,12 @@ class ChestRank(Base):
     __table_args__ = (
         Index("gender_age_rank_chest_idx", "sex", "age"),
     )
+    __mapper_args__ = {"eager_defaults": False}
 
 class BackRank(Base):
     __tablename__ = "rank_back"
 
-    id: Mapped[int] = mapped_column(nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
     username: Mapped[str] = mapped_column(String(50), nullable=False)
     age: Mapped[int] = mapped_column(nullable=False)
     sex: Mapped[str] = mapped_column(String(1), nullable=False)
@@ -94,11 +95,12 @@ class BackRank(Base):
     __table_args__ = (
         Index("gender_age_rank_back_idx", "sex", "age"),
     )
+    __mapper_args__ = {"eager_defaults": False}
 
 class ShoulderRank(Base):
     __tablename__ = "rank_shoulder"
 
-    id: Mapped[int] = mapped_column(nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
     username: Mapped[str] = mapped_column(String(50), nullable=False)
     age: Mapped[int] = mapped_column(nullable=False)
     sex: Mapped[str] = mapped_column(String(1), nullable=False)
@@ -107,11 +109,12 @@ class ShoulderRank(Base):
     __table_args__ = (
         Index("gender_age_rank_shoulder_idx", "sex", "age"),
     )
+    __mapper_args__ = {"eager_defaults": False}
 
 class LegRank(Base):
     __tablename__ = "rank_leg"
 
-    id: Mapped[int] = mapped_column(nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
     username: Mapped[str] = mapped_column(String(50), nullable=False)
     age: Mapped[int] = mapped_column(nullable=False)
     sex: Mapped[str] = mapped_column(String(1), nullable=False)
@@ -120,11 +123,12 @@ class LegRank(Base):
     __table_args__ = (
         Index("gender_age_rank_leg_idx", "sex", "age"),
     )
+    __mapper_args__ = {"eager_defaults": False}
 
 class ArmRank(Base):
     __tablename__ = "rank_arm"
 
-    id: Mapped[int] = mapped_column(nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
     username: Mapped[str] = mapped_column(String(50), nullable=False)
     age: Mapped[int] = mapped_column(nullable=False)
     sex: Mapped[str] = mapped_column(String(1), nullable=False)
@@ -133,11 +137,12 @@ class ArmRank(Base):
     __table_args__ = (
         Index("gender_age_rank_arm_idx", "sex", "age"),
     )
+    __mapper_args__ = {"eager_defaults": False}
 
 class GeneralRank(Base):
     __tablename__ = "general_rank"
     
-    id: Mapped[int] = mapped_column(nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
     username: Mapped[str] = mapped_column(String(50), nullable=False)
     age: Mapped[int] = mapped_column(nullable=False)
     sex: Mapped[str] = mapped_column(String(1), nullable=False)
@@ -146,3 +151,4 @@ class GeneralRank(Base):
     __table_args__ = (
         Index("gender_age_general_rank_idx", "sex", "age"),
     )
+    __mapper_args__ = {"eager_defaults": False}

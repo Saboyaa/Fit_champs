@@ -20,7 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.execute("""
-        CREATE MATERIALIZED VIEW rank_back AS
+        CREATE MATERIALIZED VIEW IF NOT EXISTS rank_back AS
         SELECT 
             u.id,
             u.username,

@@ -20,7 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.execute("""
-        CREATE TABLE exercises (
+        CREATE TABLE IF NOT EXISTS exercises (
             id SERIAL PRIMARY KEY,
             muscular_group VARCHAR(10),
             submuscular_group VARCHAR(30),
@@ -120,9 +120,7 @@ def upgrade() -> None:
             ('Ombro', 'Trapézio/Deltóide Lateral', 'Remada Alta'),
             ('Ombro', 'Deltóide Geral', 'Desenvolvimento Sentado'),
             ('Ombro', 'Trapézio', 'Shrugs com Halteres'),
-            ('Ombro', 'Deltóide Posterior', 'W-Raise'),
-            -- Day Off
-            ('Day Off', '', '');
+            ('Ombro', 'Deltóide Posterior', 'W-Raise');
                
         CREATE INDEX IF NOT EXISTS exercises_id_idx ON exercises USING hash (id);
         CREATE INDEX IF NOT EXISTS exercises_muscular_group_idx ON exercises USING btree (muscular_group);
