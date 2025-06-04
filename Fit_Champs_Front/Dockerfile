@@ -1,8 +1,8 @@
-FROM node:23-slim AS build
+FROM node:23-alpine AS build
 
 WORKDIR /app
 
-COPY package.json package-lock.json /app/
+COPY package.json package-lock.json ./
 
 RUN npm install
 
@@ -14,7 +14,7 @@ FROM nginx:stable-alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=build /app/dist /urs/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 

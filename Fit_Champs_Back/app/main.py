@@ -7,9 +7,7 @@ from .rank.controller import rank_router
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:3000"
-]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
