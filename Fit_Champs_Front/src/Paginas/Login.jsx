@@ -1,5 +1,5 @@
 // src/Paginas/Login.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/authService";
 
@@ -15,7 +15,6 @@ import Footer from "../Components/ComponentsLogin/Footer";
 import ErrorMessage from "../Components/ComponentsLogin/ErrorMessage";
 
 export default function Login() {
-  // Estados do componente
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
@@ -25,12 +24,10 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  // Função para alternar visibilidade da senha
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  // Função de login (preparada para integração com backend)
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -40,11 +37,9 @@ export default function Login() {
     }
 
     try {
-      setError("");
       setLoading(true);
 
-      // Descomente quando o backend estiver pronto
-      // await authService.login(username, password);
+      await authService.login(username, password);
 
       if (rememberMe) {
         localStorage.setItem("rememberMe", "true");
@@ -54,38 +49,39 @@ export default function Login() {
         localStorage.removeItem("savedUsername");
       }
 
-      // Simular delay para mostrar loading
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       navigate("/Home");
-    } catch (error) {
-      setError(
-        error.message || "Erro ao fazer login. Verifique suas credenciais."
-      );
+    } catch (err) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Erro ao fazer login. Verifique suas credenciais.";
+      localStorage.setItem("loginError", message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Verificar remember me no carregamento do componente
-  // useState(() => {
-  //   const savedUsername = localStorage.getItem("savedUsername");
-  //   const rememberMe = localStorage.getItem("rememberMe") === "true";
+  // Restaurar nome de usuário se "lembrar-me" estiver ativado
+  useEffect(() => {
+    const savedUsername = localStorage.getItem("savedUsername");
+    const remember = localStorage.getItem("rememberMe") === "true";
+    const savedError = localStorage.getItem("loginError");
 
-  //   if (rememberMe && savedUsername) {
-  //     setUsername(savedUsername);
-  //     setRememberMe(true);
-  //   }
-  // }, []);
+    if (remember && savedUsername) {
+      setUsername(savedUsername);
+      setRememberMe(true);
+    }
+    if (savedError) {
+      setError(savedError);
+      localStorage.removeItem("loginError");
+    }
+  }, []);
 
   return (
     <div className="w-[100vw] bg-gradient-to-br from-slate-950 to-slate-700 flex flex-col items-center justify-center p-6 rounded-md shadow-2xl">
-      {/* Header com logo */}
       <LoginHeader />
 
-      {/* Card principal de login */}
       <div className="w-full max-w-2xl bg-gradient-to-b from-sky-950 to-sky-950/90 rounded-2xl shadow-2xl overflow-hidden">
-        {/* Barra decorativa superior */}
         <div className="h-2 bg-gradient-to-r from-blue-600 to-cyan-500"></div>
 
         <div className="p-10">
@@ -94,17 +90,14 @@ export default function Login() {
           </h2>
 
           <form onSubmit={handleLogin} className="space-y-6">
-            {/* Mensagem de erro */}
             <ErrorMessage error={error} />
 
-            {/* Campo de usuário */}
             <UsernameField
               username={username}
               setUsername={setUsername}
               disabled={loading}
             />
 
-            {/* Campo de senha */}
             <PasswordField
               password={password}
               setPassword={setPassword}
@@ -113,25 +106,20 @@ export default function Login() {
               disabled={loading}
             />
 
-            {/* Opções de login (lembrar-me e esqueci senha) */}
             <LoginOptions
               rememberMe={rememberMe}
               setRememberMe={setRememberMe}
             />
 
-            {/* Botão de login */}
             <LoginButton loading={loading} disabled={!username || !password} />
 
-            {/* Seção de cadastro */}
             <SignupSection />
           </form>
 
-          {/* Banner motivacional */}
           <MotivationBanner />
         </div>
       </div>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

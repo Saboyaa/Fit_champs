@@ -5,14 +5,21 @@ const authService = {
   // Função de login
   login: async (username, password) => {
     try {
-      const response = await api.post("auth/login", { username, password });
+      const data = new URLSearchParams();
+      data.append("grant_type", "password");
+      data.append("username", username);
+      data.append("password", password);
+      data.append("scope", "");
+      data.append("client_id", "string");
+      data.append("client_secret", "string");
+      const response = await api.post("auth/login", data, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
       if (response.data.token) {
         // Se o token for recebido, armazena no localStorage
         localStorage.setItem("authToken", response.data.token);
-
-        if (response.data.user) {
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-        }
       }
       return response.data;
     } catch (error) {
