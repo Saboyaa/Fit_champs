@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotificationState } from "../Hooks/notification";
 import Header from "../Components/ComponentsCadastro/Header";
 import SuccessModal from "../Components/ComponentsCadastro/SuccessModal";
 import CadastroForm from "../Components/ComponentsCadastro/CadastroForm";
+import authService from "../services/authService";
 
 const Cadastro = () => {
   const { notification, showNotification } = useNotificationState();
@@ -11,16 +12,16 @@ const Cadastro = () => {
 
   // Estados para os campos do formulário
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
-    age: "",
-    weight: "",
-    phone: "",
     password: "",
-    confirmPassword: "",
-    cidade: "",
-    sexo: "masculino", // Default value
-    altura: "",
+    confirm_password: "",
+    city: "",
+    sex: "masculino",
+    age: "",
+    phone: "",
+    height: "",
+    weight: "",
   });
 
   // Estado para a força da senha
@@ -106,7 +107,7 @@ const Cadastro = () => {
     setIsLoading(true);
 
     // Validação das senhas
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.password !== formData.confirm_password) {
       showNotification("As senhas não coincidem!", "error");
       setIsLoading(false);
       return;
@@ -119,41 +120,33 @@ const Cadastro = () => {
       return;
     }
 
-    // Preparar dados para envio (removendo confirmPassword)
     try {
-      const dataToSubmit = {
-        ...formData,
-        confirmPassword: undefined,
-      };
-
       // Aqui você enviaria os dados para o servidor (API)
-      // const response = await authService.register(dataToSubmit);
-      console.log("Dados enviados:", dataToSubmit);
+      await authService.register(formData);
 
       setIsSuccess(true);
       showNotification("Cadastro realizado com sucesso!", "success");
 
       // Limpar formulário
       setFormData({
-        name: "",
+        username: "",
         email: "",
-        age: "",
-        weight: "",
-        phone: "",
         password: "",
-        confirmPassword: "",
-        altura: "",
-        cidade: "",
-        sexo: "masculino",
+        confirm_password: "",
+        city: "",
+        sex: "masculino",
+        age: "",
+        phone: "",
+        height: "",
+        weight: "",
       });
 
       setPasswordStrength({ score: 0, color: "" });
 
       setTimeout(() => {
-        navigate("/Home");
+        navigate("/");
       }, 2000);
     } catch (error) {
-      console.error("Erro no cadastro:", error);
       showNotification(error.message, "error");
     } finally {
       setIsLoading(false);

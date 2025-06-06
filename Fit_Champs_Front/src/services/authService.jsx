@@ -5,6 +5,7 @@ const authService = {
   // Função de login
   login: async (username, password) => {
     try {
+      // Preparar dados para envio ao backend
       const data = new URLSearchParams();
       data.append("grant_type", "password");
       data.append("username", username);
@@ -17,10 +18,12 @@ const authService = {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
-      if (response.data.token) {
+
+      if (response.data.access_token) {
         // Se o token for recebido, armazena no localStorage
-        localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("authToken", response.data.access_token);
       }
+
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || "Erro ao fazer login");
@@ -29,29 +32,31 @@ const authService = {
 
   register: async (userData) => {
     try {
+      function extractDigits(phoneStr) {
+        return phoneStr.replace(/\D/g, "");
+      }
       // Preparar dados para envio ao backend
       const registrationData = {
-        name: userData.name,
-        email: userData.email,
-        password: userData.password,
-        phone: userData.phone,
-        age: parseInt(userData.age),
-        height: parseInt(userData.altura),
-        weight: parseFloat(userData.weight),
-        city: userData.cidade,
-        gender: userData.sexo === "masculino" ? "M" : "F",
+        user: {
+          username: userData.username,
+          email: userData.email,
+          password: userData.password,
+          confirm_password: userData.confirm_password,
+          phone: extractDigits(userData.phone),
+          age: parseInt(userData.age),
+          height: parseInt(userData.height),
+          weight: parseInt(userData.weight),
+          city: userData.city,
+          sex: userData.sex === "masculino" ? "M" : "F",
+        },
       };
 
-      const response = await api.post("auth/register", registrationData);
-
-      // Se o cadastro foi bem-sucedido e retornou um token, fazer login automático
-      if (response.data.token) {
-        localStorage.setItem("authToken", response.data.token);
-
-        if (response.data.user) {
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-        }
-      }
+      console.log(registrationData);
+      const response = await api.post("auth/signup", registrationData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       return response.data;
     } catch (error) {

@@ -32,10 +32,10 @@ const CadastroForm = ({
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <InputField
-            id="name"
+            id="username"
             label="Nome Completo"
             type="text"
-            value={formData.name}
+            value={formData.username}
             onChange={handleChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
@@ -60,10 +60,10 @@ const CadastroForm = ({
           />
 
           <InputField
-            id="cidade"
+            id="city"
             label="Cidade"
             type="text"
-            value={formData.cidade}
+            value={formData.city}
             onChange={handleChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
@@ -74,10 +74,10 @@ const CadastroForm = ({
           />
 
           <InputField
-            id="sexo"
+            id="sex"
             label="Sexo"
             type="select"
-            value={formData.sexo}
+            value={formData.sex}
             onChange={handleChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
@@ -121,10 +121,10 @@ const CadastroForm = ({
           />
 
           <InputField
-            id="altura"
+            id="height"
             label="Altura (cm)"
             type="number"
-            value={formData.altura}
+            value={formData.height}
             onChange={handleChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
@@ -172,9 +172,9 @@ const CadastroForm = ({
           />
 
           <PasswordField
-            id="confirmPassword"
+            id="confirm_password"
             label="Confirmar Senha"
-            value={formData.confirmPassword}
+            value={formData.confirm_password}
             onChange={handleChange}
             onFocus={handleFocus}
             onBlur={handleBlur}

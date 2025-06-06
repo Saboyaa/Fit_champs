@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useGlobalContext } from "../Hooks/ContextoGlobal";
 import Header from "../Components/ComponentsHome/Header";
 import UserProfileCard from "../Components/ComponentsHome/UserProfileCard";
