@@ -29,7 +29,7 @@ export default function Login() {
     // Lógica de autenticação aqui...
     // router.push("/home"); // criar a rota /home depois
 
-    router.push("/home")
+    router.push("/GraficodeEvolucao")
 
   };
 
