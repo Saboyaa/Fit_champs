@@ -1,6 +1,6 @@
+import { BarChart2, Calendar, Filter, Target } from "lucide-react-native";
 import React from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-import { Filter, BarChart2, Calendar, Target } from "lucide-react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const ChartControls = ({
   viewMode,
@@ -9,22 +9,30 @@ const ChartControls = ({
   setVisualizationType,
   showMetas,
   setShowMetas,
+}: {
+  viewMode: string;
+  setViewMode: (mode: string) => void;
+  visualizationType: string;
+  setVisualizationType: (type: string) => void;
+  showMetas: boolean;
+  setShowMetas: (show: boolean) => void;
 }) => {
-  const renderButton = (icon, text, active, onPress, isGoalButton = false) => {
+  const renderButton = (
+    icon: React.ReactElement | null,
+    text: string,
+    active: boolean,
+    onPress: () => void,
+    isGoalButton: boolean = false
+  ) => {
     const activeBgColor = isGoalButton ? '#16a34a' : '#4338ca';
-    
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={onPress}
         style={[
           styles.button,
           active ? { backgroundColor: activeBgColor } : styles.inactiveButton
         ]}
       >
-        {icon && React.cloneElement(icon, {
-          color: active ? 'white' : '#e2e8f0',
-          style: styles.icon
-        })}
         <Text style={active ? styles.buttonTextActive : styles.buttonTextInactive}>
           {text}
         </Text>
@@ -55,7 +63,7 @@ const ChartControls = ({
           () => setViewMode("summary")
         )}
       </View>
-
+      
       {/* Chart type */}
       <View style={styles.controlGroup}>
         {renderButton(
@@ -71,7 +79,7 @@ const ChartControls = ({
           () => setVisualizationType("bar")
         )}
       </View>
-
+      
       {/* Goals toggle */}
       <View style={styles.controlGroup}>
         {renderButton(

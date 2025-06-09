@@ -1,17 +1,25 @@
+import { Calendar } from "lucide-react";
 import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { VictoryChart, VictoryStack, VictoryBar, VictoryLine, VictoryAxis, VictoryTheme, VictoryTooltip, VictoryLegend, VictoryVoronoiContainer } from "victory-native";
-import { Calendar } from "lucide-react-native";
-import { prepareSummaryData } from "./Utils";
-import { calculateSummaryChartYAxis } from "./Utils";
+import { VictoryAxis, VictoryBar, VictoryChart, VictoryLabel, VictoryLegend, VictoryLine, VictoryStack, VictoryTheme, VictoryTooltip, VictoryVoronoiContainer } from "victory";
+import { calculateSummaryChartYAxis, prepareSummaryData } from "./Utils";
 
-const SummaryChart = ({ trainingData, trainingTypes, visualizationType }) => {
+interface TrainingData {
+  [key: string]: any;
+}
+
+interface SummaryChartProps {
+  trainingData: TrainingData[];
+  trainingTypes: string[];
+  visualizationType: "bar" | "line";
+}
+
+const SummaryChart: React.FC<SummaryChartProps> = ({ trainingData, trainingTypes, visualizationType }) => {
   const data = prepareSummaryData(trainingData, trainingTypes);
   const yAxisConfig = calculateSummaryChartYAxis(data, trainingTypes);
-  const chartWidth = Dimensions.get("window").width * 0.9;
+  const chartWidth = window.innerWidth * 0.9;
   const chartHeight = 400;
 
-  const colors = {
+  const colors: { [key: string]: string } = {
     Peito: "#3B82F6",
     Costas: "#10B981",
     Braço: "#F59E0B",
@@ -19,49 +27,39 @@ const SummaryChart = ({ trainingData, trainingTypes, visualizationType }) => {
     Ombro: "#EC4899",
   };
 
-  const CustomTooltip = ({ datum }) => {
-    return (
-      <View style={styles.tooltip}>
-        <Text style={styles.tooltipTitle}>{datum.data}</Text>
-        {trainingTypes.map((type) => {
-          if (datum[type] > 0) {
-            return (
-              <View key={type} style={styles.tooltipRow}>
-                <View style={[styles.tooltipDot, { backgroundColor: colors[type] }]} />
-                <Text style={styles.tooltipText}>
-                  {type}: <Text style={styles.tooltipValue}>{datum[type]} kg</Text>
-                </Text>
-              </View>
-            );
-          }
-          return null;
-        })}
-      </View>
-    );
-  };
-
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <div style={styles.container}>
+      <div style={styles.header}>
         <Calendar color="#60a5fa" size={20} style={styles.icon} />
-        <Text style={styles.title}>Evolução Total do Treino</Text>
-      </View>
+        <h3 style={styles.title}>Evolução Total do Treino</h3>
+      </div>
       
-      <View style={styles.chartContainer}>
+      <div style={styles.chartContainer}>
         <VictoryChart
           theme={VictoryTheme.material}
           width={chartWidth}
           height={chartHeight}
-          domain={{ y: yAxisConfig.domain }}
+          domain={{ y: yAxisConfig.domain as [number, number] }}
           containerComponent={
             <VictoryVoronoiContainer
               voronoiDimension="x"
-              labels={({ datum }) => datum.data}
+              labels={({ datum }: { datum: any }) => {
+                let tooltipContent = `${datum.data}\n`;
+                trainingTypes.forEach(type => {
+                  if (datum[type] > 0) {
+                    tooltipContent += `${type}: ${datum[type]} kg\n`;
+                  }
+                });
+                return tooltipContent;
+              }}
               labelComponent={
                 <VictoryTooltip
-                  flyoutComponent={<CustomTooltip />}
                   cornerRadius={8}
                   flyoutStyle={styles.tooltipFlyout}
+                  style={{
+                    fill: "#e2e8f0",
+                    fontSize: 12
+                  }}
                 />
               }
             />
@@ -141,67 +139,66 @@ const SummaryChart = ({ trainingData, trainingTypes, visualizationType }) => {
             }))}
           />
         </VictoryChart>
-      </View>
-    </View>
+      </div>
+    </div>
   );
 };
 
-const styles = StyleSheet.create({
+const styles: { [key: string]: React.CSSProperties } = {
   container: {
     backgroundColor: 'rgba(30, 41, 59, 0.9)',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#334155',
-    padding: 16,
-    marginBottom: 16,
+    borderRadius: '12px',
+    border: '1px solid #334155',
+    padding: '16px',
+    marginBottom: '16px',
     width: '95%',
-    alignSelf: 'center'
+    margin: '0 auto'
   },
   header: {
-    flexDirection: 'row',
+    display: 'flex',
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: '16px'
   },
   icon: {
-    marginRight: 8
+    marginRight: '8px'
   },
   title: {
     color: '#f1f5f9',
-    fontSize: 18,
-    fontWeight: '600'
+    fontSize: '18px',
+    fontWeight: '600',
+    margin: 0
   },
   chartContainer: {
-    height: 400
+    height: '400px'
   },
   tooltip: {
     backgroundColor: 'rgba(15, 23, 42, 0.9)',
-    borderRadius: 8,
-    borderColor: '#1e293b',
-    padding: 12,
-    minWidth: 150
+    borderRadius: '8px',
+    border: '1px solid #1e293b',
+    padding: '12px',
+    minWidth: '150px'
   },
   tooltipTitle: {
     color: '#e2e8f0',
     fontWeight: 'bold',
-    marginBottom: 8,
-    borderBottomColor: '#334155',
-    borderBottomWidth: 1,
-    paddingBottom: 4
+    marginBottom: '8px',
+    borderBottom: '1px solid #334155',
+    paddingBottom: '4px'
   },
   tooltipRow: {
-    flexDirection: 'row',
+    display: 'flex',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: '4px'
   },
   tooltipDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginRight: 8
+    width: '12px',
+    height: '12px',
+    borderRadius: '6px',
+    marginRight: '8px'
   },
   tooltipText: {
     color: '#e2e8f0',
-    fontSize: 14
+    fontSize: '14px'
   },
   tooltipValue: {
     fontWeight: 'bold'
@@ -211,6 +208,6 @@ const styles = StyleSheet.create({
     stroke: '#1e293b',
     strokeWidth: 1
   }
-});
+};
 
 export default SummaryChart;

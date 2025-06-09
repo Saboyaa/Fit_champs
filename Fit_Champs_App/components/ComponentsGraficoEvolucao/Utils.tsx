@@ -14,32 +14,17 @@ export const calculateTrend = (data) => {
 };
 
 // Calcular o progresso em relação à meta
-export const calculateProgress = (data, meta) => {
-  if (data.length === 0) return 0;
-  const lastVolume = data[data.length - 1].volume;
-  return ((lastVolume / meta) * 100).toFixed(1);
-};
-
-// ========== FUNÇÕES DE RENDERIZAÇÃO ==========
-
-// Função para obter o ícone do grupo muscular
-export const getIconComponent = (grupo, icons) => {
-  const { peito, perna, ombro, costas, braco } = icons;
-
-  switch (grupo.toLowerCase()) {
-    case "peito":
-      return { source: peito, name: "Peito" };
-    case "perna":
-      return { source: perna, name: "Perna" };
-    case "ombro":
-      return { source: ombro, name: "Ombro" };
-    case "costas":
-      return { source: costas, name: "Costas" };
-    case "braço":
-      return { source: braco, name: "Braço" };
-    default:
-      return null;
-  }
+export const calculateProgress = (
+  data: Array<{ volume: number | string; [key: string]: any }>, 
+  meta: number
+): number => {
+  if (data.length === 0 || meta === 0) return 0;
+  
+  const lastVolume = typeof data[data.length - 1].volume === 'number' 
+    ? data[data.length - 1].volume 
+    : parseFloat(data[data.length - 1].volume as string) || 0;
+  
+  return Math.round((lastVolume / meta) * 100);
 };
 
 // ========== FUNÇÕES DE PREPARAÇÃO DE DADOS PARA GRÁFICOS ==========

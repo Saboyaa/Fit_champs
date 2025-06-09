@@ -2,11 +2,15 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { ArrowUpCircle, ArrowDownCircle, MinusCircle } from "lucide-react-native";
 
-const TrendIndicator = ({ trend }) => {
+interface trendType {
+  type: string,
+  diff: number,
+}
+const TrendIndicator = ( trend : any) => {
   if (trend.type === "melhora") {
     return (
       <View style={[styles.container, styles.improvementContainer]}>
-        <ArrowUpCircle color="#22c55e" size={20} style={styles.icon} />
+        <ArrowUpCircle color="#22c55e" size={20} />
         <Text style={styles.improvementText}>
           Melhora de <Text style={styles.boldText}>{trend.diff}%</Text> em relação ao treino anterior, continue assim!
         </Text>
@@ -15,7 +19,7 @@ const TrendIndicator = ({ trend }) => {
   } else if (trend.type === "piora") {
     return (
       <View style={[styles.container, styles.declineContainer]}>
-        <ArrowDownCircle color="#ef4444" size={20} style={styles.icon} />
+        <ArrowDownCircle color="#ef4444" size={20} />
         <Text style={styles.declineText}>
           Queda de <Text style={styles.boldText}>{trend.diff}%</Text> em relação ao treino anterior, não deixe a peteca cair!
         </Text>
@@ -24,7 +28,7 @@ const TrendIndicator = ({ trend }) => {
   } else {
     return (
       <View style={[styles.container, styles.neutralContainer]}>
-        <MinusCircle color="#94a3b8" size={20} style={styles.icon} />
+        <MinusCircle color="#94a3b8" size={20} />
         <Text style={styles.neutralText}>
           Volume mantido em relação ao treino anterior
         </Text>

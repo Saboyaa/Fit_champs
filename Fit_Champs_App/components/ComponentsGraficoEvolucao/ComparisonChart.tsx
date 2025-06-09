@@ -1,22 +1,47 @@
 import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { VictoryChart, VictoryBar, VictoryLine, VictoryAxis, VictoryTheme, VictoryTooltip, VictoryLegend, VictoryVoronoiContainer } from "victory-native";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
+// Use regular Victory for React Native (most common approach)
 import { BarChart } from "lucide-react-native";
-import { prepareComparisonData } from "./Utils";
-import { calculateComparisonChartYAxis } from "./Utils";
+import {
+  VictoryAxis,
+  VictoryBar,
+  VictoryChart,
+  VictoryLabel,
+  VictoryLegend,
+  VictoryLine,
+  VictoryTheme,
+  VictoryTooltip,
+  VictoryVoronoiContainer
+} from "victory";
+import { calculateComparisonChartYAxis, prepareComparisonData } from "./Utils";
+
+interface ComparisonChartProps {
+  trainingData: any[];
+  visualizationType: string;
+  showMetas: boolean;
+  metas: any[];
+}
+
+interface TooltipProps {
+  datum: {
+    nome: string;
+    volume: number;
+    meta: number;
+  };
+}
 
 const ComparisonChart = ({
   trainingData,
   visualizationType,
   showMetas,
   metas,
-}) => {
+}: ComparisonChartProps) => {
   const comparisonData = prepareComparisonData(trainingData, metas);
   const yAxisConfig = calculateComparisonChartYAxis(comparisonData, showMetas);
   const chartWidth = Dimensions.get("window").width * 0.9;
   const chartHeight = 400;
 
-  const CustomTooltip = ({ datum }) => {
+  const CustomTooltip = ({ datum }: TooltipProps) => {
     return (
       <View style={styles.tooltip}>
         <Text style={styles.tooltipTitle}>{datum.nome}</Text>
@@ -41,7 +66,7 @@ const ComparisonChart = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <BarChart color="#60a5fa" size={20} style={styles.icon} />
+        <BarChart color="#60a5fa" size={20}  />
         <Text style={styles.title}>Comparação de Volumes por Grupo Muscular</Text>
       </View>
       
@@ -50,16 +75,15 @@ const ComparisonChart = ({
           theme={VictoryTheme.material}
           width={chartWidth}
           height={chartHeight}
-          domain={{ y: yAxisConfig.domain }}
+          domain={{ y: yAxisConfig.domain.length === 2 ? yAxisConfig.domain as [number, number] : undefined }}
           containerComponent={
             <VictoryVoronoiContainer
               voronoiDimension="x"
-              labels={({ datum }) => datum.volume}
+              labels={({ datum }: { datum: any }) => datum.volume}
               labelComponent={
                 <VictoryTooltip
-                  flyoutComponent={<CustomTooltip />}
+                  flyoutComponent={<CustomTooltip datum={{ nome: '', volume: 0, meta: 0 }} />}
                   cornerRadius={8}
-                  flyoutStyle={styles.tooltipFlyout}
                 />
               }
             />
@@ -67,15 +91,15 @@ const ComparisonChart = ({
         >
           <VictoryAxis
             style={{
-              axis: { stroke: "#334155" },
-              tickLabels: { fill: "#94a3b8" }
+              axis: { stroke: "#334155" } as any,
+              tickLabels: { fill: "#94a3b8", fontSize: 12 } as any
             }}
           />
           <VictoryAxis
             dependentAxis
             style={{
-              axis: { stroke: "#334155" },
-              tickLabels: { fill: "#94a3b8" }
+              axis: { stroke: "#334155" } as any,
+              tickLabels: { fill: "#94a3b8", fontSize: 12 } as any
             }}
             tickValues={yAxisConfig.ticks}
             label="Volume (kg)"
@@ -83,7 +107,7 @@ const ComparisonChart = ({
               <VictoryLabel
                 angle={-90}
                 textAnchor="middle"
-                style={{ fill: "#94a3b8" }}
+                style={{ fill: "#94a3b8", fontSize: 14 } as any}
                 dy={-chartHeight * 0.4}
               />
             }
@@ -98,7 +122,7 @@ const ComparisonChart = ({
                 data: {
                   fill: "#3b82f6",
                   width: 30
-                }
+                } as any
               }}
             />
           ) : (
@@ -110,7 +134,7 @@ const ComparisonChart = ({
                 data: {
                   stroke: "#3b82f6",
                   strokeWidth: 2
-                }
+                } as any
               }}
             />
           )}
@@ -125,7 +149,7 @@ const ComparisonChart = ({
                   stroke: "#10b981",
                   strokeWidth: 2,
                   strokeDasharray: "5,5"
-                }
+                } as any
               }}
             />
           )}
@@ -136,7 +160,7 @@ const ComparisonChart = ({
             orientation="vertical"
             gutter={20}
             style={{
-              labels: { fill: "#e2e8f0" }
+              labels: { fill: "#e2e8f0", fontSize: 12 } as any
             }}
             data={[
               {
@@ -220,11 +244,6 @@ const styles = StyleSheet.create({
   },
   tooltipValue: {
     fontWeight: 'bold'
-  },
-  tooltipFlyout: {
-    fill: 'rgba(15, 23, 42, 0.9)',
-    stroke: '#1e293b',
-    strokeWidth: 1
   }
 });
 

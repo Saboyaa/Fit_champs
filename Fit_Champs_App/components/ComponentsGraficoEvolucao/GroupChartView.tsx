@@ -1,8 +1,20 @@
 import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { TrainingCard } from "./TrainingCard";
+import { StyleSheet, View } from "react-native";
+import TrainingCard from "./TrainingCard";
 
-export const GroupChartView = ({
+// Define the props interface
+interface GroupChartViewProps {
+  trainingData: Record<string, any>; // or more specific type based on your data structure
+  trainingTypes: string[];
+  hoveredChart: string | null;
+  setHoveredChart: (chart: string | null) => void;
+  visualizationType: string;
+  showMetas: boolean;
+  metas: any; // Replace with specific type if known
+  icons: Record<string, any>; // or more specific icon type
+}
+
+export const GroupChartView: React.FC<GroupChartViewProps> = ({
   trainingData,
   trainingTypes,
   hoveredChart,
@@ -16,14 +28,12 @@ export const GroupChartView = ({
   const lastItemIndex = trainingTypes.length - 1;
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.gridContainer}>
         {trainingTypes.map((type, index) => {
           const isLastItemOdd = isOdd && index === lastItemIndex;
-
           return (
-            <View 
-              key={type} 
+            <View
+              key={type}
               style={[
                 styles.cardWrapper,
                 isLastItemOdd && styles.fullWidthCard
@@ -32,11 +42,10 @@ export const GroupChartView = ({
               <TrainingCard
                 type={type}
                 data={trainingData[type]}
-                icons={icons}
                 isLastItemOdd={isLastItemOdd}
-                hoveredChart={hoveredChart}
+                hoveredChart={hoveredChart||''}
                 setHoveredChart={setHoveredChart}
-                visualizationType={visualizationType}
+                visualizationType="line"
                 showMetas={showMetas}
                 metas={metas}
               />
@@ -44,7 +53,6 @@ export const GroupChartView = ({
           );
         })}
       </View>
-    </ScrollView>
   );
 };
 
@@ -60,11 +68,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   cardWrapper: {
-    width: "48%", // Leaves small gap between cards
+    width: "48%",
     marginBottom: 24,
   },
   fullWidthCard: {
-    width: "100%", // Full width for last odd card
+    width: "100%",
   },
 });
-

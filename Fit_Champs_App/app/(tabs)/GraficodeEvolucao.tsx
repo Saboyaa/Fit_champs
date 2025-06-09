@@ -1,534 +1,274 @@
-import React, { useState, useEffect } from "react";
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity, 
-  ActivityIndicator,
-  Image,
-  Dimensions,
-  RefreshControl
-} from "react-native";
-import { useGlobalContext } from "../../hooks/ContextoGlobal";
-import trainingService from "../../services/trainingService";
-import userService from "../../services/userService";
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  StatusBar,
+} from 'react-native';
+import {
+  CartesianChart,
+  Line,
+  Area,
+} from 'victory-native';
 
-// Components
-import Header from "../../components/ComponentsGraficoEvolucao/Header";
-import ChartControls from "../../components/ComponentsGraficoEvolucao/ChartControls";
-import { GroupChartView } from "../../components/ComponentsGraficoEvolucao/GroupChartView";
-import ComparisonChart from "../../components/ComponentsGraficoEvolucao/ComparisonChart";
-import SummaryChart from "../../components/ComponentsGraficoEvolucao/SummaryChart";
+interface TrainingData {
+  x: string;
+  y: number;
+  [key: string]: unknown;
+}
 
-// Icons
-import { RefreshCw, ChevronLeft, ChevronRight } from "lucide-react-native";
+interface MuscleGroupData {
+  name: string;
+  icon: string;
+  data: TrainingData[];
+  lastDate: string;
+  improvement: number;
+  color: string;
+}
 
-// Images
-const icons = {
-  peito: require("../../images/peito.png"),
-  perna: require("../../images/perna.png"),
-  ombro: require("../../images/ombro.png"),
-  costas: require("../../images/costas.png"),
-  braco: require("../../images/musculo.png"),
-};
+const TrainingStatsScreen: React.FC = () => {
+  const muscleGroups: MuscleGroupData[] = [
+    {
+      name: 'Peito',
+      icon: '💪',
+      lastDate: '14/02/2025',
+      improvement: 6.7,
+      color: '#4F46E5',
+      data: [
+        { x: '10/01', y: 2400 },
+        { x: '17/01', y: 2550 },
+        { x: '24/01', y: 2650 },
+        { x: '31/01', y: 2800 },
+        { x: '07/02', y: 2950 },
+        { x: '14/02', y: 3100 },
+      ],
+    },
+    {
+      name: 'Costas',
+      icon: '🏋️',
+      lastDate: '15/02/2025',
+      improvement: 6.9,
+      color: '#059669',
+      data: [
+        { x: '11/01', y: 2200 },
+        { x: '18/01', y: 2400 },
+        { x: '25/01', y: 2650 },
+        { x: '01/02', y: 2550 },
+        { x: '08/02', y: 2750 },
+        { x: '15/02', y: 2900 },
+      ],
+    },
+    {
+      name: 'Pernas',
+      icon: '🦵',
+      lastDate: '13/02/2025',
+      improvement: 8.2,
+      color: '#DC2626',
+      data: [
+        { x: '09/01', y: 3500 },
+        { x: '16/01', y: 3650 },
+        { x: '23/01', y: 3800 },
+        { x: '30/01', y: 3900 },
+        { x: '06/02', y: 4100 },
+        { x: '13/02', y: 4200 },
+      ],
+    },
+    {
+      name: 'Braços',
+      icon: '💪',
+      lastDate: '12/02/2025',
+      improvement: 5.4,
+      color: '#7C3AED',
+      data: [
+        { x: '08/01', y: 1800 },
+        { x: '15/01', y: 1900 },
+        { x: '22/01', y: 1950 },
+        { x: '29/01', y: 2050 },
+        { x: '05/02', y: 2100 },
+        { x: '12/02', y: 2200 },
+      ],
+    },
+    {
+      name: 'Ombro',
+      icon: '🏋️‍♂️',
+      lastDate: '16/02/2025',
+      improvement: 7.1,
+      color: '#EA580C',
+      data: [
+        { x: '12/01', y: 1200 },
+        { x: '19/01', y: 1300 },
+        { x: '26/01', y: 1400 },
+        { x: '02/02', y: 1450 },
+        { x: '09/02', y: 1550 },
+        { x: '16/02', y: 1650 },
+      ],
+    },
+  ];
 
-const GraficosEvolucao = () => {
-  const { isMenuOpen } = useGlobalContext();
+  const renderChart = (muscleGroup: MuscleGroupData) => (
+    <View key={muscleGroup.name} style={styles.chartContainer}>
+      <View style={styles.chartHeader}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.chartIcon}>{muscleGroup.icon}</Text>
+          <Text style={styles.chartTitle}>{muscleGroup.name}</Text>
+        </View>
+        <Text style={styles.lastDate}>Último: {muscleGroup.lastDate}</Text>
+      </View>
 
-  // States for data
-  const [trainingData, setTrainingData] = useState({});
-  const [metas, setMetas] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
+      <View style={styles.chartWrapper}>
+        <CartesianChart
+          data={muscleGroup.data}
+          xKey="x"
+          yKeys={["y"]}
+          axisOptions={{
+            lineColor: '#374151',
+            labelColor: '#9CA3AF',
+          }}
+          domainPadding={{ left: 20, right: 20, top: 20, bottom: 20 }}
+        >
+          {({ points, chartBounds }) => (
+            <>
+              <Area
+                points={points.y}
+                y0={chartBounds.bottom}
+                color={muscleGroup.color}
+                opacity={0.2}
+                animate={{ type: "timing", duration: 1000 }}
+              />
+              <Line
+                points={points.y}
+                color={muscleGroup.color}
+                strokeWidth={3}
+                animate={{ type: "timing", duration: 1000 }}
+              />
+            </>
+          )}
+        </CartesianChart>
+      </View>
 
-  // States for UI controls
-  const [hoveredChart, setHoveredChart] = useState(null);
-  const [viewMode, setViewMode] = useState("cards");
-  const [visualizationType, setVisualizationType] = useState("line");
-  const [showMetas, setShowMetas] = useState(false);
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
-
-  // Function to load training data
-  const loadTrainingData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Get training data
-      const formattedTrainingData = await trainingService.getFormattedTrainingData();
-      setTrainingData(formattedTrainingData);
-
-      // Get user goals
-      try {
-        const userGoals = await userService.getUserGoals();
-
-        // Format goals to expected structure
-        const formattedGoals = {
-          Peito: userGoals.peito || userGoals.Peito || 3500,
-          Costas: userGoals.costas || userGoals.Costas || 3400,
-          Braço: userGoals.braco || userGoals.Braço || userGoals.braço || 2100,
-          Perna: userGoals.perna || userGoals.Perna || 4500,
-          Ombro: userGoals.ombro || userGoals.Ombro || 2300,
-        };
-
-        setMetas(formattedGoals);
-      } catch (goalsError) {
-        console.warn("Error fetching goals, using defaults:", goalsError);
-        
-        // Use default goals on error
-        setMetas({
-          Peito: 3500,
-          Costas: 3400,
-          Braço: 2100,
-          Perna: 4500,
-          Ombro: 2300,
-        });
-      }
-    } catch (err) {
-      setError(err.message);
-      console.error("Error loading data:", err);
-
-      // Empty data on error
-      setTrainingData(trainingService.getEmptyChartData());
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  // Load data when component mounts
-  useEffect(() => {
-    loadTrainingData();
-  }, []);
-
-  // Check if there's training data to show
-  const hasTrainingData =
-    Object.keys(trainingData).length > 0 &&
-    Object.values(trainingData).some(
-      (data) => Array.isArray(data) && data.length > 0
-    );
-
-  // Get workout types that have data
-  const trainingTypes = Object.keys(trainingData).filter(
-    (type) =>
-      trainingData[type] &&
-      Array.isArray(trainingData[type]) &&
-      trainingData[type].length > 0
+      <View style={styles.improvementContainer}>
+        <View style={[styles.improvementBadge, { backgroundColor: `${muscleGroup.color}20` }]}>
+          <Text style={[styles.improvementText, { color: muscleGroup.color }]}>
+            ↗ Melhora de {muscleGroup.improvement}% em relação ao treino anterior, continue assim!
+          </Text>
+        </View>
+      </View>
+    </View>
   );
 
-  // Stats calculations
-  const stats = {
-    totalWorkouts: Object.values(trainingData).reduce(
-      (total, workouts) =>
-        total + (Array.isArray(workouts) ? workouts.length : 0),
-      0
-    ),
-    muscleGroups: trainingTypes.length,
-
-    // Get all available months sorted
-    availableMonths: Object.values(trainingData)
-      .flat()
-      .filter((workout) => workout && workout.data)
-      .map((workout) => {
-        const [day, month, year] = workout.data.split("/");
-        return `${year}-${String(month).padStart(2, "0")}`;
-      })
-      .filter((month, index, array) => array.indexOf(month) === index)
-      .sort()
-      .reverse(),
-
-    // Function to get workouts for selected month
-    getWorkoutsForMonth: (monthIndex) => {
-      const availableMonths = Object.values(trainingData)
-        .flat()
-        .filter((workout) => workout && workout.data)
-        .map((workout) => {
-          const [day, month, year] = workout.data.split("/");
-          return `${year}-${String(month).padStart(2, "0")}`;
-        })
-        .filter((month, index, array) => array.indexOf(month) === index)
-        .sort()
-        .reverse();
-
-      const selectedMonth = availableMonths[monthIndex];
-      if (!selectedMonth) return 0;
-
-      return Object.values(trainingData)
-        .flat()
-        .filter((workout) => {
-          if (!workout || !workout.data) return false;
-          const [day, month, year] = workout.data.split("/");
-          const workoutMonth = `${year}-${String(month).padStart(2, "0")}`;
-          return workoutMonth === selectedMonth;
-        }).length;
-    },
-  };
-
-  // Format month for display
-  const formatMonthDisplay = (monthKey) => {
-    if (!monthKey) return "N/A";
-    const [year, month] = monthKey.split("-");
-    const monthNames = [
-      "Janeiro",
-      "Fevereiro",
-      "Março",
-      "Abril",
-      "Maio",
-      "Junho",
-      "Julho",
-      "Agosto",
-      "Setembro",
-      "Outubro",
-      "Novembro",
-      "Dezembro",
-    ];
-    return `${monthNames[parseInt(month) - 1]} ${year}`;
-  };
-
-  // Navigation functions
-  const handlePreviousMonth = () => {
-    setCurrentMonthIndex((prev) =>
-      prev < stats.availableMonths.length - 1 ? prev + 1 : prev
-    );
-  };
-
-  const handleNextMonth = () => {
-    setCurrentMonthIndex((prev) => (prev > 0 ? prev - 1 : prev));
-  };
-
-  // Refresh function
-  const onRefresh = () => {
-    setRefreshing(true);
-    loadTrainingData();
-  };
-
-  // Loading component
-  if (loading && !refreshing) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#60a5fa" />
-        <Text style={styles.loadingText}>Carregando dados de treino...</Text>
-      </View>
-    );
-  }
-
-  // Error component
-  if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <View style={styles.errorBox}>
-          <Text style={styles.errorTitle}>⚠️ Erro ao carregar dados</Text>
-          <Text style={styles.errorMessage}>{error}</Text>
-          <TouchableOpacity
-            onPress={loadTrainingData}
-            style={styles.retryButton}
-          >
-            <Text style={styles.retryButtonText}>Tentar Novamente</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
-
-  // No data component
-  if (!hasTrainingData) {
-    return (
-      <ScrollView 
-        contentContainerStyle={styles.container}
-        refreshControl={
-          <RefreshControl 
-            refreshing={refreshing} 
-            onRefresh={onRefresh} 
-          />
-        }
-      >
-        <Header />
-        <View style={styles.noDataContainer}>
-          <Text style={styles.noDataEmoji}>📊</Text>
-          <Text style={styles.noDataTitle}>Nenhum treino encontrado</Text>
-          <Text style={styles.noDataText}>
-            Comece registrando seus treinos para visualizar sua evolução nos
-            gráficos.
-          </Text>
-          <TouchableOpacity
-            onPress={loadTrainingData}
-            style={styles.refreshButton}
-          >
-            <Text style={styles.refreshButtonText}>Atualizar Dados</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    );
-  }
-
   return (
-    <ScrollView 
-      style={styles.container}
-      refreshControl={
-        <RefreshControl 
-          refreshing={refreshing} 
-          onRefresh={onRefresh} 
-        />
-      }
-    >
-      {/* Header */}
-      <Header />
-
-      {/* Summary statistics */}
-      <View style={styles.statsContainer}>
-        <View style={styles.statsBox}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{stats.totalWorkouts}</Text>
-            <Text style={styles.statLabel}>Total de Treinos</Text>
-          </View>
-
-          {/* Monthly workouts section */}
-          <View style={styles.statItem}>
-            <View style={styles.monthNavContainer}>
-              <TouchableOpacity
-                onPress={handlePreviousMonth}
-                disabled={currentMonthIndex >= stats.availableMonths.length - 1}
-                style={[
-                  styles.navButton,
-                  currentMonthIndex >= stats.availableMonths.length - 1 && styles.disabledButton
-                ]}
-              >
-                <ChevronLeft size={16} color="#fff" />
-              </TouchableOpacity>
-
-              <View style={styles.monthStat}>
-                <Text style={styles.monthStatValue}>
-                  {stats.getWorkoutsForMonth(currentMonthIndex)}
-                </Text>
-                <Text style={styles.monthStatLabel}>
-                  Treinos mensais{"\n"}
-                  {formatMonthDisplay(stats.availableMonths[currentMonthIndex])}
-                </Text>
-              </View>
-
-              <TouchableOpacity
-                onPress={handleNextMonth}
-                disabled={currentMonthIndex <= 0}
-                style={[
-                  styles.navButton,
-                  currentMonthIndex <= 0 && styles.disabledButton
-                ]}
-              >
-                <ChevronRight size={16} color="#fff" />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <TouchableOpacity
-            onPress={loadTrainingData}
-            style={styles.refreshIcon}
-          >
-            <RefreshCw size={20} color="#94a3b8" />
-          </TouchableOpacity>
-        </View>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#1F2937" />
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Estatísticas de Treino</Text>
+        <Text style={styles.headerSubtitle}>
+          Acompanhe seu progresso e alcance seus objetivos!
+        </Text>
       </View>
 
-      {/* Controls */}
-      <ChartControls
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-        visualizationType={visualizationType}
-        setVisualizationType={setVisualizationType}
-        showMetas={showMetas}
-        setShowMetas={setShowMetas}
-      />
-
-      {/* Views */}
-      {viewMode === "cards" && (
-        <GroupChartView
-          trainingData={trainingData}
-          trainingTypes={trainingTypes}
-          hoveredChart={hoveredChart}
-          setHoveredChart={setHoveredChart}
-          visualizationType={visualizationType}
-          showMetas={showMetas}
-          metas={metas}
-          icons={icons}
-        />
-      )}
-
-      {viewMode === "comparison" && (
-        <View style={styles.chartContainer}>
-          <ComparisonChart
-            trainingData={trainingData}
-            visualizationType={visualizationType}
-            showMetas={showMetas}
-            metas={metas}
-          />
-        </View>
-      )}
-
-      {viewMode === "summary" && (
-        <View style={styles.chartContainer}>
-          <SummaryChart
-            trainingData={trainingData}
-            trainingTypes={trainingTypes}
-            visualizationType={visualizationType}
-          />
-        </View>
-      )}
-    </ScrollView>
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {muscleGroups.map(renderChart)}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0f172a",
+    backgroundColor: '#111827',
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#0f172a",
+  header: {
+    backgroundColor: '#1F2937',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#374151',
   },
-  loadingText: {
-    color: "#e2e8f0",
-    marginTop: 16,
+  headerTitle: {
+    color: '#F9FAFB',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    color: '#9CA3AF',
     fontSize: 16,
   },
-  errorContainer: {
+  scrollView: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#0f172a",
   },
-  errorBox: {
-    backgroundColor: "#1e293b",
-    padding: 24,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#f87171",
-    alignItems: "center",
-    width: "80%",
-  },
-  errorTitle: {
-    color: "#f87171",
-    fontSize: 20,
-    marginBottom: 16,
-  },
-  errorMessage: {
-    color: "#e2e8f0",
-    marginBottom: 24,
-    textAlign: "center",
-  },
-  retryButton: {
-    backgroundColor: "#2563eb",
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  retryButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  noDataContainer: {
-    backgroundColor: "#1e293b",
-    padding: 24,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#334155",
-    alignItems: "center",
-    marginHorizontal: 24,
-    marginTop: 24,
-  },
-  noDataEmoji: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
-  noDataTitle: {
-    color: "#e2e8f0",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  noDataText: {
-    color: "#94a3b8",
-    marginBottom: 24,
-    textAlign: "center",
-  },
-  refreshButton: {
-    backgroundColor: "#2563eb",
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  refreshButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  statsContainer: {
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  statsBox: {
-    backgroundColor: "#1e293b",
+  scrollContent: {
     padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#334155",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "90%",
-  },
-  statItem: {
-    alignItems: "center",
-  },
-  statValue: {
-    color: "#60a5fa",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  statLabel: {
-    color: "#94a3b8",
-    fontSize: 12,
-  },
-  monthNavContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  navButton: {
-    backgroundColor: "#334155",
-    padding: 8,
-    borderRadius: 24,
-    marginHorizontal: 4,
-  },
-  disabledButton: {
-    opacity: 0.5,
-  },
-  monthStat: {
-    alignItems: "center",
-    minWidth: 120,
-  },
-  monthStatValue: {
-    color: "#4ade80",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  monthStatLabel: {
-    color: "#94a3b8",
-    fontSize: 10,
-    textAlign: "center",
-  },
-  refreshIcon: {
-    padding: 8,
+    paddingBottom: 32,
   },
   chartContainer: {
-    width: "95%",
-    alignSelf: "center",
-    marginBottom: 32,
+    backgroundColor: '#1F2937',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  chartHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  chartIcon: {
+    fontSize: 24,
+    marginRight: 8,
+  },
+  chartTitle: {
+    color: '#F9FAFB',
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  lastDate: {
+    color: '#9CA3AF',
+    fontSize: 14,
+  },
+  chartWrapper: {
+    alignItems: 'center',
+    marginVertical: 8,
+    height: 200,
+  },
+  volumeLabel: {
+    color: '#9CA3AF',
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  improvementContainer: {
+    marginTop: 12,
+  },
+  improvementBadge: {
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  improvementText: {
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });
 
-export default GraficosEvolucao;
-
+export default TrainingStatsScreen;

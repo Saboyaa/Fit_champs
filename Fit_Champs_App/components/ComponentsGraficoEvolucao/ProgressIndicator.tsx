@@ -1,11 +1,28 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Award } from "lucide-react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { calculateProgress } from "./Utils";
 
-const ProgressIndicator = ({ type, data, meta }) => {
+interface TrainingDataPoint {
+  volume: number | string;
+  date: string;
+  [key: string]: any;
+}
+
+interface ProgressIndicatorProps {
+  type: string;
+  data: TrainingDataPoint[];
+  meta: number;
+}
+
+const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({ type, data, meta }) => {
   const progress = calculateProgress(data, meta);
-  const lastVolume = data.length > 0 ? data[data.length - 1].volume : 0;
+  
+  // Safely convert volume to number
+  const lastVolume = data.length > 0 
+    ? (typeof data[data.length - 1].volume === 'number' 
+       ? data[data.length - 1].volume 
+       : parseFloat(data[data.length - 1].volume as string) || 0)
+    : 0;
 
   return (
     <View style={styles.container}>
@@ -15,22 +32,19 @@ const ProgressIndicator = ({ type, data, meta }) => {
           {lastVolume} / {meta} kg
         </Text>
       </View>
-      
       <View style={styles.progressBarBackground}>
-        <View 
+        <View
           style={[
             styles.progressBarFill,
-            { 
+            {
               width: `${Math.min(progress, 100)}%`,
               backgroundColor: progress >= 100 ? "#22c55e" : "#2563eb"
             }
           ]}
         />
       </View>
-
       {progress >= 100 && (
         <View style={styles.successContainer}>
-          <Award size={14} color="#22c55e" style={styles.icon} />
           <Text style={styles.successText}>Meta alcançada!</Text>
         </View>
       )}

@@ -1,8 +1,7 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { LucideMedal, TrendingUp } from "lucide-react-native";
-import { getGroupIcon } from "./IconUtils";
 import { useNavigation } from "@react-navigation/native";
+import { LucideMedal, TrendingUp } from "lucide-react-native";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const UserRankings = ({ userData }) => {
   const navigation = useNavigation();
