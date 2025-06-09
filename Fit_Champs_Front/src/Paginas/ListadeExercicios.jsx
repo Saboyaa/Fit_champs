@@ -14,7 +14,7 @@ import exerciseService from "../services/exerciseService";
 
 function ListadeExercicios() {
   const { isMenuOpen } = useGlobalContext();
-  const { treinos } = useExercicios();
+  const { treinos, adicionarTreinos } = useExercicios();
   const [activeView, setActiveView] = useState("list");
   const [exercisesList, setExercisesList] = useState();
 
@@ -43,7 +43,7 @@ function ListadeExercicios() {
     toggleExpandTreino,
     salvarTreino,
     calcularTotalPorTreino,
-  } = useExerciseLogic(treinos, exercisesList);
+  } = useExerciseLogic(treinos, adicionarTreinos, exercisesList);
 
   const hasExercicios = treinos.some(
     (treino) =>

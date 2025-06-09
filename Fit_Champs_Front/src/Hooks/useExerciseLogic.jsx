@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
-// import { encontrarExercicio } from "../Classes/exercicio";
+import { useNavigate } from "react-router-dom";
 
-export const useExerciseLogic = (treinos, exercisesList) => {
+import exerciseService from "../services/exerciseService";
+
+export const useExerciseLogic = (treinos, adicionarTreinos, exercisesList) => {
   const [exerciciosPorTreino, setExerciciosPorTreino] = useState({});
   const [expandedTreino, setExpandedTreino] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [trainingDateAndVolume, setTrainingDateAndVolume] = useState({});
+
+  const navigate = useNavigate();
 
   // Inicializar exercícios para todos os treinos ao carregar
   useEffect(() => {
@@ -38,6 +42,7 @@ export const useExerciseLogic = (treinos, exercisesList) => {
         peso: 0,
         volume: 0,
         subgrupo: "",
+        exerciseId: null,
       });
     }
 
@@ -55,6 +60,7 @@ export const useExerciseLogic = (treinos, exercisesList) => {
       peso: 0,
       volume: 0,
       subgrupo: "",
+      exerciseId: null,
     };
 
     setExerciciosPorTreino((prev) => ({
@@ -90,6 +96,7 @@ export const useExerciseLogic = (treinos, exercisesList) => {
                     ...ex,
                     [campo]: valor,
                     subgrupo: exercicioSelecionado.subgrupo,
+                    exerciseId: exercicioSelecionado.id,
                   }
                 : ex
             );
@@ -141,42 +148,26 @@ export const useExerciseLogic = (treinos, exercisesList) => {
     setExpandedTreino(expandedTreino === treinoId ? null : treinoId);
   };
 
-  const salvarTreino = () => {
-    setIsSaving(true);
+  const salvarTreino = async () => {
+    try {
+      setIsSaving(true);
 
-    setTimeout(() => {
-      console.log("Treinos salvos:", {
+      const response = await exerciseService.postTrains(
         treinos,
-        exerciciosPorTreino,
-      });
+        exerciciosPorTreino
+      );
 
-      const currentDate = new Date();
-      const volumeSummary = {};
+      console.log(response);
 
-      treinos.forEach((treino) => {
-        if (treino.descripition !== "Day Off") {
-          const stats = calcularTotalPorTreino(treino.id);
-          volumeSummary[treino.id] = {
-            text: treino.text,
-            descripition: treino.descripition,
-            volume: stats.volume,
-            data: treino.data,
-            date: currentDate.toLocaleString("pt-BR", {
-              dateStyle: "short",
-              timeStyle: "short",
-            }),
-          };
-        }
-      });
-
-      setTrainingDateAndVolume(volumeSummary);
       setIsSaving(false);
       setSaveSuccess(true);
-
-      setTimeout(() => {
-        setSaveSuccess(false);
-      }, 2000);
-    }, 1000);
+      adicionarTreinos([]);
+      setExerciciosPorTreino({});
+      navigate("/GraficodeEvolucao");
+    } catch (error) {
+      console.error(error.message);
+      setIsSaving(false);
+    }
   };
 
   const calcularTotalPorTreino = (treinoId) => {

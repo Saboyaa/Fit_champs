@@ -1,5 +1,5 @@
 // src/Paginas/GraficodeEvolucao.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useGlobalContext } from "../Hooks/ContextoGlobal";
 import trainingService from "../services/trainingService";
 import userService from "../services/userService";

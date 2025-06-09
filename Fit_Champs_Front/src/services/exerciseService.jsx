@@ -28,6 +28,42 @@ const exerciseService = {
       );
     }
   },
+
+  postTrains: async (trainData, exercisesPerTrainData) => {
+    try {
+      const trainList = [];
+
+      trainData.forEach((train) => {
+        if (train.descripition !== "Day Off") {
+          const exercisesList = exercisesPerTrainData[train.id].filter(
+            (ex) => ex.exerciseId !== 0
+          );
+
+          const train_date = new Date(train.data);
+
+          trainList.push({
+            muscular_group: train.descripition.slice(10),
+            train_date: train_date.toISOString().split("T")[0],
+            exercises: exercisesList.map((ex) => ({
+              exercise_id: ex.exerciseId,
+              load: ex.peso,
+              repetitions: ex.repeticoes.replaceAll(/\s/g, ""),
+            })),
+          });
+        }
+      });
+
+      console.log({ trains: trainList });
+
+      const response = await api.post("exercise/trains", {
+        trains: trainList,
+      });
+
+      return response.data;
+    } catch (error) {
+      throw new Error(error?.message || "Erro ao enviar os treinos.");
+    }
+  },
 };
 
 export default exerciseService;
