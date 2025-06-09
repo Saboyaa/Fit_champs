@@ -1,5 +1,4 @@
-import React from "react";
-import { User, Info, ActivitySquare, Edit } from "lucide-react";
+import { Info, Edit } from "lucide-react";
 import IMCSection from "./IMCSection";
 import UserRankings from "./UserRankings";
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { encontrarExercicio } from "../Classes/exercicio";
+// import { encontrarExercicio } from "../Classes/exercicio";
 
-export const useExerciseLogic = (treinos) => {
+export const useExerciseLogic = (treinos, exercisesList) => {
   const [exerciciosPorTreino, setExerciciosPorTreino] = useState({});
   const [expandedTreino, setExpandedTreino] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -19,6 +19,11 @@ export const useExerciseLogic = (treinos) => {
       }
     });
   }, [treinos]);
+
+  const encontrarExercicio = (tipoTreino, nomeExercicio) => {
+    const exerciciosList = exercisesList[tipoTreino] || [];
+    return exerciciosList.find((ex) => ex.nome === nomeExercicio);
+  };
 
   const inicializarExercicios = (treinoId) => {
     const treino = treinos.find((t) => t.id === treinoId);

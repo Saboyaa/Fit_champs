@@ -55,12 +55,12 @@ def create_trains(
     return created_trains
 
 # Endpoint para deletar o exercício de um treino específico de um dado usuário
-@exercise_router.delete("/trains_exercises/{train_exercise_id}")
-def delete_trains_exercises(
-    train_exercise_id: Annotated[int, Path(title="ID do exércicio do treino a ser deletado")],
-    current_user: Annotated[User, Depends(get_current_user)],
-    db: Session = Depends(get_db)
-):
-    delete_train_exercise_by_train_exercise_id_and_user_id(db, user_id=current_user.id, train_exercise_id=train_exercise_id)
+# @exercise_router.delete("/trains_exercises/{train_exercise_id}")
+# def delete_trains_exercises(
+#     train_exercise_id: Annotated[int, Path(title="ID do exércicio do treino a ser deletado")],
+#     current_user: Annotated[User, Depends(get_current_user)],
+#     db: Session = Depends(get_db)
+# ):
+#     delete_train_exercise_by_train_exercise_id_and_user_id(db, user_id=current_user.id, train_exercise_id=train_exercise_id)
 
-    return "complete"
+#     return "complete"

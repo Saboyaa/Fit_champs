@@ -1,13 +1,13 @@
-import React from "react";
 import { Trash } from "lucide-react";
 import CustomDropdown from "./selectmo";
-import exerciciosPorTipo from "../../Classes/exercicio";
+// import exerciciosPorTipo from "../../Classes/exercicio";
 
 const ExerciseRow = ({
   treino,
   exercicio,
   atualizarExercicio,
   removerExercicio,
+  exerciciosPorTipo,
 }) => {
   return (
     <div className="grid grid-cols-12 gap-2 items-center bg-slate-800/50 p-3 rounded-lg hover:bg-slate-700/50 transition-colors border border-slate-700/50">

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   TrendingUp,
   ClipboardList,
@@ -13,10 +13,14 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import exerciciosPorTipo from "../../Classes/exercicio";
+// import exerciciosPorTipo from "../../Classes/exercicio";
 import { getWeekRange, changeWeek } from "../../Hooks/getWeek";
 
-const TreinoTipoSumario = ({ exerciciosPorTreino, treinos }) => {
+const TreinoTipoSumario = ({
+  exerciciosPorTreino,
+  treinos,
+  exerciciosPorTipo,
+}) => {
   const [expandedType, setExpandedType] = useState(null);
   const [weekRange, setWeekRange] = useState(getWeekRange());
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);

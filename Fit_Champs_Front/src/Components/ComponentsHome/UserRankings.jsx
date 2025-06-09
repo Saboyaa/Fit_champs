@@ -1,44 +1,9 @@
-import React from "react";
 import { LucideMedal, TrendingUp } from "lucide-react";
 import { getGroupIcon } from "./IconUtils";
 import { useNavigate } from "react-router-dom";
 
 const UserRankings = ({ userData }) => {
   const navigate = useNavigate();
-
-  // Simulated muscle records for the ranking display
-  const recordesMusculares = [
-    {
-      grupo: "Peito",
-      recordeVolume: 4000,
-      metaVolume: 5000,
-      data: "2022-10-10",
-    },
-    {
-      grupo: "Costas",
-      recordeVolume: 6100,
-      metaVolume: 6000,
-      data: "2022-10-11",
-    },
-    {
-      grupo: "Perna",
-      recordeVolume: 7200,
-      metaVolume: 8000,
-      data: "2022-10-12",
-    },
-    {
-      grupo: "Ombro",
-      recordeVolume: 2800,
-      metaVolume: 4000,
-      data: "2022-10-14",
-    },
-    {
-      grupo: "Braço",
-      recordeVolume: 1800,
-      metaVolume: 3000,
-      data: "2022-10-15",
-    },
-  ];
 
   // Navegar para a página de ranking
   const goToRankings = () => {
@@ -61,27 +26,23 @@ const UserRankings = ({ userData }) => {
         </button>
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {recordesMusculares.map((recorde) => (
+        {Object.entries(userData.recordes).map(([key, value]) => (
           <div
-            key={recorde.grupo}
+            key={key}
             className="relative p-4 bg-slate-800 rounded-lg border border-slate-700 hover:shadow-md transition-shadow hover:border-blue-600/50"
           >
             <div className="flex items-center gap-3">
               <div className="bg-slate-700 p-2 rounded-lg">
-                {getGroupIcon(recorde.grupo)}
+                {getGroupIcon(key)}
               </div>
               <div>
                 <p className="text-white">
                   <span className="text-yellow-400 font-bold text-xl mr-1">
-                    {userData.posicaoRank}º
+                    {value}°
                   </span>
-                  <span className="font-medium text-white">
-                    {recorde.grupo}
-                  </span>
+                  <span className="font-medium text-white">{key}</span>
                 </p>
-                <span className="text-xs text-blue-300">
-                  Categoria: {recorde.grupo}
-                </span>
+                <span className="text-xs text-blue-300">Categoria: {key}</span>
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Edit } from "lucide-react";
 
 const EditProfileModal = ({

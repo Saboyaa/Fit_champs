@@ -12,6 +12,7 @@ const WorkoutCard = ({
   atualizarExercicio,
   removerExercicio,
   adicionarExercicio,
+  exerciciosPorTipo,
 }) => {
   if (treino.descripition === "Day Off") return null;
 
@@ -91,6 +92,7 @@ const WorkoutCard = ({
                 exercicio={exercicio}
                 atualizarExercicio={atualizarExercicio}
                 removerExercicio={removerExercicio}
+                exerciciosPorTipo={exerciciosPorTipo}
               />
             ))}
           </div>

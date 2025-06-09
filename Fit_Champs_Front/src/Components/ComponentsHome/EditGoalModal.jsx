@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Target, Info, Plus, Minus, X } from "lucide-react";
 
 const EditGoalModal = ({

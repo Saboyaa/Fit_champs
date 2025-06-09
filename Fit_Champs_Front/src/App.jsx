@@ -1,4 +1,3 @@
-import React from "react";
 import BarraMenu from "./Components/BarraMenu";
 import { BrowserRouter as Router, useLocation } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes";

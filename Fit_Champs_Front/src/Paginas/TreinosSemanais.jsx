@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Tasks from "../Components/ComponentsTreinosSemanais/Tasks";
 import { useGlobalContext } from "../Hooks/ContextoGlobal";
 import { useExercicios } from "../Hooks/ExerciciosContext";

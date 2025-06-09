@@ -1,26 +1,33 @@
-export const exerciseService = {
-  async getExercisesByWorkout(workoutId) {
+import api from "./apiConfig";
+
+const exerciseService = {
+  getExercisesList: async () => {
     try {
-      return await api.get(`/exercises/workout/${workoutId}`);
+      const response = await api.get("exercise");
+
+      const convertedData = {};
+
+      for (const [muscleGroup, exercises] of Object.entries(response.data)) {
+        const treinoKey =
+          muscleGroup === "Day Off" ? "Day Off" : `Treino de ${muscleGroup}`;
+
+        convertedData[treinoKey] = exercises
+          .filter((ex) => ex.exercise_name)
+          .map((ex) => ({
+            id: ex.id,
+            nome: ex.exercise_name,
+            subgrupo: ex.submuscular_group,
+          }));
+      }
+
+      return convertedData;
     } catch (error) {
-      console.error("Erro ao buscar exercícios do treino:", error);
-      throw error;
-    }
-  },
-  async deleteExercise(exerciseId) {
-    try {
-      return await api.delete(`/exercises/${exerciseId}`);
-    } catch (error) {
-      console.error("Erro ao deletar exercício:", error);
-      throw error;
-    }
-  },
-  async saveWorkoutWithExercises(workoutData) {
-    try {
-      return await api.post("/workouts/complete", workoutData);
-    } catch (error) {
-      console.error("Erro ao salvar treino completo:", error);
-      throw error;
+      throw new Error(
+        error.response?.data?.message ||
+          "Erro ao buscar os exércicios disponíveis."
+      );
     }
   },
 };
+
+export default exerciseService;

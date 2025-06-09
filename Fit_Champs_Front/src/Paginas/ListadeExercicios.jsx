@@ -1,21 +1,36 @@
-// src/Paginas/ListadeExercicios.jsx - Versão Refatorada
-import React, { useState } from "react";
+// src/Paginas/ListadeExercicios.jsx
+import { useState, useEffect } from "react";
 import { useExercicios } from "../Hooks/ExerciciosContext";
 import { useGlobalContext } from "../Hooks/ContextoGlobal";
 import { useExerciseLogic } from "../Hooks/useExerciseLogic";
 
-// Componentes importados
 import Header from "../Components/ComponentsListaExercicios/Header";
 import ViewControls from "../Components/ComponentsListaExercicios/ViewControls";
 import EmptyState from "../Components/ComponentsListaExercicios/EmptyState";
 import WorkoutCard from "../Components/ComponentsListaExercicios/WorkoutCard";
 import SaveButton from "../Components/ComponentsListaExercicios/SaveButton";
 import TreinoTipoSumario from "../Components/ComponentsListaExercicios/resumoSemanal";
+import exerciseService from "../services/exerciseService";
 
 function ListadeExercicios() {
   const { isMenuOpen } = useGlobalContext();
   const { treinos } = useExercicios();
   const [activeView, setActiveView] = useState("list");
+  const [exercisesList, setExercisesList] = useState();
+
+  const loadExercisesList = async () => {
+    try {
+      const response = await exerciseService.getExercisesList();
+
+      setExercisesList(response);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    loadExercisesList();
+  }, []);
 
   const {
     exerciciosPorTreino,
@@ -28,7 +43,7 @@ function ListadeExercicios() {
     toggleExpandTreino,
     salvarTreino,
     calcularTotalPorTreino,
-  } = useExerciseLogic(treinos);
+  } = useExerciseLogic(treinos, exercisesList);
 
   const hasExercicios = treinos.some(
     (treino) =>
@@ -67,6 +82,7 @@ function ListadeExercicios() {
                     atualizarExercicio={atualizarExercicio}
                     removerExercicio={removerExercicio}
                     adicionarExercicio={adicionarExercicio}
+                    exerciciosPorTipo={exercisesList}
                   />
                 ))}
 
@@ -83,6 +99,7 @@ function ListadeExercicios() {
                 <TreinoTipoSumario
                   treinos={treinos}
                   exerciciosPorTreino={exerciciosPorTreino}
+                  exerciciosPorTipo={exercisesList}
                 />
               </div>
             )}

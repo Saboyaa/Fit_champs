@@ -4,9 +4,54 @@ import api from "./apiConfig";
 const userService = {
   // Função para pegar dados do usuário
   getCurrentUser: async () => {
+    const formattedPhoneFunction = (value) => {
+      let formattedPhone = value.replace(/\D/g, "");
+      if (formattedPhone.length > 0) {
+        formattedPhone = "(" + formattedPhone;
+        if (formattedPhone.length > 3) {
+          formattedPhone =
+            formattedPhone.substring(0, 3) + ") " + formattedPhone.substring(3);
+        }
+        if (formattedPhone.length > 10) {
+          formattedPhone =
+            formattedPhone.substring(0, 10) +
+            "-" +
+            formattedPhone.substring(10);
+        }
+        if (formattedPhone.length > 15) {
+          formattedPhone = formattedPhone.substring(0, 15);
+        }
+      }
+
+      return formattedPhone;
+    };
+
     try {
-      const response = await api.get("users/profile");
-      return response.data;
+      const response = await api.get("user");
+      return {
+        nome: response.data.username,
+        telefone: formattedPhoneFunction(response.data.phone),
+        email: response.data.email,
+        idade: response.data.age,
+        altura: response.data.height,
+        peso: response.data.weight,
+        sexo: response.data.sex == "M" ? "Masculino" : "Feminino",
+        cidade: response.data.city,
+        recordes: {
+          peito: response.data.rank_chest,
+          costas: response.data.rank_back,
+          braço: response.data.rank_arm,
+          perna: response.data.rank_leg,
+          ombro: response.data.rank_shoulder,
+        },
+        metas: {
+          peito: response.data.goal_chest,
+          costas: response.data.goal_back,
+          braço: response.data.goal_arm,
+          perna: response.data.goal_leg,
+          ombro: response.data.goal_shoulder,
+        },
+      };
     } catch (error) {
       throw new Error(
         error.response?.data?.message || "Erro ao buscar dados do usuário"
@@ -15,30 +60,40 @@ const userService = {
   },
 
   //Função para o TopMenu pegar dados do usuário
-  getUserDisplay: async () => {
-    try {
-      const response = await api.get("users/profile");
-      return {
-        nome: response.data.nome,
-        foto: response.data.foto,
-      };
-    } catch (error) {
-      throw new Error(
-        error.response?.data?.message ||
-          "Erro ao buscar dados de exibição do usuário"
-      );
-    }
-  },
+  // getUserDisplay: async () => {
+  //   try {
+  //     const response = await api.get("user");
+  //     return {
+  //       nome: response.data.nome,
+  //       foto: response.data.foto,
+  //     };
+  //   } catch (error) {
+  //     throw new Error(
+  //       error.response?.data?.message ||
+  //         "Erro ao buscar dados de exibição do usuário"
+  //     );
+  //   }
+  // },
 
   // Função para atualizar perfil do usuário
   updateProfile: async (userData) => {
     try {
-      const response = await api.put("users/profile", userData);
-
-      // Atualizar dados do usuário no localStorage se necessário
-      if (response.data.user) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+      function extractDigits(phoneStr) {
+        return phoneStr.replace(/\D/g, "");
       }
+
+      const newUserData = {
+        user_data: {
+          username: userData.nome,
+          email: userData.email,
+          city: userData.cidade,
+          age: parseInt(userData.idade),
+          phone: extractDigits(userData.telefone),
+          height: parseInt(userData.altura),
+          weight: parseInt(userData.peso),
+        },
+      };
+      const response = await api.patch("user", newUserData);
 
       return response.data;
     } catch (error) {
@@ -50,10 +105,27 @@ const userService = {
 
   updateVolumeGoal: async (muscleGroup, newGoal) => {
     try {
-      const response = await api.put("users/volume-goals", {
-        muscleGroup,
-        goal: newGoal,
+      const muscleGroupMap = {
+        Peito: "chest",
+        Costas: "back",
+        Braço: "arm",
+        Perna: "leg",
+        Ombro: "shoulder",
+      };
+
+      const newGoalData = {
+        user_goal: {
+          goal: parseInt(newGoal),
+        },
+      };
+
+      const url = `user/${muscleGroupMap[muscleGroup]}_goal`;
+      const response = await api.patch(url, newGoalData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+
       return response.data;
     } catch (error) {
       throw new Error(
