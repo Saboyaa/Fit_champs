@@ -51,22 +51,22 @@ function Tasks({ initialTasks = [], onTasksUpdate, weekStartDate }) {
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
-  const handleSelectChange = (id, field, value) => {
-    setSelectedOptions({ ...selectedOptions, [`${id}-${field}`]: value });
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === id) {
-        return {
-          ...task,
-          [field]: value,
-          ...(field === "text"
-            ? { data: calculateTaskDate(value, weekStartDate) }
-            : {}),
-        };
-      }
-      return task;
-    });
-    setTasks(updatedTasks);
-  };
+  // const handleSelectChange = (id, field, value) => {
+  //   setSelectedOptions({ ...selectedOptions, [`${id}-${field}`]: value });
+  //   const updatedTasks = tasks.map((task) => {
+  //     if (task.id === id) {
+  //       return {
+  //         ...task,
+  //         [field]: value,
+  //         ...(field === "text"
+  //           ? { data: calculateTaskDate(value, weekStartDate) }
+  //           : {}),
+  //       };
+  //     }
+  //     return task;
+  //   });
+  //   setTasks(updatedTasks);
+  // };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
