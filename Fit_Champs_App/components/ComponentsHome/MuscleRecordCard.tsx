@@ -43,14 +43,10 @@ const MuscleRecordsCard = ({ recordesMusculares, openGoalModal }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(30, 41, 59, 0.9)",
+    backgroundColor: "#0f172a",
     padding: 24,
     borderRadius: 12,
     marginBottom: 32,
-    borderWidth: 1,
-    borderColor: "#374151",
-    // React Native doesn't have backdrop-filter, you might need a third-party library
-    // or implement it differently for iOS/Android
   },
   header: {
     backgroundColor: "#1e293b", // slate-900
@@ -58,8 +54,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: "rgba(99, 102, 241, 0.3)", // indigo-500/30
-    // Gradient would need a separate implementation in React Native
+    borderColor: "rgba(99, 102, 241, 0.3)",
   },
   headerContent: {
     flexDirection: "row",

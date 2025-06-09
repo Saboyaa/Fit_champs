@@ -2,8 +2,6 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { User, Info, ActivitySquare, Edit } from "lucide-react-native";
 import IMCSection from "./IMCSection";
-import UserRankings from "./UserRankings";
-import LinearGradient from "react-native-linear-gradient";
 
 const UserProfileCard = ({ userData, openProfileModal }) => {
   return (
@@ -59,7 +57,6 @@ const UserProfileCard = ({ userData, openProfileModal }) => {
 
         </View>
 
-        <UserRankings userData={userData} />
       </View>
     </View>
   );
@@ -67,12 +64,11 @@ const UserProfileCard = ({ userData, openProfileModal }) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    backgroundColor: "rgba(30, 41, 59, 0.9)",
+    backgroundColor: "#0f172a",
     borderRadius: 12,
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "#334155",
     overflow: "hidden",
+    padding:10,
   },
   gradientHeader: {
     padding: 24,
@@ -84,6 +80,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
+    margin:8,
   },
   userName: {
     fontSize: 20,

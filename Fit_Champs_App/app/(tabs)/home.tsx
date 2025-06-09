@@ -4,17 +4,45 @@ import { useGlobalContext } from '@/Context/ContextoGlobal';
 import Header from "../../components/ComponentsHome/Header";
 import UserProfileCard from "../../components/ComponentsHome/UserProfileCard";
 import MuscleRecordsCard from "../../components/ComponentsHome/MuscleRecordCard";
-import EditProfileModal from "../Components/ComponentsHome/EditProfileModal";
-import EditGoalModal from "../Components/ComponentsHome/EditGoalModal";
 import { useNotificationState } from "../../Context/notification";
-import peito from "../../images/peito.png";
 
-const Home = ({ navigation }) => {
+// Type definitions
+interface IMC {
+  value: number | null;
+  classification: string;
+}
+
+interface UserData {
+  nome: string;
+  foto: any; // For require() imported images
+  telefone: string;
+  email: string;
+  idade: number;
+  altura: number;
+  peso: number;
+  posicaoRank: number;
+  sexo: string;
+  cidade: string;
+  imc: IMC;
+}
+
+interface MuscleRecord {
+  grupo: string;
+  recordeVolume: number;
+  metaVolume: number;
+  data: string;
+}
+
+interface HomeProps {
+  navigation: any; // You might want to import proper navigation types from @react-navigation/native
+}
+
+const Home: React.FC<HomeProps> = ({ navigation }) => {
   const { isMenuOpen } = useGlobalContext();
 
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<UserData>({
     nome: "João Silva",
-    foto: peito,
+    foto: require('../../images/peito.png'),
     telefone: "(11) 98765-4321",
     email: "joao.silva@email.com",
     idade: 28,
@@ -26,13 +54,13 @@ const Home = ({ navigation }) => {
     imc: { value: null, classification: "" },
   });
 
-  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [currentEditGroup, setCurrentEditGroup] = useState(null);
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState<boolean>(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
+  const [currentEditGroup, setCurrentEditGroup] = useState<string | null>(null);
 
   const { notification, showNotification } = useNotificationState();
 
-  const [recordesMusculares, setRecordesMusculares] = useState([
+  const [recordesMusculares, setRecordesMusculares] = useState<MuscleRecord[]>([
     {
       grupo: "Peito",
       recordeVolume: 4000,
@@ -69,11 +97,11 @@ const Home = ({ navigation }) => {
     calculateIMC(userData.altura, userData.peso);
   }, [userData.altura, userData.peso]);
 
-  const calculateIMC = (altura, peso) => {
+  const calculateIMC = (altura: number, peso: number): void => {
     if (altura && peso) {
       const heightInMeters = altura / 100;
-      const imcValue = (peso / (heightInMeters * heightInMeters)).toFixed(2);
-      let classification = "";
+      const imcValue = parseFloat((peso / (heightInMeters * heightInMeters)).toFixed(2));
+      let classification: string = "";
 
       if (imcValue < 18.5) {
         classification = "Abaixo do peso";
@@ -96,12 +124,12 @@ const Home = ({ navigation }) => {
     }
   };
 
-  const openGoalModal = (grupo) => {
+  const openGoalModal = (grupo: string): void => {
     setCurrentEditGroup(grupo);
     setIsGoalModalOpen(true);
   };
 
-  const updateVolumeGoal = (grupo, newGoal) => {
+  const updateVolumeGoal = (grupo: string, newGoal: number | string): void => {
     setRecordesMusculares((prev) =>
       prev.map((recorde) =>
         recorde.grupo === grupo
@@ -112,7 +140,7 @@ const Home = ({ navigation }) => {
     setIsGoalModalOpen(false);
   };
 
-  const handleSaveUserData = (updatedData) => {
+  const handleSaveUserData = (updatedData: UserData): void => {
     setUserData(updatedData);
     calculateIMC(updatedData.altura, updatedData.peso);
     setIsProfileModalOpen(false);
@@ -125,39 +153,17 @@ const Home = ({ navigation }) => {
           {/* Header */}
           <Header navigation={navigation} />
 
-          {/* User Profile Card */}
           <UserProfileCard
             userData={userData}
             openProfileModal={() => setIsProfileModalOpen(true)}
           />
-
-          {/* Muscle Records Card */}
-	  <MuscleRecordsCard
+          
+          <MuscleRecordsCard
             recordesMusculares={recordesMusculares}
             openGoalModal={openGoalModal}
-          />} 
+          />
         </View>
       </ScrollView>
-
-      {/* Volume Goal Edit Modal */}
-      {/*<EditGoalModal
-        visible={isGoalModalOpen}
-        grupo={currentEditGroup}
-        initialValue={
-          recordesMusculares.find((r) => r.grupo === currentEditGroup)
-            ?.metaVolume
-        }
-        onSave={updateVolumeGoal}
-        onCancel={() => setIsGoalModalOpen(false)}
-      />*/}
-
-      {/* Profile Edit Modal */}
-      {/*<EditProfileModal
-        visible={isProfileModalOpen}
-        userData={userData}
-        onSave={handleSaveUserData}
-        onCancel={() => setIsProfileModalOpen(false)}
-      />*/}
     </View>
   );
 };

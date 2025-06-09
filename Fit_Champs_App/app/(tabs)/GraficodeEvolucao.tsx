@@ -6,12 +6,11 @@ import {
   ScrollView,
   SafeAreaView,
   StatusBar,
+  Dimensions,
 } from 'react-native';
-import {
-  CartesianChart,
-  Line,
-  Area,
-} from 'victory-native';
+import { LineChart } from 'react-native-chart-kit';
+
+const screenWidth = Dimensions.get('window').width;
 
 interface TrainingData {
   x: string;
@@ -107,56 +106,102 @@ const TrainingStatsScreen: React.FC = () => {
     },
   ];
 
-  const renderChart = (muscleGroup: MuscleGroupData) => (
-    <View key={muscleGroup.name} style={styles.chartContainer}>
-      <View style={styles.chartHeader}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.chartIcon}>{muscleGroup.icon}</Text>
-          <Text style={styles.chartTitle}>{muscleGroup.name}</Text>
-        </View>
-        <Text style={styles.lastDate}>Último: {muscleGroup.lastDate}</Text>
-      </View>
+  const prepareChartData = (muscleGroup: MuscleGroupData) => {
+    return {
+      labels: muscleGroup.data.map(item => item.x),
+      datasets: [
+        {
+          data: muscleGroup.data.map(item => item.y),
+          color: (opacity = 1) => muscleGroup.color,
+          strokeWidth: 3,
+        },
+      ],
+    };
+  };
 
-      <View style={styles.chartWrapper}>
-        <CartesianChart
-          data={muscleGroup.data}
-          xKey="x"
-          yKeys={["y"]}
-          axisOptions={{
-            lineColor: '#374151',
-            labelColor: '#9CA3AF',
-          }}
-          domainPadding={{ left: 20, right: 20, top: 20, bottom: 20 }}
-        >
-          {({ points, chartBounds }) => (
-            <>
-              <Area
-                points={points.y}
-                y0={chartBounds.bottom}
-                color={muscleGroup.color}
-                opacity={0.2}
-                animate={{ type: "timing", duration: 1000 }}
-              />
-              <Line
-                points={points.y}
-                color={muscleGroup.color}
-                strokeWidth={3}
-                animate={{ type: "timing", duration: 1000 }}
-              />
-            </>
-          )}
-        </CartesianChart>
-      </View>
+  const chartConfig = {
+    backgroundColor: '#1F2937',
+    backgroundGradientFrom: '#1F2937',
+    backgroundGradientTo: '#1F2937',
+    decimalPlaces: 0,
+    color: (opacity = 1) => `rgba(156, 163, 175, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(156, 163, 175, ${opacity})`,
+    style: {
+      borderRadius: 16,
+    },
+    propsForDots: {
+      r: '4',
+      strokeWidth: '2',
+    },
+    propsForBackgroundLines: {
+      strokeDasharray: '',
+      stroke: '#374151',
+      strokeWidth: 1,
+    },
+    fillShadowGradient: '',
+    fillShadowGradientOpacity: 0,
+  };
 
-      <View style={styles.improvementContainer}>
-        <View style={[styles.improvementBadge, { backgroundColor: `${muscleGroup.color}20` }]}>
-          <Text style={[styles.improvementText, { color: muscleGroup.color }]}>
-            ↗ Melhora de {muscleGroup.improvement}% em relação ao treino anterior, continue assim!
-          </Text>
+  const renderChart = (muscleGroup: MuscleGroupData) => {
+    const chartData = prepareChartData(muscleGroup);
+    
+    return (
+      <View key={muscleGroup.name} style={styles.chartContainer}>
+        <View style={styles.chartHeader}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.chartIcon}>{muscleGroup.icon}</Text>
+            <Text style={styles.chartTitle}>{muscleGroup.name}</Text>
+          </View>
+          <Text style={styles.lastDate}>Último: {muscleGroup.lastDate}</Text>
+        </View>
+
+        <View style={styles.chartWrapper}>
+          <LineChart
+            data={chartData}
+            width={screenWidth - 72} // Adjusted for container padding
+            height={200}
+            chartConfig={{
+              ...chartConfig,
+              color: (opacity = 1) => muscleGroup.color,
+            }}
+            bezier
+            style={styles.chart}
+            withInnerLines={true}
+            withOuterLines={false}
+            withVerticalLines={false}
+            withHorizontalLines={true}
+            withDots={true}
+            withShadow={false}
+            fromZero={true}
+            segments={4}
+          />
+        </View>
+
+        <View style={styles.improvementContainer}>
+          <View style={[styles.improvementBadge, { backgroundColor: `${muscleGroup.color}20` }]}>
+            <Text style={[styles.improvementText, { color: muscleGroup.color }]}>
+              ↗ Melhora de {muscleGroup.improvement}% em relação ao treino anterior, continue assim!
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>Volume Atual</Text>
+            <Text style={[styles.statValue, { color: muscleGroup.color }]}>
+              {muscleGroup.data[muscleGroup.data.length - 1].y.toLocaleString()}
+            </Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>Progresso</Text>
+            <Text style={[styles.statValue, { color: muscleGroup.color }]}>
+              +{muscleGroup.improvement}%
+            </Text>
+          </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -248,16 +293,15 @@ const styles = StyleSheet.create({
   chartWrapper: {
     alignItems: 'center',
     marginVertical: 8,
-    height: 200,
+    overflow: 'hidden',
+    borderRadius: 16,
   },
-  volumeLabel: {
-    color: '#9CA3AF',
-    fontSize: 12,
-    textAlign: 'center',
-    marginTop: 8,
+  chart: {
+    borderRadius: 16,
   },
   improvementContainer: {
-    marginTop: 12,
+    marginTop: 16,
+    marginBottom: 12,
   },
   improvementBadge: {
     borderRadius: 8,
@@ -268,6 +312,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     textAlign: 'center',
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#374151',
+  },
+  statItem: {
+    alignItems: 'center',
+  },
+  statLabel: {
+    color: '#9CA3AF',
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

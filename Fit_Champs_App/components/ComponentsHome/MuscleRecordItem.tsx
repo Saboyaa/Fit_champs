@@ -36,7 +36,7 @@ const MuscleRecordItem = ({
       </View>
 
       <View style={styles.volumeContainer}>
-        <Text style={styles.volumeLabel}>Volume Atual / Meta:</Text>
+        <Text style={styles.volumeLabel}>Volume Atual / Meta: </Text>
         <Text style={[styles.volumeValue, metaAlcancada ? styles.volumeAchieved : styles.volumeDefault]}>
           {recorde.recordeVolume}/{recorde.metaVolume}
         </Text>
