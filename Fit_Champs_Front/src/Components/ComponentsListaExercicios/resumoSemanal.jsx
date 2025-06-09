@@ -13,8 +13,11 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-// import exerciciosPorTipo from "../../Classes/exercicio";
-import { getWeekRange, changeWeek } from "../../Hooks/getWeek";
+import {
+  getWeekRange,
+  changeWeek,
+  isDateInWeekRange,
+} from "../../Hooks/getWeek";
 
 const TreinoTipoSumario = ({
   exerciciosPorTreino,
@@ -52,20 +55,12 @@ const TreinoTipoSumario = ({
   const isTreinoInSelectedWeek = (treinoData) => {
     if (!treinoData) return false;
 
-    // Converter data do treino para objeto Date
-    const [day, month, year] = treinoData.split("-").map(Number);
-    const treinoDate = new Date(2000 + year, month - 1, day);
-
-    // Converter datas da semana selecionada para objetos Date
-    const [startDay, startMonth, startYear] = weekRange.start
-      .split("/")
-      .map(Number);
-    const [endDay, endMonth, endYear] = weekRange.end.split("/").map(Number);
-
-    const weekStart = new Date(startYear, startMonth - 1, startDay);
-    const weekEnd = new Date(endYear, endMonth - 1, endDay);
-
-    return treinoDate >= weekStart && treinoDate <= weekEnd;
+    try {
+      return isDateInWeekRange(treinoData, weekRange, true);
+    } catch (error) {
+      console.error("Erro ao verificar data do treino:", error);
+      return false;
+    }
   };
 
   const treinoTipoSummary = useMemo(() => {

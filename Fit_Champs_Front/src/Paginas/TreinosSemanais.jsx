@@ -110,7 +110,9 @@ function TreinosSemanais() {
           <Tasks
             initialTasks={[]}
             onTasksUpdate={atualizarTasks}
-            weekStartDate={weekRange.start.replace(/\//g, "-")}
+            weekStartDate={
+              weekRange.startForTraining || weekRange.start.replace(/\//g, "-")
+            }
           />
         </div>
 

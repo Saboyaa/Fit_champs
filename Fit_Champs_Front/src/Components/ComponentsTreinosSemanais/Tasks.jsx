@@ -7,34 +7,11 @@ import {
   Clock,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { calculateTaskDate } from "../../Hooks/getWeek";
 
 function Tasks({ initialTasks = [], onTasksUpdate, weekStartDate }) {
   const [tasks, setTasks] = useState(initialTasks);
   const [selectedOptions, setSelectedOptions] = useState({});
-
-  const calculateTaskDate = (dayOfWeek, startDate) => {
-    const [day, month, year] = startDate.split("-").map(Number);
-    const baseDate = new Date(2000 + year, month - 1, day);
-
-    const dayOffsets = {
-      Domingo: 0,
-      "Segunda-feira": 1,
-      "Terça-feira": 2,
-      "Quarta-feira": 3,
-      "Quinta-feira": 4,
-      "Sexta-feira": 5,
-      Sábado: 6,
-    };
-
-    const taskDate = new Date(baseDate);
-    taskDate.setDate(baseDate.getDate() + dayOffsets[dayOfWeek]);
-
-    return `${taskDate.getDate().toString().padStart(2, "0")}-${(
-      taskDate.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, "0")}-${taskDate.getFullYear().toString().slice(-2)}`;
-  };
 
   const [newTask, setNewTask] = useState({
     id: null,
@@ -51,6 +28,14 @@ function Tasks({ initialTasks = [], onTasksUpdate, weekStartDate }) {
       onTasksUpdate(tasks);
     }
   }, [tasks, onTasksUpdate]);
+
+  useEffect(() => {
+    // Atualizar a data do newTask quando weekStartDate mudar
+    setNewTask((prev) => ({
+      ...prev,
+      data: calculateTaskDate(prev.text, weekStartDate),
+    }));
+  }, [weekStartDate]);
 
   const addTask = (task) => {
     const id = Math.floor(Math.random() * 10000) + 1;
@@ -163,7 +148,7 @@ function Tasks({ initialTasks = [], onTasksUpdate, weekStartDate }) {
             </div>
 
             <div className="transition-all duration-200 hover:shadow-md">
-              <label className=" text-blue-100 mb-2 font-semibold flex items-center">
+              <label className="block text-blue-100 mb-2 font-semibold flex items-center">
                 <CheckCircle className="text-blue-300 mr-2" size={18} />
                 Número de Exercícios
               </label>
