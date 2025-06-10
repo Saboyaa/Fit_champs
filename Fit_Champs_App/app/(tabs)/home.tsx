@@ -151,7 +151,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={[styles.content, isMenuOpen && styles.menuOpenStyle]}>
           {/* Header */}
-          <Header navigation={navigation} />
+          
 
           <UserProfileCard
             userData={userData}

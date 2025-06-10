@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,9 @@ import {
   Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
+import authService from "@/services/authService";
+import axios, { AxiosError } from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login() {
   const router = useRouter();
@@ -19,19 +22,81 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError]     = useState<string>('');
 
-  const handleLogin = () => {
-    // if (!username || !password) {
-    //   Alert.alert("Erro", "Preencha todos os campos.");
-    //   return;
-    // }
 
-    // Lógica de autenticação aqui...
-    // router.push("/home"); // criar a rota /home depois
-
+  const handleLogin = async () => {
     router.push("/GraficodeEvolucao")
+  }
 
-  };
+  // const handleLogin = async () => {
+  //   if (!username || !password) {
+  //     setError('Preencha todos os campos');
+  //     return;
+  //   }
+
+  //   try {
+  //     setLoading(true);
+  //     setError('');
+
+  //     await authService.login(username, password);
+
+  //     if (rememberMe) {
+  //       await AsyncStorage.setItem('rememberMe', 'true');
+  //       await AsyncStorage.setItem('savedUsername', username);
+  //     } else {
+  //       await AsyncStorage.removeItem('rememberMe');
+  //       await AsyncStorage.removeItem('savedUsername');
+  //     }
+
+  //     // navega para a tela de evolução
+  //     router.push("/GraficodeEvolucao")
+  //   } catch (err: unknown) {
+  //     // extrai mensagem do Axios ou genérica
+  //     let message = 'Erro ao fazer login. Verifique suas credenciais.';
+  //     if (axios.isAxiosError(err)) {
+  //       message =
+  //         err.response?.data?.message ||
+  //         err.message ||
+  //         message;
+  //     } else if (err instanceof Error) {
+  //       message = err.message;
+  //     }
+
+  //     setError(message);
+  //     await AsyncStorage.setItem('loginError', message);
+  //     // opcional: alerta imediato
+  //     Alert.alert('Falha no Login', message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+
+  useEffect(() => {
+    const loadSaved = async () => {
+      try {
+        const savedUsername = await AsyncStorage.getItem('savedUsername');
+        const remember      = (await AsyncStorage.getItem('rememberMe')) === 'true';
+        const savedError    = await AsyncStorage.getItem('loginError');
+
+        if (remember && savedUsername) {
+          setUsername(savedUsername);
+          setRememberMe(true);
+        }
+        if (savedError) {
+          setError(savedError);
+          await AsyncStorage.removeItem('loginError');
+        }
+      } catch (e) {
+        console.warn('Erro ao carregar dados salvos:', e);
+      }
+    };
+
+    loadSaved();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

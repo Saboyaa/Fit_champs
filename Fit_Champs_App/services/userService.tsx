@@ -1,176 +1,271 @@
-// Importar a configuração centralizada da API
-import api from "./apiConfig";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// src/services/userService.tsx
 
-// Interface para dados do usuário
-interface User {
-  id: string;
+import { AxiosError, isAxiosError } from 'axios';
+import api from './apiConfig';
+
+/** Tipos das respostas do backend */
+export interface RawUser {
+  id?: number | string;
+  username: string;
+  phone: string;
+  email: string;
+  age: number;
+  height: number;
+  weight: number;
+  sex: 'M' | 'F';
+  city: string;
+  rank_chest: number;
+  rank_back: number;
+  rank_arm: number;
+  rank_leg: number;
+  rank_shoulder: number;
+  goal_chest: number;
+  goal_back: number;
+  goal_arm: number;
+  goal_leg: number;
+  goal_shoulder: number;
+}
+
+/** Tipos para uso no app */
+export interface Recordes {
+  peito: number;
+  costas: number;
+  braço: number;
+  perna: number;
+  ombro: number;
+}
+
+export interface Metas {
+  peito: number;
+  costas: number;
+  braço: number;
+  perna: number;
+  ombro: number;
+}
+
+export interface CurrentUser {
+  nome: string;
+  telefone: string;
+  email: string;
+  idade: number;
+  altura: number;
+  peso: number;
+  sexo: 'Masculino' | 'Feminino';
+  cidade: string;
+  recordes: Recordes;
+  metas: Metas;
+}
+
+export interface CurrentUserBasic {
+  id?: number | string;
+  nome: string;
+  idade: number;
+  sexo: 'Masculino' | 'Feminino';
+}
+
+export interface ProfileUpdateData {
   nome: string;
   email: string;
-  foto?: string;
-  altura?: number;
-  peso?: number;
-  // Adicione outros campos conforme necessário
+  cidade: string;
+  idade: string | number;
+  telefone: string;
+  altura: string | number;
+  peso: string | number;
 }
 
-interface UserDisplay {
-  nome: string;
-  foto?: string;
-}
-
-interface VolumeGoal {
-  muscleGroup: string;
-  goal: number;
-}
-
-interface UserRecord {
+export interface UpdateRecord {
   grupo: string;
   recordeVolume: number;
   metaVolume: number;
   data: string | null;
 }
 
-interface IMCResult {
+export interface IMCResult {
   value: number | null;
   classification: string;
 }
 
-interface UserGoals {
-  peito?: number;
-  costas?: number;
-  perna?: number;
-  ombro?: number;
-  braco?: number;
-  [key: string]: number | undefined; // Index signature
-}
-
 const userService = {
-  // Função para pegar dados do usuário
-  async getCurrentUser(): Promise<User> {
-    try {
-      const response = await api.get("users/profile");
-      return response.data as User;
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || "Erro ao buscar dados do usuário"
-      );
-    }
+  /** Formata telefone como (XX) XXXXX-XXXX */
+  formatPhone(value: string): string {
+    let digits = value.replace(/\D/g, '');
+    if (digits.length > 0) digits = '(' + digits;
+    if (digits.length > 3) digits = digits.slice(0, 3) + ') ' + digits.slice(3);
+    if (digits.length > 10)
+      digits = digits.slice(0, 10) + '-' + digits.slice(10);
+    return digits.slice(0, 15);
   },
 
-  // Função para o TopMenu pegar dados do usuário
-  async getUserDisplay(): Promise<UserDisplay> {
+  /** Pega dados completos do usuário */
+  getCurrentUser: async (): Promise<CurrentUser> => {
     try {
-      const response = await api.get("users/profile");
+      const { data } = await api.get<RawUser>('user');
       return {
-        nome: response.data.nome,
-        foto: response.data.foto,
+        nome:     data.username,
+        telefone: userService.formatPhone(data.phone),
+        email:    data.email,
+        idade:    data.age,
+        altura:   data.height,
+        peso:     data.weight,
+        sexo:     data.sex === 'M' ? 'Masculino' : 'Feminino',
+        cidade:   data.city,
+        recordes: {
+          peito:  data.rank_chest,
+          costas: data.rank_back,
+          braço:  data.rank_arm,
+          perna:  data.rank_leg,
+          ombro:  data.rank_shoulder,
+        },
+        metas: {
+          peito:  data.goal_chest,
+          costas: data.goal_back,
+          braço:  data.goal_arm,
+          perna:  data.goal_leg,
+          ombro:  data.goal_shoulder,
+        },
       };
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message ||
-          "Erro ao buscar dados de exibição do usuário"
-      );
+    } catch (error: unknown) {
+      let msg = 'Erro ao buscar dados do usuário';
+      if (isAxiosError(error)) msg = error.message;
+      else if (error instanceof Error) msg = error.message;
+      throw new Error(msg);
     }
   },
 
-  // Função para atualizar perfil do usuário
-  async updateProfile(userData: Partial<User>): Promise<User> {
+  /** Pega dados básicos para Ranking Semanal */
+  getCurrentUser2: async (): Promise<CurrentUserBasic> => {
     try {
-      const response = await api.put("users/profile", userData);
-
-      // Atualizar dados do usuário no AsyncStorage se necessário
-      if (response.data.user) {
-        await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-      }
-
-      return response.data as User;
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || "Erro ao atualizar perfil"
-      );
+      const { data } = await api.get<RawUser>('user');
+      return {
+        id:    data.id,
+        nome:  data.username,
+        idade: data.age,
+        sexo:  data.sex === 'M' ? 'Masculino' : 'Feminino',
+      };
+    } catch (error: unknown) {
+      let msg = 'Erro ao buscar dados do usuário';
+      if (isAxiosError(error)) msg = error.message;
+      else if (error instanceof Error) msg = error.message;
+      throw new Error(msg);
     }
   },
 
-  async updateVolumeGoal(muscleGroup: string, newGoal: number): Promise<VolumeGoal> {
+  /** Atualiza perfil do usuário */
+  updateProfile: async (
+    userData: ProfileUpdateData
+  ): Promise<RawUser> => {
     try {
-      const response = await api.put("users/volume-goals", {
-        muscleGroup,
-        goal: newGoal,
+      const extractDigits = (s: string) => s.replace(/\D/g, '');
+      const payload = {
+        user_data: {
+          username: userData.nome,
+          email:    userData.email,
+          city:     userData.cidade,
+          age:      Number(userData.idade),
+          phone:    extractDigits(String(userData.telefone)),
+          height:   Number(userData.altura),
+          weight:   Number(userData.peso),
+        },
+      };
+      const { data } = await api.patch<RawUser>('user', payload);
+      return data;
+    } catch (error: unknown) {
+      let msg = 'Erro ao atualizar perfil';
+      if (isAxiosError(error)) msg = error.message;
+      else if (error instanceof Error) msg = error.message;
+      throw new Error(msg);
+    }
+  },
+
+  /** Atualiza meta de volume por grupo muscular */
+  updateVolumeGoal: async (
+    muscleGroup: keyof Metas,
+    newGoal: string | number
+  ): Promise<any> => {
+    try {
+      const mapKey: Record<keyof Metas, string> = {
+        peito:  'chest',
+        costas: 'back',
+        braço:  'arm',
+        perna:  'leg',
+        ombro:  'shoulder',
+      };
+      const payload = {
+        user_goal: { goal: Number(newGoal) },
+      };
+      const url = `user/${mapKey[muscleGroup]}_goal`;
+      const { data } = await api.patch(url, payload, {
+        headers: { 'Content-Type': 'application/json' },
       });
-      return response.data as VolumeGoal;
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || "Erro ao atualizar meta de volume"
-      );
+      return data;
+    } catch (error: unknown) {
+      let msg = 'Erro ao atualizar meta de volume';
+      if (isAxiosError(error)) msg = error.message;
+      else if (error instanceof Error) msg = error.message;
+      throw new Error(msg);
     }
   },
 
-  // Função para calcular recordes a partir do histórico
-  calculateRecordsFromHistory(treinos: Array<{grupoMuscular: string; volumeTotal: number; data: string}>, metas: UserGoals): UserRecord[] {
-    const grupos = ["Peito", "Costas", "Perna", "Ombro", "Braço"] as const;
-
-    return grupos.map((grupo) => {
-      // Filtrar treinos deste grupo muscular
-      const treinosDoGrupo = treinos.filter((t) => t.grupoMuscular === grupo);
-
-      if (treinosDoGrupo.length === 0) {
-        return {
-          grupo,
-          recordeVolume: 0,
-          metaVolume: metas[grupo.toLowerCase() as keyof UserGoals] || 0,
-          data: null,
-        };
+  /** Calcula recordes a partir do histórico */
+  calculateRecordsFromHistory: (
+    history: { grupoMuscular: string; volumeTotal: number; data: string }[],
+    metas: Record<string, number>
+  ): UpdateRecord[] => {
+    const groups = ['Peito', 'Costas', 'Perna', 'Ombro', 'Braço'];
+    return groups.map(grupo => {
+      const entries = history.filter(h => h.grupoMuscular === grupo);
+      if (entries.length === 0) {
+        return { grupo, recordeVolume: 0, metaVolume: metas[grupo.toLowerCase()] || 0, data: null };
       }
-
-      // Encontrar o treino com maior volume
-      const melhorTreino = treinosDoGrupo.reduce((max, atual) =>
-        atual.volumeTotal > max.volumeTotal ? atual : max
+      const best = entries.reduce((m, c) =>
+        c.volumeTotal > m.volumeTotal ? c : m
       );
-
       return {
         grupo,
-        recordeVolume: melhorTreino.volumeTotal,
-        metaVolume: metas[grupo.toLowerCase() as keyof UserGoals] || 0,
-        data: melhorTreino.data,
+        recordeVolume: best.volumeTotal,
+        metaVolume: metas[grupo.toLowerCase()] || 0,
+        data: best.data,
       };
     });
   },
 
-  // Função para calcular IMC
-  calculateIMC(altura: number | undefined, peso: number | undefined): IMCResult {
-    if (!altura || !peso) return { value: null, classification: "" };
-
-    const heightInMeters = altura / 100;
-    const imcValue = parseFloat((peso / (heightInMeters * heightInMeters)).toFixed(2));
-    let classification = "";
-
-    if (imcValue < 18.5) {
-      classification = "Abaixo do peso";
-    } else if (imcValue >= 18.5 && imcValue < 25) {
-      classification = "Peso normal";
-    } else if (imcValue >= 25 && imcValue < 30) {
-      classification = "Sobrepeso";
-    } else if (imcValue >= 30 && imcValue < 35) {
-      classification = "Obesidade grau I";
-    } else if (imcValue >= 35 && imcValue < 40) {
-      classification = "Obesidade grau II";
-    } else {
-      classification = "Obesidade grau III";
-    }
-
-    return { value: imcValue, classification };
+  /** Calcula IMC */
+  calculateIMC: (
+    altura: number,
+    peso: number
+  ): IMCResult => {
+    if (!altura || !peso) return { value: null, classification: '' };
+    const h = altura / 100;
+    const val = Number((peso / (h * h)).toFixed(2));
+    let cls = '';
+    if (val < 18.5)           cls = 'Abaixo do peso';
+    else if (val < 25)        cls = 'Peso normal';
+    else if (val < 30)        cls = 'Sobrepeso';
+    else if (val < 35)        cls = 'Obesidade grau I';
+    else if (val < 40)        cls = 'Obesidade grau II';
+    else                       cls = 'Obesidade grau III';
+    return { value: val, classification: cls };
   },
 
-  async getUserGoals(): Promise<UserGoals> {
+  /** Pega metas do usuário */
+  getUserGoals: async (): Promise<Metas> => {
     try {
-      const response = await api.get("users/goals");
-      return response.data as UserGoals;
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || "Erro ao buscar metas do usuário"
-      );
+      const { data } = await api.get<RawUser>('user');
+      return {
+        peito:  data.goal_chest,
+        costas: data.goal_back,
+        braço:  data.goal_arm,
+        perna:  data.goal_leg,
+        ombro:  data.goal_shoulder,
+      };
+    } catch (error: unknown) {
+      let msg = 'Erro ao buscar metas do usuário';
+      if (isAxiosError(error)) msg = error.message;
+      else if (error instanceof Error) msg = error.message;
+      throw new Error(msg);
     }
   },
 };
 
 export default userService;
+
