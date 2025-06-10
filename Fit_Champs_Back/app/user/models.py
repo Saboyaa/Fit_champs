@@ -27,6 +27,7 @@ class UserGet(BaseModel):
     rank_leg: int = Field(title="Ranque atual do usuário no grupo muscular")
     rank_shoulder: int = Field(title="Ranque atual do usuário no grupo muscular")
     rank_arm: int = Field(title="Ranque atual do usuário no grupo muscular")
+    rank_general: int = Field(title="Ranque atual do usuário")
     goal_chest: int = Field(title="Meta atual do usuário no grupo muscular")
     goal_back: int = Field(title="Meta atual do usuário no grupo muscular")
     goal_leg: int = Field(title="Meta atual do usuário no grupo muscular")

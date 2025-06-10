@@ -39,6 +39,7 @@ def get_user(
         rank_arm=current_user.rank_arm,
         rank_leg=current_user.rank_leg,
         rank_shoulder=current_user.rank_shoulder,
+        rank_general=current_user.rank_general,
         goal_chest=current_user.goal_chest,
         goal_back=current_user.goal_back,
         goal_arm=current_user.goal_arm,

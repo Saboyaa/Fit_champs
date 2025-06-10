@@ -42,6 +42,7 @@ def upgrade() -> None:
             rank_leg INT CHECK(rank_leg >= 0) DEFAULT 0,
             rank_shoulder INT CHECK(rank_shoulder >= 0) DEFAULT 0,
             rank_arm INT CHECK(rank_arm >= 0) DEFAULT 0,
+            rank_general INT CHECK(rank_general >= 0) DEFAULT 0,
             goal_chest SMALLINT CHECK(goal_chest >= 0) DEFAULT 3500,
             goal_back SMALLINT CHECK(goal_back >= 0) DEFAULT 3400,
             goal_leg SMALLINT CHECK(goal_leg >= 0) DEFAULT 4500,

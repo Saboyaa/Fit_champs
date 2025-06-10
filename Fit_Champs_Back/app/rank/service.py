@@ -41,7 +41,7 @@ def get_chest_rank_by_age_and_gender(db: Session, gender: str, age: int):
         bigger_age = 2147483647
 
     return db.execute(
-        select(ChestRank) \
+        select(ChestRank.id, ChestRank.age, ChestRank.sex, ChestRank.total_volume) \
         .where(
             ChestRank.sex == gender,
             between(ChestRank.age, lower_age, bigger_age)
@@ -78,7 +78,7 @@ def get_back_rank_by_age_and_gender(db: Session, gender: str, age: int):
         bigger_age = 2147483647
 
     return db.execute(
-        select(BackRank) \
+        select(BackRank.id, BackRank.age, BackRank.sex, BackRank.total_volume) \
         .where(
             BackRank.sex == gender,
             between(BackRank.age, lower_age, bigger_age)
@@ -115,7 +115,7 @@ def get_shoulder_rank_by_age_and_gender(db: Session, gender: str, age: int):
         bigger_age = 2147483647
 
     return db.execute(
-        select(ShoulderRank) \
+        select(ShoulderRank.id, ShoulderRank.age, ShoulderRank.sex, ShoulderRank.total_volume) \
         .where(
             ShoulderRank.sex == gender,
             between(ShoulderRank.age, lower_age, bigger_age)
@@ -152,7 +152,7 @@ def get_leg_rank_by_age_and_gender(db: Session, gender: str, age: int):
         bigger_age = 2147483647
 
     return db.execute(
-        select(LegRank) \
+        select(LegRank.id, LegRank.age, LegRank.sex, LegRank.total_volume) \
         .where(
             LegRank.sex == gender,
             between(LegRank.age, lower_age, bigger_age)
@@ -189,7 +189,7 @@ def get_arm_rank_by_age_and_gender(db: Session, gender: str, age: int):
         bigger_age = 2147483647
 
     return db.execute(
-        select(ArmRank) \
+        select(ArmRank.id, ArmRank.age, ArmRank.sex, ArmRank.total_volume) \
         .where(
             ArmRank.sex == gender,
             between(ArmRank.age, lower_age, bigger_age)
@@ -226,7 +226,7 @@ def get_general_rank_by_age_and_gender(db: Session, gender: str, age: int):
         bigger_age = 2147483647
 
     return db.execute(
-        select(GeneralRank) \
+        select(GeneralRank.id, GeneralRank.age, GeneralRank.sex, GeneralRank.total_volume) \
         .where(
             GeneralRank.sex == gender,
             between(GeneralRank.age, lower_age, bigger_age)
@@ -234,3 +234,6 @@ def get_general_rank_by_age_and_gender(db: Session, gender: str, age: int):
         .order_by(GeneralRank.total_volume.desc())
         .limit(5)
     ).all()
+
+def get_total_volume_by_user(db: Session, user_id: int):
+    pass

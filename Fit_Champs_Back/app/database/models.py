@@ -22,6 +22,7 @@ class User(Base):
     phone: Mapped[str] = mapped_column(String(11))
     height: Mapped[int] = mapped_column(nullable=False, default=0)
     weight: Mapped[int] = mapped_column(nullable=False, default=0)
+    rank_general: Mapped[int] = mapped_column(nullable=False, default=0)
     rank_chest: Mapped[int] = mapped_column(nullable=False, default=0)
     rank_back: Mapped[int] = mapped_column(nullable=False, default=0)
     rank_leg: Mapped[int] = mapped_column(nullable=False, default=0)

@@ -167,7 +167,7 @@ const RankingSemanal = () => {
           activeFaixaEtaria={activeFaixaEtaria}
           rankingData={rankingData}
           isLoading={isLoading}
-          userData={userData}
+          userData={userData.id}
         />
 
         {/* Contador de rankings ativos */}
