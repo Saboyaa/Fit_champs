@@ -65,7 +65,6 @@ const UserProfileCard = ({ userData, openProfileModal }) => {
 const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: "#0f172a",
-    borderRadius: 12,
     marginBottom: 16,
     overflow: "hidden",
     padding:10,
@@ -73,8 +72,6 @@ const styles = StyleSheet.create({
   gradientHeader: {
     padding: 24,
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "rgba(99, 102, 241, 0.3)",
   },
   headerContent: {
     flexDirection: "row",
@@ -105,10 +102,7 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     backgroundColor: "rgba(15, 23, 42, 0.7)",
-    borderRadius: 12,
     padding: 16,
-    borderWidth: 1,
-    borderColor: "#334155",
   },
   sectionHeader: {
     flexDirection: "row",

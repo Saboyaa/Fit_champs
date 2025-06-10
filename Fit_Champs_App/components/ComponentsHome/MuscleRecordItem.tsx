@@ -70,11 +70,9 @@ const GoalAchievedMessage = () => (
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "rgba(15, 23, 42, 0.7)",
+    backgroundColor: "#1F2937",
     padding: 20,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#374151",
     marginBottom: 16,
     width: "100%",
   },

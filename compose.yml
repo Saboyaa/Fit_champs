@@ -1,7 +1,0 @@
-version: "1"
-services:
-    client:
-        image: saboyaa/fitfront:1.0
-        container_name: front-end-fit
-        ports:
-            - "5173:5173"

@@ -51,8 +51,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(30, 41, 59, 0.8)",
     padding: 20,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#334155",
   },
   header: {
     flexDirection: "row",
@@ -74,12 +72,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   valueBox: {
-    backgroundColor: "rgba(15, 23, 42, 0.8)",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#334155",
     alignItems: "center",
     minWidth: 100,
   },
