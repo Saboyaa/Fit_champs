@@ -26,9 +26,9 @@ def upgrade() -> None:
             sub.username,
             sub.age,
             sub.sex,
-            sub.total_volume * 
+            sub.sub_volume * 
             GREATEST(sub.muscular_count / 5.0 + 1, 1) * 
-            GREATEST(sub.date_count / 5.0 + 1, 1) AS positions
+            GREATEST(sub.date_count / 5.0 + 1, 1) AS total_volume
         FROM (
             SELECT 
                 u.id,
@@ -37,7 +37,7 @@ def upgrade() -> None:
                 u.sex,
                 COUNT(DISTINCT tr.muscular_group) AS muscular_count,
                 COUNT(DISTINCT tr.train_date) AS date_count,
-                SUM(te.volume) AS total_volume
+                SUM(te.volume) AS sub_volume
             FROM users AS u
             JOIN (
                 SELECT t.id, t.user_id, t.muscular_group, t.train_date

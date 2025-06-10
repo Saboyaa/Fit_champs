@@ -1,17 +1,14 @@
-// src/Paginas/GraficodeEvolucao.jsx
 import { useState, useEffect } from "react";
 import { useGlobalContext } from "../Hooks/ContextoGlobal";
 import trainingService from "../services/trainingService";
 import userService from "../services/userService";
 
-// Componentes
 import Header from "../Components/ComponentsGraficoEvolucao/Header";
 import ChartControls from "../Components/ComponentsGraficoEvolucao/ChartControls";
 import GroupChartView from "../Components/ComponentsGraficoEvolucao/GroupChartview";
 import ComparisonChart from "../Components/ComponentsGraficoEvolucao/ComparisonChart";
 import SummaryChart from "../Components/ComponentsGraficoEvolucao/SummaryChart";
 
-// Imagens
 import peito from "../images/peito.png";
 import perna from "../images/perna.png";
 import ombro from "../images/ombro.png";
@@ -24,7 +21,13 @@ const GraficosEvolucao = () => {
 
   // Estados para dados
   const [trainingData, setTrainingData] = useState({});
-  const [metas, setMetas] = useState({});
+  const [metas, setMetas] = useState({
+    Peito: 3500,
+    Costas: 3400,
+    Braço: 2100,
+    Perna: 4500,
+    Ombro: 2300,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -60,34 +63,20 @@ const GraficosEvolucao = () => {
 
         // Formatar metas para a estrutura esperada
         const formattedGoals = {
-          Peito: userGoals.peito || userGoals.Peito || 3500,
-          Costas: userGoals.costas || userGoals.Costas || 3400,
-          Braço: userGoals.braco || userGoals.Braço || userGoals.braço || 2100,
-          Perna: userGoals.perna || userGoals.Perna || 4500,
-          Ombro: userGoals.ombro || userGoals.Ombro || 2300,
+          Peito: userGoals.peito,
+          Costas: userGoals.costas,
+          Braço: userGoals.braco,
+          Perna: userGoals.perna,
+          Ombro: userGoals.ombro,
         };
 
         setMetas(formattedGoals);
-      } catch (goalsError) {
-        console.warn(
-          "Erro ao buscar metas, usando valores padrão:",
-          goalsError
-        );
-
-        // Usar metas padrão em caso de erro
-        setMetas({
-          Peito: 3500,
-          Costas: 3400,
-          Braço: 2100,
-          Perna: 4500,
-          Ombro: 2300,
-        });
+      } catch (error) {
+        console.error(error);
       }
     } catch (err) {
-      setError(err.message);
-      console.error("Erro ao carregar dados:", err);
-
-      // Dados vazios em caso de erro
+      setError(err);
+      console.error(err);
       setTrainingData(trainingService.getEmptyChartData());
     } finally {
       setLoading(false);
@@ -196,15 +185,6 @@ const GraficosEvolucao = () => {
   const handleNextMonth = () => {
     setCurrentMonthIndex((prev) => (prev > 0 ? prev - 1 : prev));
   };
-  // Calcular estatísticas básicas
-  // const stats = {
-  //   totalWorkouts: Object.values(trainingData).reduce(
-  //     (total, workouts) =>
-  //       total + (Array.isArray(workouts) ? workouts.length : 0),
-  //     0
-  //   ),
-  //   muscleGroups: trainingTypes.length,
-  // };
 
   // Função para recarregar dados
   const handleRefreshData = () => {
@@ -346,31 +326,6 @@ const GraficosEvolucao = () => {
             </div>
           </div>
         </div>
-        {/* <div className="flex justify-center mb-6">
-          <div className="bg-slate-800/90 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-slate-700 flex space-x-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-400">
-                {stats.totalWorkouts}
-              </div>
-              <div className="text-sm text-slate-400">Total de Treinos</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-400">
-                {stats.muscleGroups}
-              </div>
-              <div className="text-sm text-slate-400">Grupos Trabalhados</div>
-            </div>
-            <div className="text-center">
-              <button
-                onClick={handleRefreshData}
-                className="text-slate-400 hover:text-blue-400 transition-colors"
-                title="Atualizar dados"
-              >
-                <LucideRefreshCcw />
-              </button>
-            </div>
-          </div>
-        </div> */}
 
         {/* Controles */}
         <ChartControls

@@ -12,7 +12,7 @@ from .models import TrainCreate
 
 from .service import (
     get_stored_exercises,
-    get_trains_by_date_and_user_id,
+    get_trains_by_interval_and_user_id,
     create_train,
     delete_train_exercise_by_train_exercise_id_and_user_id
 )
@@ -35,13 +35,12 @@ def get_exercises(
     return grouped_exercises
 
 # Endpoint para pegar os treinos de um usuário dado uma data
-@exercise_router.get("/trains/{train_date}")
-def get_trains_by_date(
-    train_date: Annotated[date, Path(title="Data para pesquisar os treinos")],
+@exercise_router.get("/trains/three_month")
+def get_trains_of_three_month(
     current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db)
 ):
-    return get_trains_by_date_and_user_id(db, user_id=current_user.id, train_date=train_date)
+    return get_trains_by_interval_and_user_id(db, user_id=current_user.id, train_interval=90)
 
 # Endpoint para criar os treinos de um usuário
 @exercise_router.post("/trains")

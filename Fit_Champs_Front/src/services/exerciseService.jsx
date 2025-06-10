@@ -23,8 +23,7 @@ const exerciseService = {
       return convertedData;
     } catch (error) {
       throw new Error(
-        error.response?.data?.message ||
-          "Erro ao buscar os exércicios disponíveis."
+        error?.message || "Erro ao buscar os exércicios disponíveis."
       );
     }
   },
@@ -39,11 +38,14 @@ const exerciseService = {
             (ex) => ex.exerciseId !== 0
           );
 
-          const train_date = new Date(train.data);
+          function convertDate(dateStr) {
+            const [dd, mm, yy] = dateStr.split("-");
+            return `20${yy}-${mm}-${dd}`;
+          }
 
           trainList.push({
             muscular_group: train.descripition.slice(10),
-            train_date: train_date.toISOString().split("T")[0],
+            train_date: convertDate(train.data),
             exercises: exercisesList.map((ex) => ({
               exercise_id: ex.exerciseId,
               load: ex.peso,

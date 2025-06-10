@@ -1,12 +1,10 @@
 from math import inf
 
-from sqlalchemy import select, and_, between
+from sqlalchemy import select, between
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 
-from .models import RankBody
 from ..database.models import (
-    Gender,
     ChestRank,
     BackRank,
     ArmRank,
@@ -15,16 +13,13 @@ from ..database.models import (
     GeneralRank
 )
 
-def get_chest_rank_by_age_and_gender(db: Session, rank_body: RankBody):
-    age = rank_body.age
-    gender = rank_body.gender
-
+def get_chest_rank_by_age_and_gender(db: Session, gender: str, age: int):
     if age < 10:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Idade inválida para consulta"
         )
-    if gender is not Gender:
+    if gender not in ["M", "F"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Gênero inválido para consulta"
@@ -46,24 +41,22 @@ def get_chest_rank_by_age_and_gender(db: Session, rank_body: RankBody):
         bigger_age = 2147483647
 
     return db.execute(
-        select(ChestRank.username, ChestRank.age, ChestRank.total_volume) \
+        select(ChestRank) \
         .where(
             ChestRank.sex == gender,
             between(ChestRank.age, lower_age, bigger_age)
         ) \
         .order_by(ChestRank.total_volume.desc())
+        .limit(5)
     ).all()
     
-def get_back_rank_by_age_and_gender(db: Session, rank_body: RankBody):
-    age = rank_body.age
-    gender = rank_body.gender
-
+def get_back_rank_by_age_and_gender(db: Session, gender: str, age: int):
     if age < 10:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Idade inválida para consulta"
         )
-    if gender is not Gender:
+    if gender not in ["M", "F"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Gênero inválido para consulta"
@@ -85,24 +78,22 @@ def get_back_rank_by_age_and_gender(db: Session, rank_body: RankBody):
         bigger_age = 2147483647
 
     return db.execute(
-        select(BackRank.username, BackRank.age, BackRank.total_volume) \
+        select(BackRank) \
         .where(
             BackRank.sex == gender,
             between(BackRank.age, lower_age, bigger_age)
         ) \
         .order_by(BackRank.total_volume.desc())
+        .limit(5)
     ).all()
 
-def get_shoulder_rank_by_age_and_gender(db: Session, rank_body: RankBody):
-    age = rank_body.age
-    gender = rank_body.gender
-
+def get_shoulder_rank_by_age_and_gender(db: Session, gender: str, age: int):
     if age < 10:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Idade inválida para consulta"
         )
-    if gender is not Gender:
+    if gender not in ["M", "F"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Gênero inválido para consulta"
@@ -124,24 +115,22 @@ def get_shoulder_rank_by_age_and_gender(db: Session, rank_body: RankBody):
         bigger_age = 2147483647
 
     return db.execute(
-        select(ShoulderRank.username, ShoulderRank.age, ShoulderRank.total_volume) \
+        select(ShoulderRank) \
         .where(
             ShoulderRank.sex == gender,
             between(ShoulderRank.age, lower_age, bigger_age)
         ) \
         .order_by(ShoulderRank.total_volume.desc())
+        .limit(5)
     ).all()
     
-def get_leg_rank_by_age_and_gender(db: Session, rank_body: RankBody):
-    age = rank_body.age
-    gender = rank_body.gender
-
+def get_leg_rank_by_age_and_gender(db: Session, gender: str, age: int):
     if age < 10:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Idade inválida para consulta"
         )
-    if gender is not Gender:
+    if gender not in ["M", "F"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Gênero inválido para consulta"
@@ -163,24 +152,22 @@ def get_leg_rank_by_age_and_gender(db: Session, rank_body: RankBody):
         bigger_age = 2147483647
 
     return db.execute(
-        select(LegRank.username, LegRank.age, LegRank.total_volume) \
+        select(LegRank) \
         .where(
             LegRank.sex == gender,
             between(LegRank.age, lower_age, bigger_age)
         ) \
         .order_by(LegRank.total_volume.desc())
+        .limit(5)
     ).all()
 
-def get_arm_rank_by_age_and_gender(db: Session, rank_body: RankBody):
-    age = rank_body.age
-    gender = rank_body.gender
-
+def get_arm_rank_by_age_and_gender(db: Session, gender: str, age: int):
     if age < 10:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Idade inválida para consulta"
         )
-    if gender is not Gender:
+    if gender not in ["M", "F"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Gênero inválido para consulta"
@@ -202,24 +189,22 @@ def get_arm_rank_by_age_and_gender(db: Session, rank_body: RankBody):
         bigger_age = 2147483647
 
     return db.execute(
-        select(ArmRank.username, ArmRank.age, ArmRank.total_volume) \
+        select(ArmRank) \
         .where(
             ArmRank.sex == gender,
             between(ArmRank.age, lower_age, bigger_age)
         ) \
         .order_by(ArmRank.total_volume.desc())
+        .limit(5)
     ).all()
 
-def get_general_rank_by_age_and_gender(db: Session, rank_body: RankBody):
-    age = rank_body.age
-    gender = rank_body.gender
-
+def get_general_rank_by_age_and_gender(db: Session, gender: str, age: int):
     if age < 10:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Idade inválida para consulta"
         )
-    if gender is not Gender:
+    if gender not in ["M", "F"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Gênero inválido para consulta"
@@ -241,10 +226,11 @@ def get_general_rank_by_age_and_gender(db: Session, rank_body: RankBody):
         bigger_age = 2147483647
 
     return db.execute(
-        select(GeneralRank.username, GeneralRank.age, GeneralRank.positions) \
+        select(GeneralRank) \
         .where(
             GeneralRank.sex == gender,
             between(GeneralRank.age, lower_age, bigger_age)
         ) \
-        .order_by(GeneralRank.positions.desc())
+        .order_by(GeneralRank.total_volume.desc())
+        .limit(5)
     ).all()

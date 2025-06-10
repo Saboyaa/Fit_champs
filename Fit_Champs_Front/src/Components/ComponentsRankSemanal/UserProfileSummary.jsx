@@ -1,5 +1,3 @@
-import React from "react";
-import { Trophy } from "lucide-react";
 import RankingPositionCard from "./RankingPositionCard";
 
 const UserProfileSummary = ({

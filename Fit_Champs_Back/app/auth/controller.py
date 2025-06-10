@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from .models import UserCreate, Token
-from .service import get_user_by_username_or_email, create_user, authenticate_user, create_access_token
+from .service import get_user_by_email, create_user, authenticate_user, create_access_token
 from ..database.utils import get_db
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -20,7 +20,7 @@ def register_user(
     user: Annotated[UserCreate, Body(embed=True)], 
     db: Session = Depends(get_db)
 ):
-    db_user = get_user_by_username_or_email(db, username=user.username, email=user.email)
+    db_user = get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Esse usuário já está cadastrado!")
     state = create_user(db=db, user=user)

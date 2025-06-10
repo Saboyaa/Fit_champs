@@ -1,4 +1,3 @@
-import React from "react";
 import RankingTableHeader from "./RankingTableHeader";
 import RankingTableRow from "./RankingTableRow";
 import LoadingIndicator from "./LoadingIndicator";
@@ -41,8 +40,8 @@ const RankingTable = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700/30">
-              {rankingData[activeTab] &&
-                rankingData[activeTab].map((user, index) => (
+              {rankingData &&
+                rankingData.map((user, index) => (
                   <RankingTableRow
                     key={user.id}
                     user={user}

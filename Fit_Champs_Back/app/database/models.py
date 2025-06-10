@@ -146,7 +146,7 @@ class GeneralRank(Base):
     username: Mapped[str] = mapped_column(String(50), nullable=False)
     age: Mapped[int] = mapped_column(nullable=False)
     sex: Mapped[str] = mapped_column(String(1), nullable=False)
-    positions: Mapped[float] = mapped_column(nullable=False)
+    total_volume: Mapped[float] = mapped_column(nullable=False)
 
     __table_args__ = (
         Index("gender_age_general_rank_idx", "sex", "age"),

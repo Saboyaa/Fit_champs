@@ -4,7 +4,7 @@ from typing import Annotated
 
 from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
-from sqlalchemy import select, or_
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt, ExpiredSignatureError
@@ -26,8 +26,8 @@ ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
 # Procura usuário pelo seu nome
-def get_user_by_username_or_email(db: Session, username: str, email: str):
-    return db.scalars(select(User).where(or_(User.username == username, User.email == email))).first()
+def get_user_by_email(db: Session, email: str):
+    return db.scalars(select(User).where(User.email == email)).first()
 
 # Cria usuário
 def create_user(db: Session, user: UserCreate):
@@ -50,8 +50,8 @@ def create_user(db: Session, user: UserCreate):
     return "complete"
 
 # Autentica o usuário
-def authenticate_user(username: str, password: str, db: Session):
-    user = db.scalars(select(User).where(User.username == username)).first()
+def authenticate_user(email: str, password: str, db: Session):
+    user = db.scalars(select(User).where(User.email == email)).first()
     if not user:
         return False
     if not pwd_context.verify(password, user.hashed_password):

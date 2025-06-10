@@ -20,7 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.execute("""
-        CREATE MATERIALIZED VIEW IF NOT EXISTS rack_shoulder AS
+        CREATE MATERIALIZED VIEW IF NOT EXISTS rank_shoulder AS
         SELECT 
             u.id,
             u.username,
@@ -46,12 +46,12 @@ def upgrade() -> None:
         ) AS tpe ON tpe.train_id = t.id
         GROUP BY u.id;
                
-        CREATE INDEX IF NOT EXISTS gender_age_rack_shoulder_idx ON rack_shoulder (sex, age);
+        CREATE INDEX IF NOT EXISTS gender_age_rank_shoulder_idx ON rank_shoulder (sex, age);
     """)
 
 
 def downgrade() -> None:
     op.execute("""
-        DROP INDEX IF EXISTS gender_age_rack_shoulder_idx;
-        DROP MATERIALIZED VIEW IF EXISTS rack_shoulder;
+        DROP INDEX IF EXISTS gender_age_rank_shoulder_idx;
+        DROP MATERIALIZED VIEW IF EXISTS rank_shoulder;
     """)

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+
+import { useNotificationState } from "../Hooks/notification";
 import { useGlobalContext } from "../Hooks/ContextoGlobal";
 
 import Header from "../Components/ComponentsHome/Header";
@@ -6,9 +8,10 @@ import UserProfileCard from "../Components/ComponentsHome/UserProfileCard";
 import MuscleRecordsCard from "../Components/ComponentsHome/MuscleRecordCard";
 import EditProfileModal from "../Components/ComponentsHome/EditProfileModal";
 import EditGoalModal from "../Components/ComponentsHome/EditGoalModal";
-import { useNotificationState } from "../Hooks/notification";
 import peito from "../images/peito.png";
+
 import userService from "../services/userService";
+import trainingService from "../services/trainingService";
 
 const Home = () => {
   const { isMenuOpen } = useGlobalContext();
@@ -30,11 +33,11 @@ const Home = () => {
       ombro: 0,
     },
     metas: {
-      peito: 0,
-      costas: 0,
-      braço: 0,
-      perna: 0,
-      ombro: 0,
+      peito: 3500,
+      costas: 3400,
+      braço: 2100,
+      perna: 4500,
+      ombro: 2300,
     },
     sexo: "Masculino",
     cidade: "",
@@ -75,7 +78,7 @@ const Home = () => {
       setUserData(userWithIMC);
 
       // Buscar histórico de treinos e calcular recordes
-      // await loadTrainingData(user.metas || {});
+      await loadTrainingData(user.metas || {});
     } catch (error) {
       console.error("Erro ao carregar dados do usuário:", error);
       setError(error.message);
@@ -85,58 +88,56 @@ const Home = () => {
   };
 
   // Função para carregar histórico de treinos e calcular recordes
-  // const loadTrainingData = async (metas = {}) => {
-  //   try {
-  //     const response = await userService.getTrainingHistory();
-  //     const treinos = response.treinos || response;
+  const loadTrainingData = async (metas) => {
+    try {
+      const treinos = await trainingService.getFormattedTrainingData();
 
-  //     // Calcular recordes dinamicamente a partir do histórico
-  //     const recordesCalculados = userService.calculateRecordsFromHistory(
-  //       treinos,
-  //       metas
-  //     );
+      // Calcular recordes dinamicamente a partir do histórico
+      const recordesCalculados = userService.calculateRecordsFromHistory(
+        treinos,
+        metas
+      );
 
-  //     setRecordesMusculares(recordesCalculados);
-  //   } catch (error) {
-  //     console.error("Erro ao carregar dados de treino:", error);
-  //   }
-  // };
+      setRecordesMusculares(recordesCalculados);
+    } catch (error) {
+      console.error("Erro ao carregar dados de treino:", error);
+    }
+  };
 
   // Dados de exemplo dos recordes de peso
   const [recordesMusculares, setRecordesMusculares] = useState([
     {
       grupo: "Peito",
-      recordeVolume: 4000,
-      metaVolume: 5000,
-      data: "2022-10-10",
+      recordeVolume: 0,
+      metaVolume: 0,
+      data: "",
     },
     {
       grupo: "Costas",
-      recordeVolume: 6100,
-      metaVolume: 6000,
-      data: "2022-10-11",
+      recordeVolume: 0,
+      metaVolume: 0,
+      data: "",
     },
     {
       grupo: "Perna",
-      recordeVolume: 7200,
-      metaVolume: 8000,
-      data: "2022-10-12",
+      recordeVolume: 0,
+      metaVolume: 0,
+      data: "",
     },
     {
       grupo: "Ombro",
-      recordeVolume: 2800,
-      metaVolume: 4000,
-      data: "2022-10-14",
+      recordeVolume: 0,
+      metaVolume: 0,
+      data: "",
     },
     {
       grupo: "Braço",
-      recordeVolume: 1800,
-      metaVolume: 3000,
-      data: "2022-10-15",
+      recordeVolume: 10,
+      metaVolume: 0,
+      data: "",
     },
   ]);
 
-  // Function to open goal edit modal
   const openGoalModal = (grupo) => {
     setCurrentEditGroup(grupo);
     setIsGoalModalOpen(true);
@@ -196,7 +197,6 @@ const Home = () => {
           isMenuOpen ? "w-[90%] ml-64 opacity-50" : "w-full"
         }`}
       >
-        {/* Notificação
         {notification.visible && (
           <div
             className={`fixed top-6 right-6 z-50 p-4 rounded-xl shadow-lg transform transition-all duration-300 ${
@@ -207,7 +207,7 @@ const Home = () => {
           >
             {notification.message}
           </div>
-        )} */}
+        )}
         {/* Cabeçalho moderno */}
         <Header />
 

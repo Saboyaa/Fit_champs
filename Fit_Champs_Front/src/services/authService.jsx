@@ -26,7 +26,7 @@ const authService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || "Erro ao fazer login");
+      throw new Error(error?.message || "Erro ao fazer login");
     }
   },
 
@@ -61,9 +61,9 @@ const authService = {
       return response.data;
     } catch (error) {
       // Tratar diferentes tipos de erro do backend
-      if (error.response?.data?.errors) {
+      if (error?.message) {
         // Se o backend retornar erros de validação específicos
-        const errors = error.response.data.errors;
+        const errors = error.message;
         if (Array.isArray(errors)) {
           throw new Error(errors.join(", "));
         } else if (typeof errors === "object") {
@@ -73,8 +73,7 @@ const authService = {
       }
 
       throw new Error(
-        error.response?.data?.message ||
-          "Erro ao realizar cadastro. Tente novamente."
+        error?.message || "Erro ao realizar cadastro. Tente novamente."
       );
     }
   },

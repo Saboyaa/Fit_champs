@@ -1,5 +1,6 @@
 from typing import Dict, List, Tuple
-from datetime import date
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import select, and_, between, tuple_, delete
 from sqlalchemy.orm import Session, selectinload
@@ -11,22 +12,23 @@ from ..database.models import (
     Exercise
 )
 from .models import TrainCreate
-from .utils import get_week_bounds
 
 def get_stored_exercises(db: Session):
     return db.scalars(select(Exercise)).all()
 
-def get_trains_by_date_and_user_id(db: Session, user_id: str, train_date: date):
-    monday, sunday = get_week_bounds(train_date)
-
+def get_trains_by_interval_and_user_id(db: Session, user_id: str, train_interval: int):
+    end = datetime.now(tz=ZoneInfo("America/Sao_Paulo"))
+    start = end - timedelta(days=train_interval)
+    start_str = start.strftime("%Y-%m-%d")
+    end_str = end.strftime("%Y-%m-%d")
     return db.scalars(
         select(Train) \
         .where(
             and_(Train.user_id == user_id,
-            between(Train.train_date, monday, sunday))
+            between(Train.train_date, start_str, end_str))
         ) \
         .options(
-            selectinload(Train.exercises).selectinload(TrainExercise.exercise)
+            selectinload(Train.exercises)
         )
     ).all()
 

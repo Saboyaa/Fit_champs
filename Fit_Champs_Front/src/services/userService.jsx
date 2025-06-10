@@ -53,9 +53,22 @@ const userService = {
         },
       };
     } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Erro ao buscar dados do usuário"
-      );
+      throw new Error(error?.message || "Erro ao buscar dados do usuário");
+    }
+  },
+
+  // Função para pegar os dados do usuário na tela de Ranking Semanal
+  getCurrentUser2: async () => {
+    try {
+      const response = await api.get("user");
+      return {
+        id: response.data.id,
+        nome: response.data.username,
+        idade: response.data.age,
+        sexo: response.data.sex == "M" ? "Masculino" : "Feminino",
+      };
+    } catch (error) {
+      throw new Error(error?.message || "Erro ao buscar dados do usuário");
     }
   },
 
@@ -97,9 +110,7 @@ const userService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Erro ao atualizar perfil"
-      );
+      throw new Error(error?.message || "Erro ao atualizar perfil");
     }
   },
 
@@ -128,9 +139,7 @@ const userService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Erro ao atualizar meta de volume"
-      );
+      throw new Error(error?.message || "Erro ao atualizar meta de volume");
     }
   },
 
@@ -139,14 +148,13 @@ const userService = {
     const grupos = ["Peito", "Costas", "Perna", "Ombro", "Braço"];
 
     return grupos.map((grupo) => {
-      // Filtrar treinos deste grupo muscular
       const treinosDoGrupo = treinos.filter((t) => t.grupoMuscular === grupo);
 
       if (treinosDoGrupo.length === 0) {
         return {
           grupo,
           recordeVolume: 0,
-          metaVolume: metas[grupo] || 0,
+          metaVolume: metas[grupo.toLowerCase()] || 0,
           data: null,
         };
       }
@@ -192,12 +200,16 @@ const userService = {
 
   getUserGoals: async () => {
     try {
-      const response = await api.get("users/goals");
-      return response.data;
+      const response = await api.get("user");
+      return {
+        peito: response.data.goal_chest,
+        costas: response.data.goal_back,
+        braço: response.data.goal_arm,
+        perna: response.data.goal_leg,
+        ombro: response.data.goal_shoulder,
+      };
     } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Erro ao buscar metas do usuário"
-      );
+      throw new Error(error?.message || "Erro ao buscar metas do usuário");
     }
   },
 };
