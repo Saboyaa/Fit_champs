@@ -146,9 +146,6 @@ const ExerciseList: React.FC = () => {
                   const repsPerSet = parseInt(updated.reps.split(' x ')[1]) || 0;
                   updated.volume = sets * repsPerSet * updated.weight;
                 }
-                if( field === 'name'){
-                    updated.name = value;
-                }
                 return updated;
               }
               return ex;
@@ -452,7 +449,7 @@ const ExerciseList: React.FC = () => {
                 {currentWorkoutDay.exercises.map((exercise) => (
                   <ExerciseRow
                     key={exercise.id}
-                    exercise={exercise}
+                    exercise_call={exercise}
                     exerciseOptions={exerciseOptions}
                     exerciseDatabase={exerciseDatabase}
                     muscleGroups={muscleGroups}
@@ -553,7 +550,7 @@ const ExerciseList: React.FC = () => {
 };
 
 interface ExerciseRowProps {
-  exercise: Exercise;
+  exercise_call: Exercise;
   exerciseOptions: string[];
   exerciseDatabase: { [key: string]: string };
   muscleGroups: string[];
@@ -563,7 +560,7 @@ interface ExerciseRowProps {
 }
 
 const ExerciseRow: React.FC<ExerciseRowProps> = ({
-  exercise,
+  exercise_call,
   exerciseOptions,
   exerciseDatabase,
   muscleGroups,
@@ -571,18 +568,22 @@ const ExerciseRow: React.FC<ExerciseRowProps> = ({
   onUpdate,
   onRemove,
 }) => {
+  const [exercise,setExercise] = useState(exercise_call);
   const [showExerciseOptions, setShowExerciseOptions] = useState(false);
   const [showMuscleOptions, setShowMuscleOptions] = useState(false);
   const [showRepOptions, setShowRepOptions] = useState(false);
 
   const handleExerciseChange = (exerciseName: string) => {
     onUpdate(exercise.id, 'name', exerciseName);
-    alert(exercise.name);
+    
     // Automatically set muscle group based on exercise
     const muscleGroup = exerciseDatabase[exerciseName];
     if (muscleGroup) {
       onUpdate(exercise.id, 'muscleGroup', muscleGroup);
     }
+    exercise_call.name = exerciseName;
+    exercise_call.muscleGroup = muscleGroup;
+    setExercise(exercise_call);
     setShowExerciseOptions(false);
   };
 
@@ -623,7 +624,6 @@ const ExerciseRow: React.FC<ExerciseRowProps> = ({
           <Text style={[styles.dropdownText, styles.autoText]} numberOfLines={2}>
             {exercise.muscleGroup}
           </Text>
-          <Text style={styles.dropdownArrow}>⌄</Text>
         </TouchableOpacity>
         {showMuscleOptions && (
           <View style={styles.optionsContainer}>
@@ -964,7 +964,7 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: '#374151',
     borderRadius: 6,
-    zIndex: 1000,
+    zIndex: 10000,
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
