@@ -1,8 +1,10 @@
 import { Tabs } from 'expo-router';
 import { Text } from 'react-native';
+import { GlobalProvider } from '../../hooks/ContextoGlobal';
 
 export default function TabsLayout() {
   return (
+    <GlobalProvider>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: 'skyblue',
@@ -22,5 +24,6 @@ export default function TabsLayout() {
       />
       {/* outras abas podem ser adicionadas aqui */}
     </Tabs>
+    </GlobalProvider>
   );
 }
