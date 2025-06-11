@@ -18,6 +18,7 @@ import {
   changeWeek,
   isDateInWeekRange,
 } from "../../Hooks/getWeek";
+import trainingService from "../../services/trainingService";
 
 const TreinoTipoSumario = ({
   exerciciosPorTreino,
@@ -27,19 +28,84 @@ const TreinoTipoSumario = ({
   const [expandedType, setExpandedType] = useState(null);
   const [weekRange, setWeekRange] = useState(getWeekRange());
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [historicoTreinos, setHistoricoTreinos] = useState([]);
 
   useEffect(() => {
     setWeekRange(getWeekRange());
+  }, []);
+
+  useEffect(() => {
+    const fetchHistoricoTreinos = async () => {
+      try {
+        setLoading(true);
+        const data = await trainingService.getUserTrainings();
+        setHistoricoTreinos(data || []);
+      } catch (error) {
+        console.error("Erro ao buscar histórico de treinos:", error);
+        setHistoricoTreinos([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHistoricoTreinos();
   }, []);
 
   const handleChangeWeek = (offset) => {
     changeWeek(currentWeekOffset, offset, setCurrentWeekOffset, setWeekRange);
   };
 
+  // Função para padronizar TODAS as datas para formato DD/MM/YYYY
+  const padronizarData = (data) => {
+    if (!data) return null;
+
+    try {
+      // Formato YYYY-MM-DD (do histórico)
+      if (
+        data.includes("-") &&
+        data.length === 10 &&
+        data.split("-")[0].length === 4
+      ) {
+        const [year, month, day] = data.split("-");
+        return `${day}/${month}/${year}`;
+      }
+
+      // Formato DD-MM-YY (dos treinos planejados)
+      if (
+        data.includes("-") &&
+        data.length === 8 &&
+        data.split("-")[2].length === 2
+      ) {
+        const [day, month, year] = data.split("-");
+        const fullYear = parseInt(year) < 50 ? `20${year}` : `19${year}`;
+        return `${day}/${month}/${fullYear}`;
+      }
+
+      // Formato DD/MM/YYYY (já padronizado)
+      if (data.includes("/") && data.split("/").length === 3) {
+        const parts = data.split("/");
+        if (parts[2].length === 4) {
+          return data;
+        }
+        // DD/MM/YY
+        if (parts[2].length === 2) {
+          const [day, month, year] = parts;
+          const fullYear = parseInt(year) < 50 ? `20${year}` : `19${year}`;
+          return `${day}/${month}/${fullYear}`;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error(`Erro ao padronizar data "${data}":`, error);
+      return null;
+    }
+  };
+
   // Função para obter todos os subgrupos possíveis para um tipo de treino
   const getTodosSubgruposPorTipo = (tipoTreino) => {
     const exercicios = exerciciosPorTipo[tipoTreino] || [];
-    // Criar um Set para evitar duplicatas
     const subgruposSet = new Set();
 
     exercicios.forEach((ex) => {
@@ -51,12 +117,114 @@ const TreinoTipoSumario = ({
     return Array.from(subgruposSet);
   };
 
+  // Função para encontrar exercício por ID - COM CONVERSÃO DE TIPOS
+  const encontrarExercicioPorId = (exerciseId) => {
+    console.log(
+      "🔍 Buscando exercício com ID:",
+      exerciseId,
+      "tipo:",
+      typeof exerciseId
+    );
+
+    if (!exerciseId || !exerciciosPorTipo) {
+      console.log("❌ ID inválido ou exerciciosPorTipo não disponível");
+      return {
+        nome: "Exercício Desconhecido",
+        subgrupo: "Geral",
+      };
+    }
+
+    // Converter para number para garantir comparação correta
+    const exerciseIdNumber = parseInt(exerciseId);
+    console.log("🔄 ID convertido para number:", exerciseIdNumber);
+
+    // Debug: mostrar estrutura do exerciciosPorTipo
+    console.log(
+      "📊 Estrutura exerciciosPorTipo:",
+      Object.keys(exerciciosPorTipo)
+    );
+
+    for (const [tipoTreino, exercicios] of Object.entries(exerciciosPorTipo)) {
+      console.log(
+        `🔍 Verificando ${tipoTreino} com ${exercicios.length} exercícios`
+      );
+
+      // Debug: mostrar alguns IDs para comparação
+      if (exercicios.length > 0) {
+        console.log(
+          `   Primeiros IDs em ${tipoTreino}:`,
+          exercicios.slice(0, 3).map((ex) => `${ex.id} (${typeof ex.id})`)
+        );
+      }
+
+      const exercicioEncontrado = exercicios.find((ex) => {
+        // Tentar múltiplas comparações
+        const match1 = ex.id === exerciseIdNumber;
+        const match2 = ex.id === exerciseId;
+        const match3 = parseInt(ex.id) === exerciseIdNumber;
+
+        if (match1 || match2 || match3) {
+          console.log(`✅ MATCH encontrado!`);
+          console.log(`   ex.id: ${ex.id} (${typeof ex.id})`);
+          console.log(`   exerciseId: ${exerciseId} (${typeof exerciseId})`);
+          console.log(
+            `   exerciseIdNumber: ${exerciseIdNumber} (${typeof exerciseIdNumber})`
+          );
+          console.log(`   match1 (ex.id === exerciseIdNumber): ${match1}`);
+          console.log(`   match2 (ex.id === exerciseId): ${match2}`);
+          console.log(
+            `   match3 (parseInt(ex.id) === exerciseIdNumber): ${match3}`
+          );
+        }
+
+        return match1 || match2 || match3;
+      });
+
+      if (exercicioEncontrado) {
+        console.log("✅ Exercício encontrado:", exercicioEncontrado);
+        return {
+          nome: exercicioEncontrado.nome,
+          subgrupo: exercicioEncontrado.subgrupo,
+        };
+      }
+    }
+
+    console.log("❌ Exercício não encontrado para ID:", exerciseId);
+    console.log("❌ Todos os IDs disponíveis:");
+    for (const [tipoTreino, exercicios] of Object.entries(exerciciosPorTipo)) {
+      console.log(
+        `   ${tipoTreino}:`,
+        exercicios.map((ex) => `${ex.id}(${typeof ex.id})`)
+      );
+    }
+
+    return {
+      nome: "Exercício Desconhecido",
+      subgrupo: "Geral",
+    };
+  };
+
   // Função para verificar se um treino está na semana selecionada
   const isTreinoInSelectedWeek = (treinoData) => {
     if (!treinoData) return false;
 
+    // Padronizar a data do treino
+    const dataPadronizada = padronizarData(treinoData);
+    if (!dataPadronizada) {
+      return false;
+    }
+
     try {
-      return isDateInWeekRange(treinoData, weekRange, true);
+      const parseDate = (dateStr) => {
+        const [day, month, year] = dateStr.split("/").map(Number);
+        return new Date(year, month - 1, day).getTime();
+      };
+
+      const dataTimestamp = parseDate(dataPadronizada);
+      const inicioTimestamp = parseDate(weekRange.start);
+      const fimTimestamp = parseDate(weekRange.end);
+
+      return dataTimestamp >= inicioTimestamp && dataTimestamp <= fimTimestamp;
     } catch (error) {
       console.error("Erro ao verificar data do treino:", error);
       return false;
@@ -66,60 +234,138 @@ const TreinoTipoSumario = ({
   const treinoTipoSummary = useMemo(() => {
     const summary = {};
 
-    // Filtrar treinos apenas da semana selecionada
+    // Função para inicializar um tipo de treino no summary
+    const initializeTreinoType = (tipoTreino) => {
+      if (!summary[tipoTreino]) {
+        summary[tipoTreino] = {
+          total: 0,
+          exercicios: [],
+          volumePorDia: {},
+          sessionCount: 0,
+          muscleGroups: {},
+          selectedMuscleGroups: {},
+        };
+
+        const todosSubgrupos = getTodosSubgruposPorTipo(tipoTreino);
+        todosSubgrupos.forEach((subgrupo) => {
+          summary[tipoTreino].muscleGroups[subgrupo] = 0;
+        });
+      }
+    };
+
+    // ✅ PROCESSAR TREINOS ATUAIS (em planejamento)
     const treinosDaSemana = treinos.filter((treino) =>
       isTreinoInSelectedWeek(treino.data)
     );
 
     treinosDaSemana.forEach((treino) => {
+      if (treino.descripition === "Day Off") return;
+
+      const tipoTreino = treino.descripition;
+      initializeTreinoType(tipoTreino);
+
       const exercises = exerciciosPorTreino[treino.id] || [];
 
-      if (!summary[treino.descripition]) {
-        summary[treino.descripition] = {
-          total: 0,
-          exercicios: [],
-          volumePorDia: {},
-          sessionCount: 0,
-          muscleGroups: {}, // Todos os subgrupos possíveis
-          selectedMuscleGroups: {}, // Subgrupos que foram selecionados
-        };
+      if (exercises.length > 0) {
+        summary[tipoTreino].sessionCount += 1;
 
-        // Inicializar todos os subgrupos possíveis para este tipo de treino
-        const todosSubgrupos = getTodosSubgruposPorTipo(treino.descripition);
-        todosSubgrupos.forEach((subgrupo) => {
-          summary[treino.descripition].muscleGroups[subgrupo] = 0;
+        const dailyVolume = exercises.reduce(
+          (total, ex) => total + (ex.volume || 0),
+          0
+        );
+        summary[tipoTreino].total += dailyVolume;
+        summary[tipoTreino].volumePorDia[treino.data] = dailyVolume;
+        summary[tipoTreino].exercicios.push(...exercises);
+
+        exercises.forEach((ex) => {
+          if (ex.subgrupo) {
+            summary[tipoTreino].muscleGroups[ex.subgrupo] =
+              (summary[tipoTreino].muscleGroups[ex.subgrupo] || 0) + 1;
+
+            if (ex.nome) {
+              summary[tipoTreino].selectedMuscleGroups[ex.subgrupo] =
+                (summary[tipoTreino].selectedMuscleGroups[ex.subgrupo] || 0) +
+                1;
+            }
+          }
         });
       }
-
-      summary[treino.descripition].sessionCount += 1;
-
-      const dailyVolume = exercises.reduce(
-        (total, ex) => total + (ex.volume || 0),
-        0
-      );
-      summary[treino.descripition].total += dailyVolume;
-      summary[treino.descripition].volumePorDia[treino.data] = dailyVolume;
-      summary[treino.descripition].exercicios.push(...exercises);
-
-      // Contar exercícios por subgrupo muscular
-      exercises.forEach((ex) => {
-        if (ex.subgrupo) {
-          // Incrementar contagem no subgrupo
-          summary[treino.descripition].muscleGroups[ex.subgrupo] =
-            (summary[treino.descripition].muscleGroups[ex.subgrupo] || 0) + 1;
-
-          // Se o exercício tem nome (foi selecionado), marcá-lo como selecionado
-          if (ex.nome) {
-            summary[treino.descripition].selectedMuscleGroups[ex.subgrupo] =
-              (summary[treino.descripition].selectedMuscleGroups[ex.subgrupo] ||
-                0) + 1;
-          }
-        }
-      });
     });
 
+    // ✅ PROCESSAR TREINOS DO HISTÓRICO
+    if (!loading && historicoTreinos.length > 0) {
+      const histTreinosDaSemana = historicoTreinos.filter((treino) =>
+        isTreinoInSelectedWeek(treino.data)
+      );
+
+      histTreinosDaSemana.forEach((treino) => {
+        const tipoTreino = `Treino de ${treino.nome}`;
+        initializeTreinoType(tipoTreino);
+
+        summary[tipoTreino].sessionCount += 1;
+
+        const dailyVolume = trainingService.calculateTotalVolume(
+          treino.exercicios
+        );
+        summary[tipoTreino].total += dailyVolume;
+
+        // Usar data formatada para consistência
+        const dataFormatada = trainingService.formatDateForChart(treino.data);
+        summary[tipoTreino].volumePorDia[dataFormatada] =
+          (summary[tipoTreino].volumePorDia[dataFormatada] || 0) + dailyVolume;
+
+        // Processar exercícios do histórico
+        treino.exercicios.forEach((ex, index) => {
+          console.log(
+            `🏋️ Processando exercício ${index + 1} do histórico:`,
+            ex
+          );
+
+          let exercicioInfo = { nome: "Exercício", subgrupo: "Geral" };
+
+          // Tentar encontrar informações do exercício
+          if (ex.exerciseId) {
+            console.log(`🔍 Buscando info para exerciseId: ${ex.exerciseId}`);
+            exercicioInfo = encontrarExercicioPorId(ex.exerciseId);
+            console.log(`📊 Info encontrada:`, exercicioInfo);
+          } else {
+            console.log("❌ exerciseId não encontrado no exercício:", ex);
+          }
+
+          const exercicioHistorico = {
+            id: `hist-${treino.id}-${index}`,
+            nome: exercicioInfo.nome,
+            subgrupo: exercicioInfo.subgrupo,
+            repeticoes: ex.series || "N/A",
+            peso: ex.peso || 0,
+            volume: trainingService.calculateTotalVolume([ex]),
+          };
+
+          summary[tipoTreino].exercicios.push(exercicioHistorico);
+
+          // Atualizar contadores de subgrupos
+          if (exercicioInfo.subgrupo) {
+            summary[tipoTreino].muscleGroups[exercicioInfo.subgrupo] =
+              (summary[tipoTreino].muscleGroups[exercicioInfo.subgrupo] || 0) +
+              1;
+            summary[tipoTreino].selectedMuscleGroups[exercicioInfo.subgrupo] =
+              (summary[tipoTreino].selectedMuscleGroups[
+                exercicioInfo.subgrupo
+              ] || 0) + 1;
+          }
+        });
+      });
+    }
+
     return summary;
-  }, [exerciciosPorTreino, treinos, weekRange]);
+  }, [
+    exerciciosPorTreino,
+    treinos,
+    historicoTreinos,
+    weekRange,
+    exerciciosPorTipo,
+    loading,
+  ]);
 
   const detalhamentoTipos = Object.entries(treinoTipoSummary)
     .map(([tipo, dados]) => ({
@@ -140,7 +386,7 @@ const TreinoTipoSumario = ({
         })
       ),
     }))
-    .filter((item) => item.sessionCount > 0 && item.exerciseCount > 0);
+    .filter((item) => item.sessionCount > 0 && item.totalVolume > 0);
 
   const getIntensityLevel = (averageVolume) => {
     if (averageVolume < 3000) return { label: "Leve", color: "text-green-400" };
@@ -196,10 +442,9 @@ const TreinoTipoSumario = ({
               return (
                 <div
                   key={item.tipo}
-                  className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 group border border-indigo-500/20 hover:border-indigo-500/40 
-                 "
+                  className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 group border border-indigo-500/20 hover:border-indigo-500/40"
                 >
-                  <div className="flex justify-between items-center mb-4 ">
+                  <div className="flex justify-between items-center mb-4">
                     <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-indigo-300">
                       {item.tipo}
                     </h3>
@@ -310,7 +555,7 @@ const TreinoTipoSumario = ({
                 .map(([tipo, dados], index) => (
                   <div
                     key={tipo}
-                    className="flex justify-between items-center text-white bg-slate-800/70 p-4 rounded-xl hover:bg-slate-700/70  border border-slate-700/30 transform hover:scale-[1.01] transition-transform"
+                    className="flex justify-between items-center text-white bg-slate-800/70 p-4 rounded-xl hover:bg-slate-700/70 border border-slate-700/30 transform hover:scale-[1.01] transition-transform"
                   >
                     <div className="flex items-center">
                       <div
