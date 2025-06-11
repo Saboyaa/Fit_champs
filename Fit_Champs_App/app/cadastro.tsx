@@ -118,13 +118,58 @@ export default function Cadastro() {
         onFocus={() => setFocusedField('username')}
         onBlur={() => setFocusedField(null)}
       />
-      {/* ... repita para os demais campos: email, city, age, phone, height, weight ... */}
-
+      <TextInput
+        style={styles.input}
+        placeholder="E-mail"
+        keyboardType="email-address"
+        placeholderTextColor="#aaa"
+        value={formData.email}
+        onChangeText={(text) => handleChange("email", text)}
+      />
       <TextInput
         style={styles.input}
         placeholder="Sexo (masculino ou feminino)"
         value={formData.sex}
         onChangeText={text => handleChange('sex', text.toLowerCase() === 'feminino' ? 'feminino' : 'masculino')}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Cidade"
+        placeholderTextColor="#aaa"
+        value={formData.city}
+        onChangeText={(text) => handleChange("city", text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Idade"
+        keyboardType="numeric"
+        placeholderTextColor="#aaa"
+        value={formData.age}
+        onChangeText={(text) => handleChange("age", text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Telefone"
+        keyboardType="phone-pad"
+        placeholderTextColor="#aaa"
+        value={formData.phone}
+        onChangeText={(text) => handleChange("phone", text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Altura (cm)"
+        keyboardType="numeric"
+        placeholderTextColor="#aaa"
+        value={formData.height}
+        onChangeText={(text) => handleChange("height", text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Peso (kg)"
+        keyboardType="numeric"
+        placeholderTextColor="#aaa"
+        value={formData.weight}
+        onChangeText={(text) => handleChange("weight", text)}
       />
 
       <TextInput

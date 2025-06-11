@@ -25,53 +25,48 @@ export default function Login() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError]     = useState<string>('');
 
-
   const handleLogin = async () => {
-    router.push("/GraficodeEvolucao")
-  }
+    if (!username || !password) {
+      setError('Preencha todos os campos');
+      return;
+    }
 
-  // const handleLogin = async () => {
-  //   if (!username || !password) {
-  //     setError('Preencha todos os campos');
-  //     return;
-  //   }
+    try {
+      setLoading(true);
+      setError('');
 
-  //   try {
-  //     setLoading(true);
-  //     setError('');
+      await authService.login(username, password);
 
-  //     await authService.login(username, password);
+      if (rememberMe) {
+        await AsyncStorage.setItem('rememberMe', 'true');
+        await AsyncStorage.setItem('savedUsername', username);
+      } else {
+        await AsyncStorage.removeItem('rememberMe');
+        await AsyncStorage.removeItem('savedUsername');
+      }
 
-  //     if (rememberMe) {
-  //       await AsyncStorage.setItem('rememberMe', 'true');
-  //       await AsyncStorage.setItem('savedUsername', username);
-  //     } else {
-  //       await AsyncStorage.removeItem('rememberMe');
-  //       await AsyncStorage.removeItem('savedUsername');
-  //     }
+      // navega para a tela de evolução
+      router.push("/GraficodeEvolucao")
+    } catch (err: unknown) {
+      // extrai mensagem do Axios ou genérica
+      let message = 'Erro ao fazer login. Verifique suas credenciais.';
+      if (axios.isAxiosError(err)) {
+        message =
+          err.response?.data?.message ||
+          err.message ||
+          message;
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
 
-  //     // navega para a tela de evolução
-  //     router.push("/GraficodeEvolucao")
-  //   } catch (err: unknown) {
-  //     // extrai mensagem do Axios ou genérica
-  //     let message = 'Erro ao fazer login. Verifique suas credenciais.';
-  //     if (axios.isAxiosError(err)) {
-  //       message =
-  //         err.response?.data?.message ||
-  //         err.message ||
-  //         message;
-  //     } else if (err instanceof Error) {
-  //       message = err.message;
-  //     }
-
-  //     setError(message);
-  //     await AsyncStorage.setItem('loginError', message);
-  //     // opcional: alerta imediato
-  //     Alert.alert('Falha no Login', message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      setError(message);
+      await AsyncStorage.setItem('loginError', message);
+      // opcional: alerta imediato
+      Alert.alert('Falha no Login', message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
 

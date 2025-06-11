@@ -14,7 +14,7 @@ import { CommonActions, NavigationContainerRef } from '@react-navigation/native'
 export let navigationRef: NavigationContainerRef<any>;
 
 // aponte pro seu backend
-const API_URL = 'https://seu-backend.com/api';
+const API_URL = 'http://172.15.6.74:8000';
 
 const api: AxiosInstance = axios.create({
   baseURL: API_URL,

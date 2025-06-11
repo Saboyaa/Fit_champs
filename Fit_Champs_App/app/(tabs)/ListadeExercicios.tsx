@@ -10,6 +10,8 @@ import {
   Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import exerciseService from '@/services/exerciseService';
+
 
 interface Exercise {
   id: string;
@@ -62,6 +64,32 @@ const ExerciseList: React.FC = () => {
   ]);
 
   const [activeWorkoutDay, setActiveWorkoutDay] = useState<string>('1');
+
+
+  const handleSave = async () => {
+    try {
+      // 1) Array de dias
+      const trainData = workoutDays.map(day => ({
+        id: day.id,
+        descripition: day.workoutType,  // Ex: "Treino de Peito"
+        data: day.date,                  // Ex: "09-06-25"
+      }));
+      // 2) Mapeamento de exercícios por dia
+      const exercisesPerTrain: Record<string, { exerciseId: number; peso: number; repeticoes: string }[]> = {};
+      workoutDays.forEach(day => {
+        exercisesPerTrain[day.id] = day.exercises.map(ex => ({
+          exerciseId: Number(ex.id),
+          peso: ex.weight,
+          repeticoes: ex.reps.replace(/\s/g, ''), // remove espaços: "3x12"
+        }));
+      });
+
+      await exerciseService.postTrains(trainData, exercisesPerTrain);
+      Alert.alert('Sucesso', 'Treino salvo com sucesso!');
+    } catch (err: any) {
+      Alert.alert('Erro', err.message || 'Falha ao salvar treino');
+    }
+  };
 
   const exerciseDatabase = {
     'Supino Reto': 'Peitoral Médio',
@@ -298,6 +326,9 @@ const ExerciseList: React.FC = () => {
 
       {/* Add Day Button */}
       <View style={styles.addDayContainer}>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <Text style={styles.saveButtonText}>💾 Salvar Treino</Text>
+        </TouchableOpacity>
         <TouchableOpacity 
           style={styles.addDayButton} 
           onPress={() => setShowCalendar(true)}
@@ -1142,5 +1173,19 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
-  },})
+  },
+  saveButton: {
+    backgroundColor: '#10B981',    // verde
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 12,
+    marginBottom: 12,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+})
   export default ExerciseList
