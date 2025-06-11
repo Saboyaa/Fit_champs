@@ -109,31 +109,31 @@ const Home = () => {
     {
       grupo: "Peito",
       recordeVolume: 0,
-      metaVolume: 0,
+      metaVolume: 3500,
       data: "",
     },
     {
       grupo: "Costas",
       recordeVolume: 0,
-      metaVolume: 0,
+      metaVolume: 3400,
       data: "",
     },
     {
       grupo: "Perna",
       recordeVolume: 0,
-      metaVolume: 0,
+      metaVolume: 4500,
       data: "",
     },
     {
       grupo: "Ombro",
       recordeVolume: 0,
-      metaVolume: 0,
+      metaVolume: 2300,
       data: "",
     },
     {
       grupo: "Braço",
-      recordeVolume: 10,
-      metaVolume: 0,
+      recordeVolume: 0,
+      metaVolume: 2100,
       data: "",
     },
   ]);
