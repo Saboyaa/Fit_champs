@@ -126,13 +126,10 @@ const Home = () => {
     try {
       const treinos = await trainingService.getFormattedTrainingData();
       // Calcular recordes dinamicamente a partir do histórico
-      console.log(treinos);
-      console.log(metas);
       const recordesCalculados = userService.calculateRecordsFromHistory(
         treinos,
         metas
       );
-      console.log(recordesCalculados);
       setRecordesMusculares(recordesCalculados);
     } catch (error) {
       console.error("Erro ao carregar dados de treino:", error);
