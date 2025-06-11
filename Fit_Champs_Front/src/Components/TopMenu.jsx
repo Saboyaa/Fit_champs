@@ -45,14 +45,6 @@ function TopMenu({ onLogout }) {
       </div>
       {/* Área direita com ícones e usuário */}
       <div className="flex items-center space-x-4">
-        {/* Ícone de notificações */}
-        <button className="relative text-white hover:bg-slate-600 p-1 rounded-full">
-          <LucideBell size={20} />
-          <span className="absolute -top-1 -right-1 bg-neutral-800 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-            3
-          </span>
-        </button>
-
         {/* Botão de logout */}
         <button
           onClick={onLogout}
@@ -62,25 +54,6 @@ function TopMenu({ onLogout }) {
             Sair <LucideLogOut size={16} className="mt-1" />
           </NavLink>
         </button>
-
-        {/* Informações do usuário */}
-        <div className="flex items-center">
-          {/* Foto do usuário - agora usando a foto do getUserDisplayInfo */}
-          {foto ? (
-            <img
-              src={foto}
-              alt={nome}
-              className="w-8 h-8 rounded-full object-cover border-2 border-black bg-white"
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-700 to-blue-600 flex items-center justify-center border-2 border-white">
-              <User className="h-4 w-4 text-blue-100" />
-            </div>
-          )}
-
-          {/* Nome do usuário - agora usando o nome do getUserDisplayInfo */}
-          <p className="text-white ml-2 hidden sm:block">{nome}</p>
-        </div>
       </div>
     </div>
   );
