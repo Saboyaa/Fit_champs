@@ -148,7 +148,7 @@ const userService = {
     const grupos = ["Peito", "Costas", "Perna", "Ombro", "Braço"];
 
     return grupos.map((grupo) => {
-      const treinosDoGrupo = treinos.filter((t) => t.grupoMuscular === grupo);
+      const treinosDoGrupo = treinos[grupo] || [];
 
       if (treinosDoGrupo.length === 0) {
         return {
@@ -161,13 +161,13 @@ const userService = {
 
       // Encontrar o treino com maior volume
       const melhorTreino = treinosDoGrupo.reduce((max, atual) =>
-        atual.volumeTotal > max.volumeTotal ? atual : max
+        atual.volume > max.volume ? atual : max
       );
 
       return {
         grupo,
-        recordeVolume: melhorTreino.volumeTotal,
-        metaVolume: metas[grupo] || 0,
+        recordeVolume: melhorTreino.volume,
+        metaVolume: metas[grupo.toLowerCase()] || 0,
         data: melhorTreino.data,
       };
     });

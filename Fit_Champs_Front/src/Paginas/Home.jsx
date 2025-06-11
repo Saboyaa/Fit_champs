@@ -53,57 +53,6 @@ const Home = () => {
   const [error, setError] = useState("");
   const [updating, setUpdating] = useState(false);
 
-  useEffect(() => {
-    loadUserData(); // Esta função já chama loadTrainingData internamente
-  }, []);
-
-  const { notification, showNotification } = useNotificationState();
-
-  // Função para carregar dados do usuário do servidor
-  const loadUserData = async () => {
-    try {
-      setLoading(true);
-      setError("");
-
-      // Buscar dados do perfil do usuário (inclui metas)
-      const response = await userService.getCurrentUser();
-      const user = response.user || response;
-
-      // Calcular IMC e atualizar estado
-      const userWithIMC = {
-        ...user,
-        imc: userService.calculateIMC(user.altura, user.peso),
-      };
-
-      setUserData(userWithIMC);
-
-      // Buscar histórico de treinos e calcular recordes
-      await loadTrainingData(user.metas || {});
-    } catch (error) {
-      console.error("Erro ao carregar dados do usuário:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Função para carregar histórico de treinos e calcular recordes
-  const loadTrainingData = async (metas) => {
-    try {
-      const treinos = await trainingService.getFormattedTrainingData();
-
-      // Calcular recordes dinamicamente a partir do histórico
-      const recordesCalculados = userService.calculateRecordsFromHistory(
-        treinos,
-        metas
-      );
-
-      setRecordesMusculares(recordesCalculados);
-    } catch (error) {
-      console.error("Erro ao carregar dados de treino:", error);
-    }
-  };
-
   // Dados de exemplo dos recordes de peso
   const [recordesMusculares, setRecordesMusculares] = useState([
     {
@@ -137,6 +86,58 @@ const Home = () => {
       data: "",
     },
   ]);
+
+  useEffect(() => {
+    loadUserData(); // Esta função já chama loadTrainingData internamente
+  }, []);
+
+  const { notification, showNotification } = useNotificationState();
+
+  // Função para carregar dados do usuário do servidor
+  const loadUserData = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      // Buscar dados do perfil do usuário (inclui metas)
+      const response = await userService.getCurrentUser();
+      const user = response.user || response;
+
+      // Calcular IMC e atualizar estado
+      const userWithIMC = {
+        ...user,
+        imc: userService.calculateIMC(user.altura, user.peso),
+      };
+
+      setUserData(userWithIMC);
+
+      // Buscar histórico de treinos e calcular recordes
+      await loadTrainingData(user.metas);
+    } catch (error) {
+      console.error("Erro ao carregar dados do usuário:", error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Função para carregar histórico de treinos e calcular recordes
+  const loadTrainingData = async (metas) => {
+    try {
+      const treinos = await trainingService.getFormattedTrainingData();
+      // Calcular recordes dinamicamente a partir do histórico
+      console.log(treinos);
+      console.log(metas);
+      const recordesCalculados = userService.calculateRecordsFromHistory(
+        treinos,
+        metas
+      );
+      console.log(recordesCalculados);
+      setRecordesMusculares(recordesCalculados);
+    } catch (error) {
+      console.error("Erro ao carregar dados de treino:", error);
+    }
+  };
 
   const openGoalModal = (grupo) => {
     setCurrentEditGroup(grupo);

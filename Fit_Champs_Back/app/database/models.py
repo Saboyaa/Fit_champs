@@ -28,11 +28,11 @@ class User(Base):
     rank_leg: Mapped[int] = mapped_column(nullable=False, default=0)
     rank_shoulder: Mapped[int] = mapped_column(nullable=False, default=0)
     rank_arm: Mapped[int] = mapped_column(nullable=False, default=0)
-    goal_chest: Mapped[int] = mapped_column(nullable=False, default=0)
-    goal_back: Mapped[int] = mapped_column(nullable=False, default=0)
-    goal_leg: Mapped[int] = mapped_column(nullable=False, default=0)
-    goal_shoulder: Mapped[int] = mapped_column(nullable=False, default=0)
-    goal_arm: Mapped[int] = mapped_column(nullable=False, default=0)
+    goal_chest: Mapped[int] = mapped_column(nullable=False, default=3500)
+    goal_back: Mapped[int] = mapped_column(nullable=False, default=3400)
+    goal_leg: Mapped[int] = mapped_column(nullable=False, default=4500)
+    goal_shoulder: Mapped[int] = mapped_column(nullable=False, default=2300)
+    goal_arm: Mapped[int] = mapped_column(nullable=False, default=2100)
 
 class Exercise(Base):
     __tablename__ = "exercises"
