@@ -109,7 +109,7 @@ const exerciseService = {
         }
       }
 
-      const response = await api.post('exercise/trains', { trains });
+      const response = await api.post('exercise/trains', { trains: trains });
       return response.data;
     } catch (error: unknown) {
       let msg = 'Erro ao enviar os treinos.';

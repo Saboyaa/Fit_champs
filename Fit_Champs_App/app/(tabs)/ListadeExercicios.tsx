@@ -12,9 +12,468 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import exerciseService from '@/services/exerciseService';
 
+// JSON Database
+const exerciseDatabase = {
+  "Peito": [
+    {
+      "id": 1,
+      "submuscular_group": "Peitoral Médio",
+      "exercise_name": "Supino Reto"
+    },
+    {
+      "id": 2,
+      "submuscular_group": "Peitoral Superior",
+      "exercise_name": "Supino Inclinado"
+    },
+    {
+      "id": 3,
+      "submuscular_group": "Peitoral Inferior",
+      "exercise_name": "Supino Declinado"
+    },
+    {
+      "id": 4,
+      "submuscular_group": "Peitoral Geral",
+      "exercise_name": "Crucifixo"
+    },
+    {
+      "id": 5,
+      "submuscular_group": "Peitoral Inferior",
+      "exercise_name": "Crossover"
+    },
+    {
+      "id": 6,
+      "submuscular_group": "Peitoral Geral",
+      "exercise_name": "Flexão"
+    },
+    {
+      "id": 7,
+      "submuscular_group": "Peitoral Lateral",
+      "exercise_name": "Peck Deck"
+    },
+    {
+      "id": 8,
+      "submuscular_group": "Peitoral Superior/Serrátil",
+      "exercise_name": "Pullover"
+    },
+    {
+      "id": 9,
+      "submuscular_group": "Peitoral Lateral",
+      "exercise_name": "Voador"
+    },
+    {
+      "id": 10,
+      "submuscular_group": "Peitoral Médio",
+      "exercise_name": "Supino Hammer"
+    },
+    {
+      "id": 11,
+      "submuscular_group": "Peitoral Médio",
+      "exercise_name": "Supino com Halteres"
+    },
+    {
+      "id": 12,
+      "submuscular_group": "Peitoral Médio",
+      "exercise_name": "Push-Up com Peso"
+    },
+    {
+      "id": 13,
+      "submuscular_group": "Peitoral Inferior",
+      "exercise_name": "Paralelas"
+    },
+    {
+      "id": 14,
+      "submuscular_group": "Peitoral Superior",
+      "exercise_name": "Cross-Bench Pullover"
+    },
+    {
+      "id": 15,
+      "submuscular_group": "Peitoral Lateral",
+      "exercise_name": "Cable Fly"
+    }
+  ],
+  "Costas": [
+    {
+      "id": 16,
+      "submuscular_group": "Latíssimo",
+      "exercise_name": "Puxada Frente"
+    },
+    {
+      "id": 17,
+      "submuscular_group": "Dorsal Médio",
+      "exercise_name": "Remada Baixa"
+    },
+    {
+      "id": 18,
+      "submuscular_group": "Dorsal Inferior",
+      "exercise_name": "Remada Curvada"
+    },
+    {
+      "id": 19,
+      "submuscular_group": "Latíssimo/Trapézio",
+      "exercise_name": "Pulldown"
+    },
+    {
+      "id": 20,
+      "submuscular_group": "Latíssimo/Rombóides",
+      "exercise_name": "Barra Fixa"
+    },
+    {
+      "id": 21,
+      "submuscular_group": "Dorsal Lateral",
+      "exercise_name": "Remada Unilateral"
+    },
+    {
+      "id": 22,
+      "submuscular_group": "Dorsal Médio",
+      "exercise_name": "Remada Cavalinho"
+    },
+    {
+      "id": 23,
+      "submuscular_group": "Trapézio/Rombóides",
+      "exercise_name": "Puxada Alta"
+    },
+    {
+      "id": 24,
+      "submuscular_group": "Latíssimo",
+      "exercise_name": "Pull-Up"
+    },
+    {
+      "id": 25,
+      "submuscular_group": "Dorsal Médio/Trapézio",
+      "exercise_name": "Remada T"
+    },
+    {
+      "id": 26,
+      "submuscular_group": "Deltóide Posterior/Trapézio",
+      "exercise_name": "Face Pull"
+    },
+    {
+      "id": 27,
+      "submuscular_group": "Eretores da Espinha",
+      "exercise_name": "Hiperextensão"
+    },
+    {
+      "id": 28,
+      "submuscular_group": "Eretores da Espinha",
+      "exercise_name": "Good Morning"
+    },
+    {
+      "id": 29,
+      "submuscular_group": "Dorsal Inferior",
+      "exercise_name": "Remada Baixa Neutra"
+    },
+    {
+      "id": 30,
+      "submuscular_group": "Dorsal Médio",
+      "exercise_name": "Remada com Corda"
+    },
+    {
+      "id": 31,
+      "submuscular_group": "Latíssimo",
+      "exercise_name": "Pulldown com Corda"
+    },
+    {
+      "id": 32,
+      "submuscular_group": "Dorsal Médio/Latíssimo",
+      "exercise_name": "Australian Pull-Up"
+    }
+  ],
+  "Braço": [
+    {
+      "id": 33,
+      "submuscular_group": "Bíceps",
+      "exercise_name": "Rosca Direta"
+    },
+    {
+      "id": 34,
+      "submuscular_group": "Bíceps/Braquial",
+      "exercise_name": "Rosca Alternada"
+    },
+    {
+      "id": 35,
+      "submuscular_group": "Braquiorradial",
+      "exercise_name": "Rosca Martelo"
+    },
+    {
+      "id": 36,
+      "submuscular_group": "Tríceps Lateral",
+      "exercise_name": "Tríceps Corda"
+    },
+    {
+      "id": 37,
+      "submuscular_group": "Tríceps Longo",
+      "exercise_name": "Tríceps Francês"
+    },
+    {
+      "id": 38,
+      "submuscular_group": "Tríceps Médio",
+      "exercise_name": "Tríceps Testa"
+    },
+    {
+      "id": 39,
+      "submuscular_group": "Bíceps Cabeça Curta",
+      "exercise_name": "Rosca Scott"
+    },
+    {
+      "id": 40,
+      "submuscular_group": "Bíceps Pico",
+      "exercise_name": "Rosca Concentrada"
+    },
+    {
+      "id": 41,
+      "submuscular_group": "Bíceps Completo",
+      "exercise_name": "Rosca 21"
+    },
+    {
+      "id": 42,
+      "submuscular_group": "Bíceps Cabeça Longa",
+      "exercise_name": "Rosca W"
+    },
+    {
+      "id": 43,
+      "submuscular_group": "Tríceps Lateral",
+      "exercise_name": "Tríceps Coice"
+    },
+    {
+      "id": 44,
+      "submuscular_group": "Tríceps Geral",
+      "exercise_name": "Tríceps Mergulho"
+    },
+    {
+      "id": 45,
+      "submuscular_group": "Tríceps Longo",
+      "exercise_name": "Tríceps Barra"
+    },
+    {
+      "id": 46,
+      "submuscular_group": "Tríceps Longo",
+      "exercise_name": "Extensão Overhead"
+    },
+    {
+      "id": 47,
+      "submuscular_group": "Tríceps Lateral",
+      "exercise_name": "Kickback"
+    },
+    {
+      "id": 48,
+      "submuscular_group": "Braquiorradial",
+      "exercise_name": "Rosca Inversa"
+    },
+    {
+      "id": 49,
+      "submuscular_group": "Bíceps Cabeça Longa",
+      "exercise_name": "Rosca Spider"
+    },
+    {
+      "id": 50,
+      "submuscular_group": "Bíceps/Antebraço",
+      "exercise_name": "Rosca Zottman"
+    },
+    {
+      "id": 51,
+      "submuscular_group": "Tríceps Lateral",
+      "exercise_name": "Dips"
+    }
+  ],
+  "Perna": [
+    {
+      "id": 52,
+      "submuscular_group": "Quadríceps/Glúteos",
+      "exercise_name": "Agachamento"
+    },
+    {
+      "id": 53,
+      "submuscular_group": "Quadríceps",
+      "exercise_name": "Leg Press"
+    },
+    {
+      "id": 54,
+      "submuscular_group": "Quadríceps",
+      "exercise_name": "Cadeira Extensora"
+    },
+    {
+      "id": 55,
+      "submuscular_group": "Isquiotibiais",
+      "exercise_name": "Cadeira Flexora"
+    },
+    {
+      "id": 56,
+      "submuscular_group": "Gastrocnêmio",
+      "exercise_name": "Panturrilha"
+    },
+    {
+      "id": 57,
+      "submuscular_group": "Isquiotibiais/Glúteos",
+      "exercise_name": "Stiff"
+    },
+    {
+      "id": 58,
+      "submuscular_group": "Quadríceps/Glúteos",
+      "exercise_name": "Avanço"
+    },
+    {
+      "id": 59,
+      "submuscular_group": "Quadríceps",
+      "exercise_name": "Hack Squat"
+    },
+    {
+      "id": 60,
+      "submuscular_group": "Glúteos/Quadríceps",
+      "exercise_name": "Afundo"
+    },
+    {
+      "id": 61,
+      "submuscular_group": "Adutores",
+      "exercise_name": "Cadeira Adutora"
+    },
+    {
+      "id": 62,
+      "submuscular_group": "Abdutores",
+      "exercise_name": "Cadeira Abdutora"
+    },
+    {
+      "id": 63,
+      "submuscular_group": "Glúteos/Adutores",
+      "exercise_name": "Agachamento Sumô"
+    },
+    {
+      "id": 64,
+      "submuscular_group": "Quadríceps/Glúteos",
+      "exercise_name": "Leg Press 45°"
+    },
+    {
+      "id": 65,
+      "submuscular_group": "Sóleo",
+      "exercise_name": "Panturrilha Sentado"
+    },
+    {
+      "id": 66,
+      "submuscular_group": "Glúteos",
+      "exercise_name": "Elevação Pélvica"
+    },
+    {
+      "id": 67,
+      "submuscular_group": "Quadríceps/Glúteos",
+      "exercise_name": "Bulgarian Split Squat"
+    },
+    {
+      "id": 68,
+      "submuscular_group": "Quadríceps",
+      "exercise_name": "Agachamento Frontal"
+    },
+    {
+      "id": 69,
+      "submuscular_group": "Glúteos/Quadríceps",
+      "exercise_name": "Passada"
+    },
+    {
+      "id": 70,
+      "submuscular_group": "Adutores/Abdutores",
+      "exercise_name": "Good Girl/Bad Girl"
+    },
+    {
+      "id": 71,
+      "submuscular_group": "Glúteos",
+      "exercise_name": "Hip Thrust"
+    },
+    {
+      "id": 72,
+      "submuscular_group": "Gastrocnêmio",
+      "exercise_name": "Panturrilha no Smith"
+    },
+    {
+      "id": 73,
+      "submuscular_group": "Isquiotibiais",
+      "exercise_name": "Leg Curl Unilateral"
+    }
+  ],
+  "Ombro": [
+    {
+      "id": 74,
+      "submuscular_group": "Deltóide Anterior",
+      "exercise_name": "Desenvolvimento"
+    },
+    {
+      "id": 75,
+      "submuscular_group": "Deltóide Lateral",
+      "exercise_name": "Elevação Lateral"
+    },
+    {
+      "id": 76,
+      "submuscular_group": "Deltóide Anterior",
+      "exercise_name": "Elevação Frontal"
+    },
+    {
+      "id": 77,
+      "submuscular_group": "Deltóide Posterior",
+      "exercise_name": "Face Pull"
+    },
+    {
+      "id": 78,
+      "submuscular_group": "Trapézio",
+      "exercise_name": "Encolhimento"
+    },
+    {
+      "id": 79,
+      "submuscular_group": "Deltóide Geral",
+      "exercise_name": "Arnold Press"
+    },
+    {
+      "id": 80,
+      "submuscular_group": "Deltóide Anterior",
+      "exercise_name": "Desenvolvimento Militar"
+    },
+    {
+      "id": 81,
+      "submuscular_group": "Deltóide Geral",
+      "exercise_name": "Desenvolvimento com Halteres"
+    },
+    {
+      "id": 82,
+      "submuscular_group": "Deltóide Posterior",
+      "exercise_name": "Crucifixo Invertido"
+    },
+    {
+      "id": 83,
+      "submuscular_group": "Deltóide Posterior",
+      "exercise_name": "Pássaro"
+    },
+    {
+      "id": 84,
+      "submuscular_group": "Deltóide Lateral",
+      "exercise_name": "Elevação Lateral na Polia"
+    },
+    {
+      "id": 85,
+      "submuscular_group": "Deltóide Anterior",
+      "exercise_name": "Desenvolvimento na Máquina"
+    },
+    {
+      "id": 86,
+      "submuscular_group": "Trapézio/Deltóide Lateral",
+      "exercise_name": "Remada Alta"
+    },
+    {
+      "id": 87,
+      "submuscular_group": "Deltóide Geral",
+      "exercise_name": "Desenvolvimento Sentado"
+    },
+    {
+      "id": 88,
+      "submuscular_group": "Trapézio",
+      "exercise_name": "Shrugs com Halteres"
+    },
+    {
+      "id": 89,
+      "submuscular_group": "Deltóide Posterior",
+      "exercise_name": "W-Raise"
+    }
+  ]
+}
 
 interface Exercise {
   id: string;
+  exerciseId: number;
   name: string;
   muscleGroup: string;
   reps: string;
@@ -39,25 +498,18 @@ const ExerciseList: React.FC = () => {
   const [workoutDays, setWorkoutDays] = useState<WorkoutDay[]>([
     {
       id: '1',
-      date: '09-06-25',
+      date: '12-06-25',
       dayName: 'Segunda-feira',
-      workoutType: 'Treino de Peito',
+      workoutType: 'Peito',
       exercises: [
         {
           id: '1',
+          exerciseId: 1,
           name: 'Supino Reto',
           muscleGroup: 'Peitoral Médio',
           reps: '3 x 12',
           weight: 12,
           volume: 432,
-      },
-        {
-          id: '2',
-          name: 'Pullover',
-          muscleGroup: 'Peitoral Superior/Serrátil',
-          reps: '3 x 12',
-          weight: 0,
-          volume: 0,
         },
       ]
     }
@@ -65,24 +517,27 @@ const ExerciseList: React.FC = () => {
 
   const [activeWorkoutDay, setActiveWorkoutDay] = useState<string>('1');
 
-
   const handleSave = async () => {
     try {
       // 1) Array de dias
       const trainData = workoutDays.map(day => ({
         id: day.id,
-        descripition: day.workoutType,  // Ex: "Treino de Peito"
-        data: day.date,                  // Ex: "09-06-25"
+        descripition: `Treino de ${day.workoutType}`,
+        data: day.date,
       }));
+      
       // 2) Mapeamento de exercícios por dia
       const exercisesPerTrain: Record<string, { exerciseId: number; peso: number; repeticoes: string }[]> = {};
       workoutDays.forEach(day => {
         exercisesPerTrain[day.id] = day.exercises.map(ex => ({
-          exerciseId: Number(ex.id),
+          exerciseId: ex.exerciseId,
           peso: ex.weight,
           repeticoes: ex.reps.replace(/\s/g, ''), // remove espaços: "3x12"
         }));
       });
+
+      console.log(trainData)
+      console.log(exercisesPerTrain)
 
       await exerciseService.postTrains(trainData, exercisesPerTrain);
       Alert.alert('Sucesso', 'Treino salvo com sucesso!');
@@ -91,31 +546,17 @@ const ExerciseList: React.FC = () => {
     }
   };
 
-  const exerciseDatabase = {
-    'Supino Reto': 'Peitoral Médio',
-    'Supino Inclinado': 'Peitoral Superior',
-    'Supino Declinado': 'Peitoral Inferior',
-    'Pullover': 'Peitoral Superior/Serrátil',
-    'Crucifixo': 'Peitoral Médio',
-    'Crucifixo Inclinado': 'Peitoral Superior',
-    'Flexão': 'Peitoral Médio',
-    'Peck Deck': 'Peitoral Médio',
-    'Cross Over': 'Peitoral Médio',
-    'Cross Over Superior': 'Peitoral Inferior',
-    'Mergulho': 'Peitoral Inferior',
-    'Supino Halteres': 'Peitoral Médio',
+  const workoutTypes = Object.keys(exerciseDatabase); // ['Peito', 'Costas', 'Braço', 'Perna', 'Ombro']
+
+  // Função para obter exercícios filtrados por tipo de treino
+  const getFilteredExercises = (workoutType: string) => {
+    return exerciseDatabase[workoutType as keyof typeof exerciseDatabase] || [];
   };
 
-  const workoutTypes = [
-    'Treino de Peito',
-    'Treino de Costas', 
-    'Treino de Pernas',
-    'Treino de Ombros',
-    'Treino de Braços'
-  ];
-
-  const exerciseOptions = Object.keys(exerciseDatabase);
-  const muscleGroups = [...new Set(Object.values(exerciseDatabase))];
+  // Função para obter todos os exercícios
+  const getAllExercises = () => {
+    return Object.values(exerciseDatabase).flat();
+  };
 
   const repOptions = [
     '3 x 8', '3 x 10', '3 x 12', '3 x 15',
@@ -136,10 +577,19 @@ const ExerciseList: React.FC = () => {
 
   const addExercise = () => {
     const currentDay = getCurrentWorkoutDay();
+    const filteredExercises = getFilteredExercises(currentDay.workoutType);
+    
+    if (filteredExercises.length === 0) {
+      Alert.alert('Erro', 'Nenhum exercício disponível para este tipo de treino.');
+      return;
+    }
+
+    const firstExercise = filteredExercises[0];
     const newExercise: Exercise = {
       id: Date.now().toString(),
-      name: 'Supino Reto',
-      muscleGroup: exerciseDatabase['Supino Reto'],
+      exerciseId: firstExercise.id,
+      name: firstExercise.exercise_name,
+      muscleGroup: firstExercise.submuscular_group,
       reps: '3 x 12',
       weight: 0,
       volume: 0,
@@ -161,26 +611,28 @@ const ExerciseList: React.FC = () => {
   };
 
   const updateExercise = (id: string, field: keyof Exercise, value: any) => {
-    setWorkoutDays(workoutDays.map(day => 
-      day.id === activeWorkoutDay 
-        ? {
-            ...day,
-            exercises: day.exercises.map(ex => {
-              if (ex.id === id) {
-                const updated = { ...ex, [field]: value };
-                // Recalculate volume when weight or reps change
-                if (field === 'weight' || field === 'reps') {
-                  const sets = parseInt(updated.reps.split(' x ')[0]) || 0;
-                  const repsPerSet = parseInt(updated.reps.split(' x ')[1]) || 0;
-                  updated.volume = sets * repsPerSet * updated.weight;
+    setWorkoutDays(prevWorkoutDays => 
+      prevWorkoutDays.map(day => 
+        day.id === activeWorkoutDay 
+          ? {
+              ...day,
+              exercises: day.exercises.map(ex => {
+                if (ex.id === id) {
+                  const updated = { ...ex, [field]: value };
+                  // Recalculate volume when weight or reps change
+                  if (field === 'weight' || field === 'reps') {
+                    const sets = parseInt(updated.reps.split(' x ')[0]) || 0;
+                    const repsPerSet = parseInt(updated.reps.split(' x ')[1]) || 0;
+                    updated.volume = sets * repsPerSet * updated.weight;
+                  }
+                  return updated;
                 }
-                return updated;
-              }
-              return ex;
-            })
-          }
-        : day
-    ));
+                return ex;
+              })
+            }
+          : day
+      )
+    );
   };
 
   const getTotalVolume = () => {
@@ -224,7 +676,7 @@ const ExerciseList: React.FC = () => {
       id: Date.now().toString(),
       date: dateString,
       dayName: dayName,
-      workoutType: 'Treino de Peito',
+      workoutType: 'Peito', // Default to first workout type
       exercises: []
     };
 
@@ -262,9 +714,17 @@ const ExerciseList: React.FC = () => {
   };
 
   const updateWorkoutType = (dayId: string, workoutType: string) => {
-    setWorkoutDays(workoutDays.map(day => 
-      day.id === dayId ? { ...day, workoutType } : day
-    ));
+    setWorkoutDays(workoutDays.map(day => {
+      if (day.id === dayId) {
+        // Limpar exercícios ao mudar o tipo de treino para evitar inconsistências
+        return { 
+          ...day, 
+          workoutType,
+          exercises: [] // Limpa exercícios quando muda o tipo
+        };
+      }
+      return day;
+    }));
   };
 
   const renderCalendar = () => {
@@ -367,7 +827,7 @@ const ExerciseList: React.FC = () => {
                 styles.dayCardType,
                 activeWorkoutDay === day.id && styles.activeDayCardText
               ]}>
-                {day.workoutType}
+                Treino de {day.workoutType}
               </Text>
             </View>
             {workoutDays.length > 1 && (
@@ -423,11 +883,11 @@ const ExerciseList: React.FC = () => {
             <View style={styles.workoutHeader}>
               <View style={styles.workoutHeaderContent}>
                 <Text style={styles.workoutTitle}>
-                  📅 {currentWorkoutDay.dayName} ({currentWorkoutDay.date}) - {currentWorkoutDay.workoutType}
+                  📅 {currentWorkoutDay.dayName} ({currentWorkoutDay.date}) - Treino de {currentWorkoutDay.workoutType}
                 </Text>
                 <View style={styles.workoutStats}>
                   <Text style={styles.statText}>
-                    {currentWorkoutDay.exercises.length}/2 exercícios
+                    {currentWorkoutDay.exercises.length} exercícios
                   </Text>
                   <Text style={styles.statText}>
                     Volume total: {getTotalVolume()}
@@ -455,7 +915,7 @@ const ExerciseList: React.FC = () => {
                         styles.workoutTypeOptionText,
                         currentWorkoutDay.workoutType === type && styles.activeWorkoutTypeOptionText
                       ]}>
-                        {type}
+                        Treino de {type}
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -480,10 +940,8 @@ const ExerciseList: React.FC = () => {
                 {currentWorkoutDay.exercises.map((exercise) => (
                   <ExerciseRow
                     key={exercise.id}
-                    exercise_call={exercise}
-                    exerciseOptions={exerciseOptions}
-                    exerciseDatabase={exerciseDatabase}
-                    muscleGroups={muscleGroups}
+                    exercise={exercise}
+                    workoutType={currentWorkoutDay.workoutType}
                     repOptions={repOptions}
                     onUpdate={updateExercise}
                     onRemove={removeExercise}
@@ -505,7 +963,7 @@ const ExerciseList: React.FC = () => {
             {workoutDays.map((day) => (
               <View key={day.id} style={styles.summaryCard}>
                 <Text style={styles.summaryDayTitle}>
-                  {day.dayName} ({day.date}) - {day.workoutType}
+                  {day.dayName} ({day.date}) - Treino de {day.workoutType}
                 </Text>
                 <Text style={styles.summaryText}>
                   Exercícios: {day.exercises.length}
@@ -581,42 +1039,48 @@ const ExerciseList: React.FC = () => {
 };
 
 interface ExerciseRowProps {
-  exercise_call: Exercise;
-  exerciseOptions: string[];
-  exerciseDatabase: { [key: string]: string };
-  muscleGroups: string[];
+  exercise: Exercise;
+  workoutType: string;
   repOptions: string[];
   onUpdate: (id: string, field: keyof Exercise, value: any) => void;
   onRemove: (id: string) => void;
 }
 
 const ExerciseRow: React.FC<ExerciseRowProps> = ({
-  exercise_call,
-  exerciseOptions,
-  exerciseDatabase,
-  muscleGroups,
+  exercise,
+  workoutType,
   repOptions,
   onUpdate,
   onRemove,
 }) => {
-  const [exercise,setExercise] = useState(exercise_call);
   const [showExerciseOptions, setShowExerciseOptions] = useState(false);
-  const [showMuscleOptions, setShowMuscleOptions] = useState(false);
   const [showRepOptions, setShowRepOptions] = useState(false);
 
-  const handleExerciseChange = (exerciseName: string) => {
-    onUpdate(exercise.id, 'name', exerciseName);
+  // Obter exercícios filtrados pelo tipo de treino atual
+  const getFilteredExercises = () => {
+    return exerciseDatabase[workoutType as keyof typeof exerciseDatabase] || [];
+  };
+
+  const handleExerciseChange = (exerciseData: any) => {
+    // Update exerciseId, name and muscle group
+    onUpdate(exercise.id, 'exerciseId', exerciseData.id);
+    onUpdate(exercise.id, 'name', exerciseData.exercise_name);
+    onUpdate(exercise.id, 'muscleGroup', exerciseData.submuscular_group);
     
-    // Automatically set muscle group based on exercise
-    const muscleGroup = exerciseDatabase[exerciseName];
-    if (muscleGroup) {
-      onUpdate(exercise.id, 'muscleGroup', muscleGroup);
-    }
-    exercise_call.name = exerciseName;
-    exercise_call.muscleGroup = muscleGroup;
-    setExercise(exercise_call);
     setShowExerciseOptions(false);
   };
+
+  const handleWeightChange = (text: string) => {
+    const weight = parseFloat(text) || 0;
+    onUpdate(exercise.id, 'weight', weight);
+  };
+
+  const handleRepsChange = (reps: string) => {
+    onUpdate(exercise.id, 'reps', reps);
+    setShowRepOptions(false);
+  };
+
+  const filteredExercises = getFilteredExercises();
 
   return (
     <View style={styles.exerciseRow}>
@@ -632,13 +1096,13 @@ const ExerciseRow: React.FC<ExerciseRowProps> = ({
         {showExerciseOptions && (
           <View style={styles.optionsContainer}>
             <ScrollView style={styles.optionsScroll} nestedScrollEnabled>
-              {exerciseOptions.map((option) => (
+              {filteredExercises.map((exerciseData) => (
                 <TouchableOpacity
-                  key={option}
+                  key={exerciseData.id}
                   style={styles.option}
-                  onPress={() => handleExerciseChange(option)}
+                  onPress={() => handleExerciseChange(exerciseData)}
                 >
-                  <Text style={styles.optionText}>{option}</Text>
+                  <Text style={styles.optionText}>{exerciseData.exercise_name}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -646,34 +1110,13 @@ const ExerciseRow: React.FC<ExerciseRowProps> = ({
         )}
       </View>
 
-      {/* Muscle Group */}
+      {/* Muscle Group - Read only, based on selected exercise */}
       <View style={[styles.cell, styles.muscleColumn]}>
-        <TouchableOpacity
-          style={[styles.dropdown, styles.disabledDropdown]}
-          onPress={() => setShowMuscleOptions(!showMuscleOptions)}
-        >
+        <View style={[styles.dropdown, styles.disabledDropdown]}>
           <Text style={[styles.dropdownText, styles.autoText]} numberOfLines={2}>
             {exercise.muscleGroup}
           </Text>
-        </TouchableOpacity>
-        {showMuscleOptions && (
-          <View style={styles.optionsContainer}>
-            <ScrollView style={styles.optionsScroll} nestedScrollEnabled>
-              {muscleGroups.map((group) => (
-                <TouchableOpacity
-                  key={group}
-                  style={styles.option}
-                  onPress={() => {
-                    onUpdate(exercise.id, 'muscleGroup', group);
-                    setShowMuscleOptions(false);
-                  }}
-                >
-                  <Text style={styles.optionText}>{group}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        )}
+        </View>
       </View>
 
       {/* Repetitions */}
@@ -692,10 +1135,7 @@ const ExerciseRow: React.FC<ExerciseRowProps> = ({
                 <TouchableOpacity
                   key={rep}
                   style={styles.option}
-                  onPress={() => {
-                    onUpdate(exercise.id, 'reps', rep);
-                    setShowRepOptions(false);
-                  }}
+                  onPress={() => handleRepsChange(rep)}
                 >
                   <Text style={styles.optionText}>{rep}</Text>
                 </TouchableOpacity>
@@ -710,7 +1150,7 @@ const ExerciseRow: React.FC<ExerciseRowProps> = ({
         <TextInput
           style={styles.input}
           value={exercise.weight.toString()}
-          onChangeText={(text) => onUpdate(exercise.id, 'weight', parseFloat(text) || 0)}
+          onChangeText={handleWeightChange}
           keyboardType="numeric"
           placeholder="0"
           placeholderTextColor="#6B7280"
@@ -917,6 +1357,7 @@ const styles = StyleSheet.create({
   },
   tableContainer: {
     minWidth: 800, // Ensures horizontal scroll
+    marginBottom: 20,
   },
   tableHeader: {
     flexDirection: 'row',

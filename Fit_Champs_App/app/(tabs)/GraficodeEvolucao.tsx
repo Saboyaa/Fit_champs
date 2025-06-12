@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,8 +7,10 @@ import {
   SafeAreaView,
   StatusBar,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
+import { useFocusEffect } from '@react-navigation/native';
 import trainingService, { ChartData as ServiceChartData, DataPoint } from '../../services/trainingService';
 import userService, { Metas } from '../../services/userService';
 
@@ -69,15 +71,22 @@ const TrainingStatsScreen: React.FC = () => {
     ombro: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Carrega dados de treino e metas
-  const loadData = async () => {
-    setLoading(true);
+  const loadData = async (isRefresh = false) => {
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     setError(null);
+    
     try {
       const td = await trainingService.getFormattedTrainingData();
       setTrainingData(td);
+      
       try {
         const goals = await userService.getUserGoals();
         setMetas(goals);
@@ -88,12 +97,21 @@ const TrainingStatsScreen: React.FC = () => {
       setError(e.message || 'Erro ao carregar dados');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // Carrega dados na primeira vez e quando a tela fica em foco
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [])
+  );
+
+  // Função para pull-to-refresh
+  const onRefresh = () => {
+    loadData(true);
+  };
 
   // Processa ServiceChartData em estrutura para componentes
   const muscleGroups = useMemo<MuscleGroupData[]>(() =>
@@ -140,7 +158,18 @@ const TrainingStatsScreen: React.FC = () => {
         <Text style={styles.headerTitle}>Evolução de Treinos</Text>
         <Text style={styles.headerSubtitle}>Volume por grupo muscular</Text>
       </View>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#4F46E5']} // Android
+            tintColor="#4F46E5" // iOS
+          />
+        }
+      >
         {muscleGroups.map(mg => (
           <View key={mg.name} style={styles.chartCard}>
             <View style={styles.cardHeader}>
@@ -182,7 +211,7 @@ const nameKey = (name: string): keyof Metas => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#111827', marginTop: 30 },
+  container: { flex: 1, backgroundColor: '#111827', paddingTop: 20},
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   statusText: { color: '#F9FAFB', fontSize: 16 },
   header: { backgroundColor: '#1F2937', padding: 16 },
