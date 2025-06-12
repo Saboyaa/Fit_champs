@@ -11,7 +11,8 @@ from .service import (
     get_chest_rank_by_age_and_gender, 
     get_general_rank_by_age_and_gender,
     get_leg_rank_by_age_and_gender,
-    get_shoulder_rank_by_age_and_gender
+    get_shoulder_rank_by_age_and_gender,
+    get_total_volume_by_user
 )
 from ..database.utils import get_db
 from ..auth.service import get_current_user
@@ -74,3 +75,10 @@ def get_shoulder_rank(
     db: Session = Depends(get_db)
 ): 
     return get_shoulder_rank_by_age_and_gender(db=db, gender=gender, age=age)
+
+@rank_router.get("/total_volume")
+def get_total_volume(
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Session = Depends(get_db)
+):
+    return get_total_volume_by_user(db=db, user_id=current_user.id)

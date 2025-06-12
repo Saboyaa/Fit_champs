@@ -21,7 +21,32 @@ import userService from "../services/userService";
 const RankingSemanal = () => {
   const { isMenuOpen } = useGlobalContext();
   const [activeTab, setActiveTab] = useState("Geral");
-  const [userRanking, setUserRanking] = useState(null);
+  const [userRanking, setUserRanking] = useState({
+    Geral: {
+      posicao: 0,
+      pontos: 0,
+    },
+    Peito: {
+      posicao: 0,
+      pontos: 0,
+    },
+    Costas: {
+      posicao: 0,
+      pontos: 0,
+    },
+    Braço: {
+      posicao: 0,
+      pontos: 0,
+    },
+    Ombro: {
+      posicao: 0,
+      pontos: 0,
+    },
+    Perna: {
+      posicao: 0,
+      pontos: 0,
+    },
+  });
   const [activeSexo, setActiveSexo] = useState("Masculino");
   const [activeFaixaEtaria, setActiveFaixaEtaria] = useState("20-40");
   const [rankingData, setRankingData] = useState({});
@@ -35,9 +60,29 @@ const RankingSemanal = () => {
 
   const getUser = async () => {
     try {
-      const response = await userService.getCurrentUser2();
+      const response1 = await userService.getCurrentUser2();
 
-      setUserData(response);
+      setUserData({
+        id: response1.id,
+        nome: response1.nome,
+        sexo: response1.sexo,
+        idade: response1.idade,
+      });
+
+      const userRankingFormatted = {};
+      try {
+        const response2 = await rankService.totalVolume();
+        Object.keys(response1.recordes).map((grupo) => {
+          userRankingFormatted[grupo] = {
+            posicao: response1.recordes[grupo],
+            pontos: response2[grupo],
+          };
+        });
+      } catch (error) {
+        console.error(error);
+      }
+
+      setUserRanking(userRankingFormatted);
     } catch (error) {
       console.error(error);
     }
@@ -82,29 +127,6 @@ const RankingSemanal = () => {
   useEffect(() => {
     filtrarRankings(activeSexo, activeFaixaEtaria, activeTab);
   }, [activeSexo, activeFaixaEtaria, activeTab]);
-
-  // Efeito para encontrar os dados do usuário atual em cada ranking
-  useEffect(() => {
-    if (Object.keys(rankingData).length === 0) return;
-
-    const userRankings = {};
-
-    Object.keys(rankingData).forEach((category) => {
-      const ranking = rankingData[category];
-      const userIndex = ranking.findIndex((user) => user.id === userData.id);
-
-      if (userIndex !== -1) {
-        userRankings[category] = {
-          posicao: userIndex + 1,
-          pontos: ranking[userIndex].pontos,
-          total: ranking.length,
-          posicaoAnterior: ranking[userIndex].posicaoAnterior,
-        };
-      }
-    });
-
-    setUserRanking(userRankings);
-  }, [userData, rankingData]);
 
   // Obter sexo e faixa etária do usuário atual
   const userInfo = useMemo(() => {

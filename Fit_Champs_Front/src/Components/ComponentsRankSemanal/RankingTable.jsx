@@ -34,9 +34,9 @@ const RankingTable = ({
                 <th className="px-6 py-4 text-left text-xs font-medium text-blue-200 uppercase tracking-wider border-b border-slate-700/30">
                   Pontos
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-blue-200 uppercase tracking-wider border-b border-slate-700/30">
+                {/* <th className="px-6 py-4 text-left text-xs font-medium text-blue-200 uppercase tracking-wider border-b border-slate-700/30">
                   Variação
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700/30">

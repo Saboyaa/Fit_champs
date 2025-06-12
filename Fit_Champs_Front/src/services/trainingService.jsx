@@ -41,7 +41,7 @@ const trainingService = {
       return formattedTrains;
     } catch (error) {
       console.error("❌ Erro ao buscar treinos:", error);
-      throw new Error(error?.message || "Erro ao buscar treinos do usuário");
+      throw new Error(error?.detail || "Erro ao buscar treinos do usuário");
     }
   },
 
@@ -88,7 +88,7 @@ const trainingService = {
     }
 
     // Se estiver em formato dd-mm-yy (formato dos treinos)
-    if (dateString.includes("-") && dateString.split("-").length === 3) {
+    if (dateString.includes("-") && dateString.length === 8) {
       const parts = dateString.split("-");
       if (parts[2].length === 2) {
         const [day, month, year] = parts;
@@ -191,18 +191,6 @@ const trainingService = {
     } catch (error) {
       console.error("Erro ao buscar dados de treino:", error);
       return trainingService.getEmptyChartData();
-    }
-  },
-
-  // Função utilitária para debug
-  debugTrainingData: async () => {
-    try {
-      const data = await trainingService.getUserTrainings();
-      console.log("Dados de treino brutos:", data);
-      return data;
-    } catch (error) {
-      console.error("Erro no debug:", error);
-      return [];
     }
   },
 };

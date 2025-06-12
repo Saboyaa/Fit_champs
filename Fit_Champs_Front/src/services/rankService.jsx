@@ -24,7 +24,7 @@ const rankService = {
 
       return formattedList;
     } catch (error) {
-      throw new Error(error?.message || "Erro ao buscar o ranque geral");
+      throw new Error(error?.detail || "Erro ao buscar o ranque geral");
     }
   },
 
@@ -51,7 +51,7 @@ const rankService = {
 
       return formattedList;
     } catch (error) {
-      throw new Error(error?.message || "Erro ao buscar o ranque de braço");
+      throw new Error(error?.detail || "Erro ao buscar o ranque de braço");
     }
   },
 
@@ -78,7 +78,7 @@ const rankService = {
 
       return formattedList;
     } catch (error) {
-      throw new Error(error?.message || "Erro ao buscar o ranque de costas");
+      throw new Error(error?.detail || "Erro ao buscar o ranque de costas");
     }
   },
 
@@ -105,7 +105,7 @@ const rankService = {
 
       return formattedList;
     } catch (error) {
-      throw new Error(error?.message || "Erro ao buscar o ranque de peito");
+      throw new Error(error?.detail || "Erro ao buscar o ranque de peito");
     }
   },
 
@@ -132,7 +132,7 @@ const rankService = {
 
       return formattedList;
     } catch (error) {
-      throw new Error(error?.message || "Erro ao buscar o ranque de perna");
+      throw new Error(error?.detail || "Erro ao buscar o ranque de perna");
     }
   },
 
@@ -159,7 +159,28 @@ const rankService = {
 
       return formattedList;
     } catch (error) {
-      throw new Error(error?.message || "Erro ao buscar o ranque de ombro");
+      throw new Error(error?.detail || "Erro ao buscar o ranque de ombro");
+    }
+  },
+
+  totalVolume: async () => {
+    try {
+      const response = await api.get("rank/total_volume", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      return {
+        Geral: response.data.general_total_volume,
+        Peito: response.data.chest_total_volume,
+        Costas: response.data.back_total_volume,
+        Braço: response.data.arm_total_volume,
+        Perna: response.data.leg_total_volume,
+        Ombro: response.data.shoulder_total_volume,
+      };
+    } catch (error) {
+      throw new Error(error?.detail || "Erro ao buscar os pontos dos usuários");
     }
   },
 };

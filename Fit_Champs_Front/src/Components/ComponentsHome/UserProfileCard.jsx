@@ -14,11 +14,11 @@ const UserProfileCard = ({ userData, openProfileModal }) => {
             <p className="text-blue-300">{userData.email}</p>
           </div>
 
-          <img
+          {/* <img
             src={userData.foto}
             alt={userData.nome}
             className="w-14  h-14 rounded-full  border-black bg-white "
-          />
+          /> */}
         </div>
       </div>
 

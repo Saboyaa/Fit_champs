@@ -26,11 +26,11 @@ const Home = () => {
     altura: 0,
     peso: 0,
     recordes: {
-      peito: 0,
-      costas: 0,
-      braço: 0,
-      perna: 0,
-      ombro: 0,
+      Peito: 0,
+      Costas: 0,
+      Braço: 0,
+      Perna: 0,
+      Ombro: 0,
     },
     metas: {
       peito: 3500,
