@@ -96,7 +96,7 @@ export default function Cadastro() {
       // resetar
       setFormData({ username: '', email: '', password: '', confirm_password: '', city: '', sex: 'masculino', age: '', phone: '', height: '', weight: '' });
       setPasswordStrength({ score: 0, color: '' });
-      setTimeout(() => router.push('/GraficodeEvolucao'), 2000);
+      setTimeout(() => router.push('/login'), 2000);
     } catch (e: any) {
       showNotification(e.message || 'Erro ao cadastrar', 'error');
     } finally {
@@ -198,8 +198,8 @@ export default function Cadastro() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 24, backgroundColor: '#0f172a', flexGrow: 1 },
-  title: { color: '#38bdf8', fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 24 },
+  container: { padding: 24, backgroundColor: '#0f172a', flexGrow: 1},
+  title: { color: '#38bdf8', fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 24, marginTop: 24 },
   input: { backgroundColor: '#1e293b', color: '#fff', padding: 12, marginBottom: 12, borderRadius: 8, borderColor: '#334155', borderWidth: 1 },
   inputFocused: { borderColor: '#38bdf8' },
   strengthBar: { height: 4, borderRadius: 2, marginBottom: 12 },

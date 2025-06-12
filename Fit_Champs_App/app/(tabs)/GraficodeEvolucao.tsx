@@ -182,7 +182,7 @@ const nameKey = (name: string): keyof Metas => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#111827' },
+  container: { flex: 1, backgroundColor: '#111827', marginTop: 30 },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   statusText: { color: '#F9FAFB', fontSize: 16 },
   header: { backgroundColor: '#1F2937', padding: 16 },

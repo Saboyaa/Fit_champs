@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 24,
     backgroundColor: "rgba(30, 41, 59, 0.8)",
-    padding: 20,
+    padding: 8,
     borderRadius: 8,
   },
   header: {
