@@ -40,8 +40,8 @@ def get_chest_rank_by_age_and_gender(db: Session, gender: str, age: int):
         lower_age = 60
         bigger_age = 2147483647
 
-    return db.execute(
-        select(ChestRank.id, ChestRank.age, ChestRank.sex, ChestRank.total_volume) \
+    return db.scalars(
+        select(ChestRank) \
         .where(
             ChestRank.sex == gender,
             between(ChestRank.age, lower_age, bigger_age)
@@ -77,8 +77,8 @@ def get_back_rank_by_age_and_gender(db: Session, gender: str, age: int):
         lower_age = 60
         bigger_age = 2147483647
 
-    return db.execute(
-        select(BackRank.id, BackRank.age, BackRank.sex, BackRank.total_volume) \
+    return db.scalars(
+        select(BackRank) \
         .where(
             BackRank.sex == gender,
             between(BackRank.age, lower_age, bigger_age)
@@ -114,8 +114,8 @@ def get_shoulder_rank_by_age_and_gender(db: Session, gender: str, age: int):
         lower_age = 60
         bigger_age = 2147483647
 
-    return db.execute(
-        select(ShoulderRank.id, ShoulderRank.age, ShoulderRank.sex, ShoulderRank.total_volume) \
+    return db.scalars(
+        select(ShoulderRank) \
         .where(
             ShoulderRank.sex == gender,
             between(ShoulderRank.age, lower_age, bigger_age)
@@ -151,8 +151,8 @@ def get_leg_rank_by_age_and_gender(db: Session, gender: str, age: int):
         lower_age = 60
         bigger_age = 2147483647
 
-    return db.execute(
-        select(LegRank.id, LegRank.age, LegRank.sex, LegRank.total_volume) \
+    return db.scalars(
+        select(LegRank) \
         .where(
             LegRank.sex == gender,
             between(LegRank.age, lower_age, bigger_age)
@@ -188,8 +188,8 @@ def get_arm_rank_by_age_and_gender(db: Session, gender: str, age: int):
         lower_age = 60
         bigger_age = 2147483647
 
-    return db.execute(
-        select(ArmRank.id, ArmRank.age, ArmRank.sex, ArmRank.total_volume) \
+    return db.scalars(
+        select(ArmRank) \
         .where(
             ArmRank.sex == gender,
             between(ArmRank.age, lower_age, bigger_age)
@@ -225,8 +225,8 @@ def get_general_rank_by_age_and_gender(db: Session, gender: str, age: int):
         lower_age = 60
         bigger_age = 2147483647
 
-    return db.execute(
-        select(GeneralRank.id, GeneralRank.age, GeneralRank.sex, GeneralRank.total_volume) \
+    return db.scalars(
+        select(GeneralRank) \
         .where(
             GeneralRank.sex == gender,
             between(GeneralRank.age, lower_age, bigger_age)
