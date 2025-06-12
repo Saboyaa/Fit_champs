@@ -26,11 +26,11 @@ const Home = () => {
     altura: 0,
     peso: 0,
     recordes: {
-      peito: 0,
-      costas: 0,
-      braço: 0,
-      perna: 0,
-      ombro: 0,
+      Peito: 0,
+      Costas: 0,
+      Braço: 0,
+      Perna: 0,
+      Ombro: 0,
     },
     metas: {
       peito: 3500,
@@ -52,6 +52,40 @@ const Home = () => {
   const [loading, setLoading] = useState(false); // isso habilitara todos os loading
   const [error, setError] = useState("");
   const [updating, setUpdating] = useState(false);
+
+  // Dados de exemplo dos recordes de peso
+  const [recordesMusculares, setRecordesMusculares] = useState([
+    {
+      grupo: "Peito",
+      recordeVolume: 0,
+      metaVolume: 3500,
+      data: "",
+    },
+    {
+      grupo: "Costas",
+      recordeVolume: 0,
+      metaVolume: 3400,
+      data: "",
+    },
+    {
+      grupo: "Perna",
+      recordeVolume: 0,
+      metaVolume: 4500,
+      data: "",
+    },
+    {
+      grupo: "Ombro",
+      recordeVolume: 0,
+      metaVolume: 2300,
+      data: "",
+    },
+    {
+      grupo: "Braço",
+      recordeVolume: 0,
+      metaVolume: 2100,
+      data: "",
+    },
+  ]);
 
   useEffect(() => {
     loadUserData(); // Esta função já chama loadTrainingData internamente
@@ -78,7 +112,7 @@ const Home = () => {
       setUserData(userWithIMC);
 
       // Buscar histórico de treinos e calcular recordes
-      await loadTrainingData(user.metas || {});
+      await loadTrainingData(user.metas);
     } catch (error) {
       console.error("Erro ao carregar dados do usuário:", error);
       setError(error.message);
@@ -91,52 +125,16 @@ const Home = () => {
   const loadTrainingData = async (metas) => {
     try {
       const treinos = await trainingService.getFormattedTrainingData();
-
       // Calcular recordes dinamicamente a partir do histórico
       const recordesCalculados = userService.calculateRecordsFromHistory(
         treinos,
         metas
       );
-
       setRecordesMusculares(recordesCalculados);
     } catch (error) {
       console.error("Erro ao carregar dados de treino:", error);
     }
   };
-
-  // Dados de exemplo dos recordes de peso
-  const [recordesMusculares, setRecordesMusculares] = useState([
-    {
-      grupo: "Peito",
-      recordeVolume: 0,
-      metaVolume: 0,
-      data: "",
-    },
-    {
-      grupo: "Costas",
-      recordeVolume: 0,
-      metaVolume: 0,
-      data: "",
-    },
-    {
-      grupo: "Perna",
-      recordeVolume: 0,
-      metaVolume: 0,
-      data: "",
-    },
-    {
-      grupo: "Ombro",
-      recordeVolume: 0,
-      metaVolume: 0,
-      data: "",
-    },
-    {
-      grupo: "Braço",
-      recordeVolume: 10,
-      metaVolume: 0,
-      data: "",
-    },
-  ]);
 
   const openGoalModal = (grupo) => {
     setCurrentEditGroup(grupo);

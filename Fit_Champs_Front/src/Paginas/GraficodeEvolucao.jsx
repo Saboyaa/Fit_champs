@@ -65,7 +65,7 @@ const GraficosEvolucao = () => {
         const formattedGoals = {
           Peito: userGoals.peito,
           Costas: userGoals.costas,
-          Braço: userGoals.braco,
+          Braço: userGoals.braço,
           Perna: userGoals.perna,
           Ombro: userGoals.ombro,
         };

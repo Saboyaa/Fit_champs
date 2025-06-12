@@ -25,10 +25,10 @@ const RankingPositionCard = ({
         <h3 className="text-lg font-semibold text-white">{category}</h3>
       </div>
       <div className="flex items-center justify-center">
-        <span className="text-3xl font-bold text-white">{data.posicao}</span>
-        <span className="text-blue-200 text-sm ml-1">/{data.total}</span>
+        <span className="text-3xl font-bold text-white">{data.posicao}°</span>
+        {/* <span className="text-blue-200 text-sm ml-1">/{data.total}</span> */}
       </div>
-      <div className="mt-2 flex justify-center">
+      {/* <div className="mt-2 flex justify-center">
         <div className="flex items-center bg-slate-800/50 px-3 py-1 rounded-full">
           {getPositionChangeIcon(data.posicao, data.posicaoAnterior)}
           <span
@@ -43,7 +43,7 @@ const RankingPositionCard = ({
             {formatPositionChange(data.posicao, data.posicaoAnterior)}
           </span>
         </div>
-      </div>
+      </div> */}
       <div className="mt-2 text-center">
         <span className="text-sm font-medium bg-indigo-900/50 px-3 py-1 rounded-full text-blue-100 inline-block">
           {data.pontos} pts

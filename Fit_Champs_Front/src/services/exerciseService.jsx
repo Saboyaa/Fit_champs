@@ -23,7 +23,7 @@ const exerciseService = {
       return convertedData;
     } catch (error) {
       throw new Error(
-        error?.message || "Erro ao buscar os exércicios disponíveis."
+        error?.detail || "Erro ao buscar os exércicios disponíveis."
       );
     }
   },
@@ -63,7 +63,7 @@ const exerciseService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(error?.message || "Erro ao enviar os treinos.");
+      throw new Error(error?.detail || "Erro ao enviar os treinos.");
     }
   },
 };

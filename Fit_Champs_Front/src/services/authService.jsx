@@ -26,7 +26,7 @@ const authService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(error?.message || "Erro ao fazer login");
+      throw new Error(error?.detail || "Erro ao fazer login");
     }
   },
 
@@ -61,19 +61,19 @@ const authService = {
       return response.data;
     } catch (error) {
       // Tratar diferentes tipos de erro do backend
-      if (error?.message) {
+      if (error?.detail) {
         // Se o backend retornar erros de validação específicos
-        const errors = error.message;
+        const errors = error.detail;
         if (Array.isArray(errors)) {
           throw new Error(errors.join(", "));
         } else if (typeof errors === "object") {
-          const errorMessages = Object.values(errors).join(", ");
-          throw new Error(errorMessages);
+          const errordetails = Object.values(errors).join(", ");
+          throw new Error(errordetails);
         }
       }
 
       throw new Error(
-        error?.message || "Erro ao realizar cadastro. Tente novamente."
+        error?.detail || "Erro ao realizar cadastro. Tente novamente."
       );
     }
   },

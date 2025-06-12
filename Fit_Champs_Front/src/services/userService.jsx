@@ -38,11 +38,11 @@ const userService = {
         sexo: response.data.sex == "M" ? "Masculino" : "Feminino",
         cidade: response.data.city,
         recordes: {
-          peito: response.data.rank_chest,
-          costas: response.data.rank_back,
-          braço: response.data.rank_arm,
-          perna: response.data.rank_leg,
-          ombro: response.data.rank_shoulder,
+          Peito: response.data.rank_chest,
+          Costas: response.data.rank_back,
+          Braço: response.data.rank_arm,
+          Perna: response.data.rank_leg,
+          Ombro: response.data.rank_shoulder,
         },
         metas: {
           peito: response.data.goal_chest,
@@ -53,7 +53,7 @@ const userService = {
         },
       };
     } catch (error) {
-      throw new Error(error?.message || "Erro ao buscar dados do usuário");
+      throw new Error(error?.detail || "Erro ao buscar dados do usuário");
     }
   },
 
@@ -66,27 +66,19 @@ const userService = {
         nome: response.data.username,
         idade: response.data.age,
         sexo: response.data.sex == "M" ? "Masculino" : "Feminino",
+        recordes: {
+          Peito: response.data.rank_chest,
+          Perna: response.data.rank_leg,
+          Ombro: response.data.rank_shoulder,
+          Costas: response.data.rank_back,
+          Braço: response.data.rank_arm,
+          Geral: response.data.rank_general,
+        },
       };
     } catch (error) {
-      throw new Error(error?.message || "Erro ao buscar dados do usuário");
+      throw new Error(error?.detail || "Erro ao buscar dados do usuário");
     }
   },
-
-  //Função para o TopMenu pegar dados do usuário
-  // getUserDisplay: async () => {
-  //   try {
-  //     const response = await api.get("user");
-  //     return {
-  //       nome: response.data.nome,
-  //       foto: response.data.foto,
-  //     };
-  //   } catch (error) {
-  //     throw new Error(
-  //       error.response?.data?.message ||
-  //         "Erro ao buscar dados de exibição do usuário"
-  //     );
-  //   }
-  // },
 
   // Função para atualizar perfil do usuário
   updateProfile: async (userData) => {
@@ -110,7 +102,7 @@ const userService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(error?.message || "Erro ao atualizar perfil");
+      throw new Error(error?.detail || "Erro ao atualizar perfil");
     }
   },
 
@@ -139,7 +131,7 @@ const userService = {
 
       return response.data;
     } catch (error) {
-      throw new Error(error?.message || "Erro ao atualizar meta de volume");
+      throw new Error(error?.detail || "Erro ao atualizar meta de volume");
     }
   },
 
@@ -148,7 +140,7 @@ const userService = {
     const grupos = ["Peito", "Costas", "Perna", "Ombro", "Braço"];
 
     return grupos.map((grupo) => {
-      const treinosDoGrupo = treinos.filter((t) => t.grupoMuscular === grupo);
+      const treinosDoGrupo = treinos[grupo] || [];
 
       if (treinosDoGrupo.length === 0) {
         return {
@@ -161,13 +153,13 @@ const userService = {
 
       // Encontrar o treino com maior volume
       const melhorTreino = treinosDoGrupo.reduce((max, atual) =>
-        atual.volumeTotal > max.volumeTotal ? atual : max
+        atual.volume > max.volume ? atual : max
       );
 
       return {
         grupo,
-        recordeVolume: melhorTreino.volumeTotal,
-        metaVolume: metas[grupo] || 0,
+        recordeVolume: melhorTreino.volume,
+        metaVolume: metas[grupo.toLowerCase()] || 0,
         data: melhorTreino.data,
       };
     });
@@ -209,7 +201,7 @@ const userService = {
         ombro: response.data.goal_shoulder,
       };
     } catch (error) {
-      throw new Error(error?.message || "Erro ao buscar metas do usuário");
+      throw new Error(error?.detail || "Erro ao buscar metas do usuário");
     }
   },
 };

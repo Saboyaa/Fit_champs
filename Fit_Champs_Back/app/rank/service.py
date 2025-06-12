@@ -236,4 +236,41 @@ def get_general_rank_by_age_and_gender(db: Session, gender: str, age: int):
     ).all()
 
 def get_total_volume_by_user(db: Session, user_id: int):
-    pass
+    general_total_volume = db.scalars(
+        select(GeneralRank.total_volume) \
+        .where(GeneralRank.id == user_id)
+    ).first()
+
+    arm_total_volume = db.scalars(
+        select(ArmRank.total_volume) \
+        .where(ArmRank.id == user_id)
+    ).first()
+
+    back_total_volume = db.scalars(
+        select(BackRank.total_volume) \
+        .where(BackRank.id == user_id)
+    ).first()
+
+    chest_total_volume = db.scalars(
+        select(ChestRank.total_volume) \
+        .where(ChestRank.id == user_id)
+    ).first()
+
+    leg_total_volume = db.scalars(
+        select(LegRank.total_volume) \
+        .where(LegRank.id == user_id)
+    ).first()
+
+    shoulder_total_volume = db.scalars(
+        select(ShoulderRank.total_volume) \
+        .where(ShoulderRank.id == user_id)
+    ).first() 
+
+    return {
+        "general_total_volume": general_total_volume if general_total_volume else 0,
+        "arm_total_volume": arm_total_volume if arm_total_volume else 0,
+        "back_total_volume": back_total_volume if back_total_volume else 0,
+        "chest_total_volume": chest_total_volume if chest_total_volume else 0,
+        "leg_total_volume": leg_total_volume if leg_total_volume else 0,
+        "shoulder_total_volume": shoulder_total_volume if shoulder_total_volume else 0
+    }

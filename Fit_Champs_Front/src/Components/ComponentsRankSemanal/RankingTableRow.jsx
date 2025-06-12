@@ -48,7 +48,7 @@ const RankingTableRow = ({ user, index, isCurrentUser }) => {
       <td className="px-6 py-5 whitespace-nowrap">
         <div className="flex items-center">
           <div className="flex-shrink-0 h-12 w-12">
-            {user.foto ? (
+            {/* {user.foto ? (
               <img
                 className="h-12 w-12 rounded-full object-cover border-2 border-slate-700/50"
                 src={user.foto}
@@ -58,7 +58,7 @@ const RankingTableRow = ({ user, index, isCurrentUser }) => {
               <div className="h-12 w-12 rounded-full bg-gradient-to-br from-indigo-700 to-blue-600 flex items-center justify-center">
                 <User className="h-6 w-6 text-blue-100" />
               </div>
-            )}
+            )} */}
           </div>
           <div className="ml-4">
             <div className="text-base font-medium text-white flex items-center">
@@ -78,7 +78,7 @@ const RankingTableRow = ({ user, index, isCurrentUser }) => {
           {user.pontos} pts
         </div>
       </td>
-      <td className="px-6 py-5 whitespace-nowrap">
+      {/* <td className="px-6 py-5 whitespace-nowrap">
         <div className="flex items-center bg-slate-800/50 px-3 py-1 rounded-lg inline-flex">
           {getPositionChangeIcon(index + 1, user.posicaoAnterior)}
           <span
@@ -93,7 +93,7 @@ const RankingTableRow = ({ user, index, isCurrentUser }) => {
             {formatPositionChange(index + 1, user.posicaoAnterior)}
           </span>
         </div>
-      </td>
+      </td> */}
     </tr>
   );
 };

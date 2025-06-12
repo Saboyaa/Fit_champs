@@ -16,11 +16,6 @@ const LoginOptions = ({ rememberMe, setRememberMe }) => {
           Lembrar-me
         </label>
       </div>
-      <div>
-        <button className="text-sm text-blue-400 hover:text-blue-200">
-          <NavLink to="/ForgotPassword">Esqueci a senha</NavLink>
-        </button>
-      </div>
     </div>
   );
 };
