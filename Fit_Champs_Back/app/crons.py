@@ -45,8 +45,13 @@ def schedule_cron_jobs():
                 $$
                     REFRESH MATERIALIZED VIEW general_rank;
                         
-                    UPDATE users AS u SET u.rank_general = gru.rank
-                    FROM (SELECT gr.id, gr.total_volume, RANK() OVER ( ORDER BY total_volume DESC) FROM general_rank AS gr) AS gru
+                    UPDATE users
+                    SET rank_general = gru.rank
+                    FROM (
+                        SELECT gr.id, gr.total_volume, RANK() OVER (ORDER BY gr.total_volume DESC) AS rank
+                        FROM general_rank AS gr
+                    ) AS gru
+                    WHERE users.id = gru.id;
                 $$
             );
         """))
@@ -69,8 +74,13 @@ def schedule_cron_jobs():
                 $$
                     REFRESH MATERIALIZED VIEW rank_arm;
                         
-                    UPDATE users AS u SET u.rank_arm = gru.rank
-                    FROM (SELECT ar.id, ar.total_volume, RANK() OVER ( ORDER BY total_volume DESC) FROM rank_arm AS ar) AS aru
+                    UPDATE users
+                    SET rank_arm = aru.rank
+                    FROM (
+                        SELECT ar.id, ar.total_volume, RANK() OVER (ORDER BY ar.total_volume DESC) AS rank
+                        FROM rank_arm AS ar
+                    ) AS aru
+                    WHERE users.id = aru.id;
                 $$
             );
         """))
@@ -93,8 +103,13 @@ def schedule_cron_jobs():
                 $$
                     REFRESH MATERIALIZED VIEW rank_leg;
                         
-                    UPDATE users AS u SET u.rank_leg = lru.rank
-                    FROM (SELECT lr.id, lr.total_volume, RANK() OVER ( ORDER BY total_volume DESC) FROM rank_leg AS lr) AS lru
+                    UPDATE users
+                    SET rank_leg = lru.rank
+                    FROM (
+                        SELECT lr.id, lr.total_volume, RANK() OVER (ORDER BY lr.total_volume DESC) AS rank
+                        FROM rank_leg AS lr
+                    ) AS lru
+                    WHERE users.id = lru.id;
                 $$
             );
         """))
@@ -117,8 +132,13 @@ def schedule_cron_jobs():
                 $$
                     REFRESH MATERIALIZED VIEW rank_shoulder;
                         
-                    UPDATE users AS u SET u.rank_shoulder = sru.rank
-                    FROM (SELECT sr.id, sr.total_volume, RANK() OVER ( ORDER BY total_volume DESC) FROM rank_shoulder AS sr) AS sru
+                    UPDATE users
+                    SET rank_shoulder = sru.rank
+                    FROM (
+                        SELECT sr.id, sr.total_volume, RANK() OVER (ORDER BY sr.total_volume DESC) AS rank
+                        FROM rank_shoulder AS sr
+                    ) AS sru
+                    WHERE users.id = sru.id;
                 $$
             );
         """))
@@ -141,8 +161,13 @@ def schedule_cron_jobs():
                 $$
                     REFRESH MATERIALIZED VIEW rank_back;
                         
-                    UPDATE users AS u SET u.rank_back = bru.rank
-                    FROM (SELECT br.id, br.total_volume, RANK() OVER ( ORDER BY total_volume DESC) FROM rank_back AS br) AS bru
+                    UPDATE users
+                    SET rank_back = bru.rank
+                    FROM (
+                        SELECT br.id, br.total_volume, RANK() OVER (ORDER BY br.total_volume DESC) AS rank
+                        FROM rank_back AS br
+                    ) AS bru
+                    WHERE users.id = bru.id;
                 $$
             );
         """))
@@ -165,8 +190,13 @@ def schedule_cron_jobs():
                 $$
                     REFRESH MATERIALIZED VIEW rank_chest;
                         
-                    UPDATE users AS u SET u.rank_chest = cru.rank
-                    FROM (SELECT cr.id, cr.total_volume, RANK() OVER ( ORDER BY total_volume DESC) FROM rank_chest AS cr) AS cru
+                    UPDATE users
+                    SET rank_chest = cru.rank
+                    FROM (
+                        SELECT cr.id, cr.total_volume, RANK() OVER (ORDER BY cr.total_volume DESC) AS rank
+                        FROM rank_chest AS cr
+                    ) AS cru
+                    WHERE users.id = cru.id;
                 $$
             );
         """))
